@@ -48,12 +48,20 @@ public class AuthController : ControllerBase
             return Ok(userDto);
 
         //If unable to contact service layer error will be given
-        } catch(Exception e)
+        } catch (InvalidOperationException e)
+        {
+            // log the error
+            _logger.LogError(e, "User with username already exists.");
+            // return the error
+            return BadRequest(new { message = e.Message });
+        }
+        catch(Exception e)
         {
             // log the error
             _logger.LogError(e, "[AuthController] Failed to create account. Username may already exist.");
             // return the error
-            return BadRequest("Failed to create account. Username may already exist.");
+            return BadRequest(new { message = "Failed to create account. Please try again." });
+
         }
     }
 
