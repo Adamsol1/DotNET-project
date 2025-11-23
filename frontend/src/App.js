@@ -1,64 +1,73 @@
-import React, {useEffect, useState} from 'react';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { GameProvider } from './context/GameContext';
 import { AudioProvider } from './context/AudioContext';
 import { Home } from './pages/Home';
 import { Game } from './pages/Game';
-import { tokens } from './design/tokens';
-import {AccountManagement} from "./pages/AccountManagement";
+import { AccountManagement } from './pages/AccountManagement';
+import { useGame } from './context/GameContext';
 
-//set the appContent routes
+/*Did a complete rebuild of this file for browser and navigation management.
+* The browser should be able to remeber which route the user is on. 
+* */
+
+//protected routes that the user has to be authenticated for. 
+const ProtectedRoute = ({ children }) => {
+  const { authenticated, authRestored } = useGame();
+  
+  if (!authRestored) {
+    return <div className="loading-screen">
+      <div className="loading-screen-content">
+        <div className="loading-screen-content-text">
+          <h1>Loading...</h1>
+        </div>
+      </div>
+    </div>;
+  }
+  
+  return authenticated ? children : <Navigate to="/" replace />;
+};
+
 function AppContent() {
-  // set the start page as the home page.
-  const [currentPage, setCurrentPage] = useState(() => {
+  return(
+    <Routes>
+      <Route path="/" element={<Home />} />
 
-    // save the page the user is on to the local storage.
-    const savedPage = localStorage.getItem('currentPage');
-    return savedPage || 'home';
-  });
+      <Route path="/game"
+      element={
+        <ProtectedRoute>
+          <Game />
+        </ProtectedRoute>
+      }
+      />
+      
+      <Route path="/account"
+      element={
+        <ProtectedRoute>
+          <AccountManagement />
+        </ProtectedRoute>
+      }
+      />
 
-  // if the page changes, save the new page to the local storage.
-  useEffect(() => {
-    localStorage.setItem('currentPage', currentPage);
-  }, [currentPage]);
+      <Route path="*" element={<Navigate to="/" replace />} />
 
-  // navigate to a different page
-  const navigate = (page) => {
-    setCurrentPage(page);
-  };
-
-  // render the current page based on the currentPage state.
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <Home onNavigate={navigate} />;
-      case 'game':
-        return <Game onNavigate={navigate} />;
-      case 'account':
-        return <AccountManagement onNavigate={navigate} />;
-      default:
-        return <Home onNavigate={navigate} />;
-    }
-  };
-
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: tokens.color.bg,
-      color: tokens.color.text
-    }}>
-      {renderPage()}
-    </div>
+    </Routes>
   );
+
 }
 
-// Setup of the app with the GameProvider, AudioProvider, and AppContent
 export default function App() {
-    return (
-        <GameProvider>
-            <AudioProvider>
-                <AppContent />
-            </AudioProvider>
-        </GameProvider>
-    );
+  return (
+    <Router>
+      <GameProvider>
+
+        <AudioProvider>
+
+          <AppContent />
+
+        </AudioProvider>
+
+      </GameProvider>
+    </Router>
+
+  );
 }

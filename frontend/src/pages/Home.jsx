@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { validateLoginForm, validateRegisterForm } from '../utils/validation';
+
+
 
 // component imports . gameContext has api calls and game state management.
 import { useGame } from '../context/GameContext';
@@ -10,17 +14,33 @@ import Stars from '../components/Home/Stars';
 // alert modal for unsaved changes.
 import AlertModal from '../components/AlertModal';
 
-export function Home({ onNavigate }) {
+export function Home() {
+  //navigation.
+  const navigate = useNavigate();
+
   const { authenticated, user, logout, login, register } = useGame();
   const [activeTab, setActiveTab] = useState('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
 
   const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   const hasUnsavedChanges = username !== '' || password !== '';
 
   // log inn the user, call the login function. from api.auth.login
   const handleLogin = async () => {
+    // validate the form.
+    setError("");
+    setValidationErrors({});
+
+    const validationResult = validateLoginForm(username, password);
+
+    if (!validationResult.isValid) {
+      setValidationErrors(validationResult.errors);
+      return;
+    }
+    
     try {
       // passes inn the username and password captured from the form 
       // to the login function.
@@ -28,16 +48,31 @@ export function Home({ onNavigate }) {
 
     } catch (error) {
       console.error('Login failed:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+      setError(errorMessage);
     }
   }
 
   // register the user, call the register function. from api.auth.register
   const handleRegister = async () => {
+    setError("");
+    setValidationErrors({});
+
+    const validationResult = validateRegisterForm(username, password);
+
+    if (!validationResult.isValid) {
+      setValidationErrors(validationResult.errors);
+      return;
+    }
+
     try {
       // passes inn the username and password captured from the form 
       // to the register function.
       await register({ username, password });
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to register. Please try again.';
+      setError(errorMessage);
+
       console.error('Register failed:', error);
     }
   }
@@ -71,7 +106,7 @@ export function Home({ onNavigate }) {
   // handle tab click with unsaved changes check
   const handleTabClick = (tab) => {
     if (tab === activeTab) return;
-
+    setError("");
     // if there are unsaved changes on register tab, show the alert modal
     if (activeTab === 'register' && tab === 'login' && hasUnsavedChanges) {
       setShowLeaveAlert(true);
@@ -146,7 +181,7 @@ export function Home({ onNavigate }) {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => onNavigate('game')}
+                    onClick={() => navigate('/game')}
                     className="w-full px-4 py-3 bg-gray-200 text-black font-bold border-2 border-black"
                   >
                     PLAY GAME
@@ -155,7 +190,7 @@ export function Home({ onNavigate }) {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => onNavigate('account')}
+                    onClick={() => navigate('/account')}
                     className="w-full px-4 py-3 bg-gray-200 text-black font-bold border-2 border-black"
                   >
                     ACCOUNT MANAGEMENT
@@ -204,6 +239,17 @@ export function Home({ onNavigate }) {
 
                 {/* Form */}
                 <div className="space-y-4">
+                  {/* Error dispaly */}
+                  {error && (
+                    <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="px-4 py-3 bg-red-600 text-white font-bold border-2 border-red-800 text-center"
+                  >
+                    {error}
+                  </motion.div>
+                  )}
+                  
                   {/* Username Field */}
                   <motion.div
                     initial={{ x: -20, opacity: 0 }}
@@ -214,13 +260,23 @@ export function Home({ onNavigate }) {
                       type="text"
                       placeholder="Username"
                       value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      style={{ 
-                        textTransform: 'none', 
-                        textCase: 'none',
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                        if (validationErrors.username) {
+                          setValidationErrors(prev => ({ ...prev, username: [] }));
+                        }
                       }}
-                      className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 ${
+                        validationErrors.username?.length > 0 
+                          ? 'border-red-600' 
+                          : 'border-black'
+                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     />
+                    {validationErrors.username?.length > 0 && (
+                      <div className="mt-1 text-red-500 text-sm text-center">
+                        {validationErrors.username[0]}
+                      </div>
+                    )}
                   </motion.div>
                   
                   {/* Password Field */}
@@ -233,13 +289,23 @@ export function Home({ onNavigate }) {
                       type="password"
                       placeholder="PASSWORD"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      style={{ 
-                        textTransform: 'none', 
-                        textCase: 'none',
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (validationErrors.password) {
+                          setValidationErrors(prev => ({ ...prev, password: [] }));
+                        }
                       }}
-                      className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 ${
+                        validationErrors.password?.length > 0 
+                          ? 'border-red-600' 
+                          : 'border-black'
+                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     />
+                    {validationErrors.password?.length > 0 && (
+                      <div className="mt-1 text-red-500 text-sm text-center">
+                        {validationErrors.password[0]}
+                      </div>
+                    )}
                   </motion.div>
                   
                   {/* Single Dynamic Button */}

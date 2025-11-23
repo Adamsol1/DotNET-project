@@ -1,5 +1,5 @@
 // react imports
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
 // api imports
 import { auth, game, story, account } from '../endpoints/api';
 
@@ -103,6 +103,14 @@ const startState = {
     dialogueIndex: 0,
     gameOver: false,
     allSaves: [], // store all previous saves
+};
+
+// Initial state to merge saved state with start state for initialization
+const initialState = {
+    ...startState,
+    user: savedState.user,
+    authenticated: savedState.authenticated,
+    currentSaveId: savedState.currentSaveId,
 };
 
 /**
@@ -328,8 +336,35 @@ const GameContext = createContext();
 // and provides the context to the children components.
 
 export function GameProvider({ children }) {
-    // use the reducer to manage the state.
-    const [state, dispatch] = useReducer(gameReducer, startState);
+    // use the reducer to manage the state, initialized with saved state
+    const [state, dispatch] = useReducer(gameReducer, initialState);
+    const [authRestored, setAuthRestored] = useState(false);
+
+    // restore auth from storage on mount
+    useEffect(() => {
+        const restoreAuth = async () => {
+            const savedAuth = loadStateFromStorage();
+            
+            if (savedAuth.authenticated && savedAuth.user) {
+                // Verify session is still valid by calling the API
+                try {
+                    const currentUser = await auth.getCurrentUser();
+                    // Session is valid, restore state
+                    dispatch({
+                        type: ActionTypes.LOGIN_SUCCESS,
+                        payload: currentUser,
+                    });
+                } catch (error) {
+                    // Session expired or invalid, clear local storage
+                    clearGameStateFromStorage();
+                    dispatch({ type: ActionTypes.LOGOUT });
+                }
+            }
+            setAuthRestored(true);
+        };
+        
+        restoreAuth();
+    }, []);
 
     // handles the login process.
     const login = async (credentials) => {
@@ -759,6 +794,7 @@ export function GameProvider({ children }) {
     const values = {
         // state.
         ...state,
+        authRestored,
         // auth actions.
         login,
         register,

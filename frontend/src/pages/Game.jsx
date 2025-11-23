@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+
 import { useGame } from '../context/GameContext';
 import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
-import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
-import TerminalPowerRestore from '../components/miniGames/TerminalPower';
+//import TerminalPowerRestore from '../components/miniGames/TerminalPower';
 
-export function Game({ onNavigate }) {
+export function Game() {
+  //navigation.
+  const navigate = useNavigate();
+
   const { authenticated, user, getAllSaves } = useGame();
   const [currentSave, setCurrentSave] = useState(null);
   const [saves, setSaves] = useState([]);
@@ -53,7 +59,7 @@ export function Game({ onNavigate }) {
 
   // exit game event and navigate to the home page.
   const exitGame = () => {
-    onNavigate('home');
+    navigate('/');
   };
 
   const handleMiniGameWin = () => {
@@ -63,12 +69,6 @@ export function Game({ onNavigate }) {
   const handleMiniGameLose = () => {
     console.log('Player lost the mini-game!');
   };
-
-  // Redirect to login if not authenticated and return null.
-  if (!authenticated) {
-    onNavigate('home');
-    return null;
-  }
 
   // Show StartGame component if new game is requested
   if (showGameStart) {
@@ -128,7 +128,7 @@ export function Game({ onNavigate }) {
               onLose={handleMiniGameLose}
             />
           ) : miniGameType === 'terminal' ? (
-            <TerminalPowerRestore
+            {/*<TerminalPowerRestore
               onComplete={() => {
                 console.log('Terminal game completed, closing...');
                 setShowMiniGame(false);
@@ -137,6 +137,7 @@ export function Game({ onNavigate }) {
               onWin={handleMiniGameWin}
               onLose={handleMiniGameLose}
             />
+            */}
           ) : null}
         </div>
       )}
@@ -233,7 +234,7 @@ export function Game({ onNavigate }) {
                   TEST TERMINAL POWER RESTORE
                 </motion.button>
               </motion.div>
-            )}
+            )} */}
 
             {/* Load Previous Saves - Below */}
             {saves.length > 0 && (
