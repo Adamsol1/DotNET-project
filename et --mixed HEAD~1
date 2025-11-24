@@ -1,0 +1,89 @@
+[33m92bc5cd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mFrontendTest[m[33m)[m Adjusted frontend and removed scrollbars
+[33m6164f49[m Added new images and fixed font on login
+[33m1a86b4c[m fixed structure
+[33mc2cb4ad[m Implement account management features: username update, password change, and account deletion
+[33mac2bcc3[m Added oblig data to dev branch
+[33m2588563[m[33m ([m[1;31morigin/DebugDungeon[m[33m)[m Fixed
+[33mf87a7cf[m tring to fix alot of erros
+[33me8893f9[m Merge branch 'exam/rebase' into Dev
+[33m641ad0f[m[33m ([m[1;31morigin/exam/rebase[m[33m, [m[1;32mexam/rebase[m[33m)[m adding animations
+[33m93cfcd2[m Merge branch 'exam/rebase' into Dev
+[33m0e61e03[m Merge branch 'exam/rebase' of https://github.com/Adamsol1/DotNET-project into exam/rebase
+[33m535f9f5[m feat: add concurrently to run frontend and backend simultaneously
+[33m98802c9[m Changed ui and font and added new pictures to match new style
+[33mdd41884[m fixed infinate recursive loop
+[33m7e2ced5[m fxied added empty space on the game page.
+[33mecafbeb[m fix
+[33m6e483af[m added home, and gamestart stuf, some backend endpoints are working, such as login, register and start game
+[33m74e4323[m fetched frontend from /feature/frontend branch
+[33mb77f612[m fixes continues tomorrow
+[33mdef5d33[m remvoed dll packages, and fixed some refactoring to react and api based backend.
+[33m68c8c26[m Update .gitignore and remove build artifacts from tracking
+[33m65ec713[m Merge pull request #15 from Adamsol1/feature/error-validation-logger
+[33me74ee4e[m Added logger to controllers
+[33m48bf5b1[m Merge pull request #14 from Adamsol1/Dev
+[33med8ae82[m Lagt til bilder
+[33m79a8f09[m Update program
+[33m223d9b4[m css + program start 2
+[33m4d61613[m CSS + Program start
+[33m8da91d9[m Added GameSave entity for later + Added more seeddata for db
+[33mc924428[m fixed small error
+[33m287d682[m Merge branch 'AuthenticationAndRepo' into Dev
+[33m500050d[m Endringer.
+[33ma17108a[m trying to fix this chaos project.
+[33mba6c9e7[m Merge pull request #13 from Adamsol1/feature/error-validation-logger
+[33me12207c[m Added logging to Service files
+[33m869ed37[m Did some changes for the frontend. NB this was done without proper IDE settings so no error messages are appearing. will go through tomorrow
+[33m3686976[m Merge branch 'feature/frontendRazorView' into Dev
+[33m003b243[m testing db
+[33m9dd4669[m Fixed certain seeder + seeding files. The database is not working with seeding
+[33mb56c699[m FIXED THE PROJECT
+[33md511992[m sdf
+[33m362288f[m small changes
+[33md5a1042[m fixed typo
+[33m4ff6acf[m fixed program.cs
+[33mbe40523[m changed dotnet-project.csproject file and added temp program.cs for it to work
+[33maaadf05[m Added models and controllers including mockapi controller for the frontend to work
+[33ma15550d[m Replaced frontend with Views
+[33md47998b[m Merge branch 'Dev' of https://github.com/Adamsol1/DotNET-project into Dev
+[33mb3deec7[m fixed GameController errors.
+[33m03460e0[m Fixed errors went from 137 to 11 errors
+[33m13b9a3e[m Work in progress fixing error, stashing and pulling from dev
+[33m8407a1e[m Added userService
+[33mb27354f[m Merge branch 'services-ah' into Dev finished the services & pulled from Dev before I merge my branch
+[33md46f361[m Service comeplete I think. Completed UnitOfWork withh Repository Injections, Completed Services, might be bugs, and added needed methods to the StoryNodeRepository, and gameController. Plan is to compelte the controllers on the 13.10 as well with the UnitTesting.
+[33m974c775[m Comments for DbSeeder and Unit tests
+[33m51736e7[m Add database seeding and initial story data + Unit tests for seeding
+[33m27aad34[m Fixed som null pointers and changed the playercharacter
+[33mdeadf02[m Added code comments
+[33m737ec59[m Merge branch 'Dev' into AuthenticationAndRepo
+[33mf109526[m Work on the repos
+[33me0cdb9c[m Initialized frontend with react and added temp scene
+[33mb84948e[m Merge pull request #11 from Adamsol1/AuthenticationAndRepo
+[33mb6e377d[m Created repo for each entitiy.
+[33m69b7a60[m Revert "ee"
+[33md961545[m ee
+[33m920e7c7[m added some files to gitIgnore, GitHelper is for now functioning, and added Unit test for the Generic aswell as folder structure
+[33mcc91899[m Stop tracking bin/ and obj/; keep ignored
+[33m3d9bd24[m We test
+[33m95ba505[m Test av Githelper og commit av GenericRepository filen
+[33md7aac63[m Added Serilog logger
+[33m40d146b[m Move .gitignore to project root
+[33m6012490[m Merge branch 'Tests' into Dev
+[33m205c0b7[m Update .gitignore for improved coverage
+[33m461b7fe[m feature: added playerServices and others, non working for know, but we should be able to later connect up everything once the Repositories are ready.
+[33m848631f[m Add initial test project for AppDbContext
+[33m79dc2f2[m Initialized DB :)
+[33m5f6238b[m restructred, reremoved web-project-2300 rebased to DOTNET-Project in all files. added frontend with proxy to backend and cors in program.cs.
+[33m2d1228e[m Refactor models namespace and add SQLite DbContext
+[33m6e60eaa[m Merge pull request #10 from Adamsol1/feature/changes-A
+[33mbd77e62[m Changes - models to domain and IgenericRepository to application/Interface
+[33m0b84322[m Update AppDbContext.cs
+[33m8595833[m Merge pull request #7 from Adamsol1/Feature-Database-w.-CRUD
+[33m689eec7[m Structuring of files and folders, Refactor models and add generic repository interfaces
+[33m04b3fd8[m we saif f it and tried to merge
+[33m5f91f61[m Update Dialogue.cs
+[33m3b65e43[m Add story and user model classes
+[33me2904a3[m[33m ([m[1;31morigin/main[m[33m)[m Structure for the code, template used is dotnet web REST API template
+[33mccdfbfe[m Initialize .NET 8 console project
+[33mf0ff3d5[m Initial commit
