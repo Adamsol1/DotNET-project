@@ -7,8 +7,8 @@ import {HoloButton} from "./UI/HoloButton";
 * 
 * 
 * The design was created with help and insperation from Gemini 2.5 free
-* based on earlier UI design, so that the game could look more visually appealing.
-* and tie into the space theme. 
+* based on earlier UI design that I had implemented, so that the game could look more visually appealing.
+* and tie into the space theme, aswell as fixing animations that I had struggled with. 
 * 
 * */
 

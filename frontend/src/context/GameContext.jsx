@@ -1,5 +1,5 @@
 // react imports
-import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
 // api imports
 import { auth, game, story, account } from '../endpoints/api';
 
@@ -342,15 +342,6 @@ export function GameProvider({ children }) {
 
     // restore auth from storage on mount
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        
-        if (token) {
-            //set authenticated user state
-            dispatch({
-                type: ActionTypes.LOGIN_SUCCESS,
-                payload: { token}
-            });
-        }
         setAuthRestored(true);
     }, []);
 
@@ -362,6 +353,7 @@ export function GameProvider({ children }) {
 
             // get the response from the API.
             const user = await auth.login(credentials);
+            console.log(user.id);
 
             // if the login is successful, we dispatch the success action.
             // to update the state.
@@ -369,6 +361,7 @@ export function GameProvider({ children }) {
             
             // save the token to the local storage.
             localStorage.setItem('token', user.token);
+            saveUserStateToStorage(user, true);
             // return the user.
             return user;
         } catch (error) {
@@ -494,7 +487,7 @@ export function GameProvider({ children }) {
     };
 
     // get all saves and return the result.
-    const getAllSaves = async (userId) => {
+    const getAllSaves = useCallback( async (userId) => {
         try {
             dispatch({ type: ActionTypes.GET_ALL_SAVES });
             const saves = await game.getAllSaves(userId);
@@ -508,7 +501,7 @@ export function GameProvider({ children }) {
             // return the error.
             throw error;
         }
-    };
+    }, []);
 
     const getSaveById = async (saveId) => {
         try {
