@@ -342,28 +342,16 @@ export function GameProvider({ children }) {
 
     // restore auth from storage on mount
     useEffect(() => {
-        const restoreAuth = async () => {
-            const savedAuth = loadStateFromStorage();
-            
-            if (savedAuth.authenticated && savedAuth.user) {
-                // Verify session is still valid by calling the API
-                try {
-                    const currentUser = await auth.getCurrentUser();
-                    // Session is valid, restore state
-                    dispatch({
-                        type: ActionTypes.LOGIN_SUCCESS,
-                        payload: currentUser,
-                    });
-                } catch (error) {
-                    // Session expired or invalid, clear local storage
-                    clearGameStateFromStorage();
-                    dispatch({ type: ActionTypes.LOGOUT });
-                }
-            }
-            setAuthRestored(true);
-        };
+        const token = localStorage.getItem('token');
         
-        restoreAuth();
+        if (token) {
+            //set authenticated user state
+            dispatch({
+                type: ActionTypes.LOGIN_SUCCESS,
+                payload: { token}
+            });
+        }
+        setAuthRestored(true);
     }, []);
 
     // handles the login process.
@@ -378,6 +366,9 @@ export function GameProvider({ children }) {
             // if the login is successful, we dispatch the success action.
             // to update the state.
             dispatch({ type: ActionTypes.LOGIN_SUCCESS, payload: user });
+            
+            // save the token to the local storage.
+            localStorage.setItem('token', user.token);
             // return the user.
             return user;
         } catch (error) {

@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
-
 import { useGame } from '../context/GameContext';
 import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
-//import TerminalPowerRestore from '../components/miniGames/TerminalPower';
+import TerminalPowerRestore from '../components/miniGames/TerminalPower';
 
 export function Game() {
   //navigation.
@@ -117,28 +115,26 @@ export function Game() {
             }
           }}
         >
-          {miniGameType === 'rockPaperScissors' ? (
+          {miniGameType === 'rockPaperScissors' && (
             <RockPaperScissors
               onComplete={() => {
-                console.log('Mini-game completed, closing...');
                 setShowMiniGame(false);
                 setMiniGameType(null);
               }}
               onWin={handleMiniGameWin}
               onLose={handleMiniGameLose}
             />
-          ) : miniGameType === 'terminal' ? (
-            {/*<TerminalPowerRestore
+          )}
+          {miniGameType === 'terminal' && (
+            <TerminalPowerRestore
               onComplete={() => {
-                console.log('Terminal game completed, closing...');
                 setShowMiniGame(false);
                 setMiniGameType(null);
               }}
               onWin={handleMiniGameWin}
               onLose={handleMiniGameLose}
             />
-            */}
-          ) : null}
+          )}
         </div>
       )}
 
@@ -200,7 +196,6 @@ export function Game() {
               </motion.button>
             </motion.div>
 
-            {/* Test Mini-Game Buttons */}
             {!showMiniGame && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -234,7 +229,7 @@ export function Game() {
                   TEST TERMINAL POWER RESTORE
                 </motion.button>
               </motion.div>
-            )} */}
+            )}
 
             {/* Load Previous Saves - Below */}
             {saves.length > 0 && (
