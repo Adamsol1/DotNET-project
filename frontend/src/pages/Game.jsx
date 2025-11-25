@@ -5,7 +5,7 @@ import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
-import TerminalPowerRestore from '../components/miniGames/TerminalPower';
+// import TerminalPowerRestore from '../components/miniGames/TerminalPower'; // TODO: Component not yet created
 
 export function Game({ onNavigate }) {
   const { getAllSaves } = useGame();
@@ -29,7 +29,7 @@ export function Game({ onNavigate }) {
     } catch (error) {
       console.error('Failed to load saves:', error);
     }
-  }, [authenticated, user, getAllSaves]);
+  }, [authenticated, user]);
 
   // Load saves when component mounts
   useEffect(() => {

@@ -76,6 +76,11 @@ public class AuthController : ControllerBase
 
             _logger.LogInformation("[AuthController] Succesfully created account for {Username}", request.Username);
             var authUserId = user.Id;
+            
+            // Assign player role to new user
+            await _userManager.AddToRoleAsync(user, "player");
+            _logger.LogInformation("[AuthController] Assigned player role to user {Username}", request.Username);
+            
             UserDto gameUserDto;
             try
             {
@@ -131,8 +136,7 @@ public class AuthController : ControllerBase
             if (userDto != null && await _userManager.CheckPasswordAsync(userDto, request.Password))
             {
                 _logger.LogInformation("[AuthController] Login attempt authorized for user : {@LoginUserDto}", request);
-                var token = GenerateJwtToken(userDto);
-                _logger.LogDebug("[AuthController] Generated token length: {Len} for user {User}", token?.Length, userDto.UserName);
+                var token = await GenerateJwtToken(userDto);
 
                 var user = await _userService.Login(request);
                 _logger.LogInformation("[AuthController] GameUser found - Id: {UserId}, Username: {Username}", user?.Id, user?.Username);
@@ -188,7 +192,7 @@ public class AuthController : ControllerBase
     }
 
 
-    private string GenerateJwtToken(AuthUser user)
+    private async Task<string> GenerateJwtToken(AuthUser user)
     {
         var JWTKey = _configuration["Jwt:Key"];
         if (string.IsNullOrEmpty(JWTKey))
@@ -198,6 +202,7 @@ public class AuthController : ControllerBase
         }
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var accountRoles = await _userManager.GetRolesAsync(user);
 
         var claims = new[]
         {
@@ -206,11 +211,15 @@ public class AuthController : ControllerBase
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
         };
+        foreach (var role in accountRoles)
+        {
+            claims = claims.Append(new Claim(ClaimTypes.Role, role)).ToArray();
+        }
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddMinutes(30),
             signingCredentials: credentials
         );
         _logger.LogInformation("[AuthController] Generated JWT token for user @{UserName}.", user.UserName);

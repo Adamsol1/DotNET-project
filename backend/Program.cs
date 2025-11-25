@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using backend.Domain.Models;
 using System.IO;
 using backend.Application;
+using backend.Application.Dtos;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories;
 using backend.Application.Interfaces.Repositories;
@@ -183,6 +184,59 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+//Seeds for the roles.
+//Based on https://medium.com/@roshanj100/users-and-roles-seeding-in-asp-net-core-identity-with-entity-framework-core-a-step-by-step-guide-28e6f76a18db
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AuthUser>>();
+    var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+    try
+    {
+        var roles = new[] { "player", "admin" };
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+                logger.Information("Created role: {Role}", role);
+            }
+        }
+
+
+        var checkAdminUser = await userManager.FindByNameAsync("admin");
+        if (checkAdminUser == null)
+        {
+            var user = new AuthUser
+            {
+                UserName = "admin",
+
+            };
+            
+            var createAdminUser = await userManager.CreateAsync(user, "Admin123!");
+            if (createAdminUser.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "admin");
+                await userService.RegisterAccount(new RegisterUserDto
+                {
+                    Username = "admin",
+                    Password = "Admin123!"
+                }, user.Id);
+                logger.Information("Created the default admin user");
+            } else
+            {
+                logger.Error("Failed to create the default admin user");
+            }
+        }
+        logger.Information("Database migration and seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.Error(ex, "An error occurred while migrating or seeding the database.");
+        throw; // Re-throw the exception after logging it
+    }
+}
+
 
 
 
@@ -238,16 +292,23 @@ app.Use(async (context, next) =>
          {
              var token = headerValue.Substring("Bearer ".Length).Trim();
 
-             // Decode the token to see its contents (without verification)
-             var handler = new JwtSecurityTokenHandler();
-             var jsonToken = handler.ReadJwtToken(token);
+             try
+             {
+                 // Decode the token to see its contents (without verification)
+                 var handler = new JwtSecurityTokenHandler();
+                 var jsonToken = handler.ReadJwtToken(token);
 
-             Console.WriteLine($"--> Token Issuer: {jsonToken.Issuer}");
-             Console.WriteLine($"--> Token Audience: {jsonToken.Audiences.FirstOrDefault()}");
-             Console.WriteLine($"--> Token Expiry: {jsonToken.ValidTo}");
-             Console.WriteLine($"--> Current Time: {DateTime.UtcNow}");
-             Console.WriteLine($"--> Config Issuer: {builder.Configuration["Jwt:Issuer"]}");
-             Console.WriteLine($"--> Config Audience: {builder.Configuration["Jwt:Audience"]}");
+                 Console.WriteLine($"--> Token Issuer: {jsonToken.Issuer}");
+                 Console.WriteLine($"--> Token Audience: {jsonToken.Audiences.FirstOrDefault()}");
+                 Console.WriteLine($"--> Token Expiry: {jsonToken.ValidTo}");
+                 Console.WriteLine($"--> Current Time: {DateTime.UtcNow}");
+                 Console.WriteLine($"--> Config Issuer: {builder.Configuration["Jwt:Issuer"]}");
+                 Console.WriteLine($"--> Config Audience: {builder.Configuration["Jwt:Audience"]}");
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"--> Error decoding token: {ex.Message}");
+             }
          }
      }
      await next.Invoke();

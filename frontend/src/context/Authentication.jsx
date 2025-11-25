@@ -22,9 +22,13 @@ export function AuthProvider({ children }) {
                     // Preserve the game user id from localStorage
                     const storedUserId = localStorage.getItem('user_id');
                     const storedUsername = localStorage.getItem('user');
+
+                    //Is it a better way to get role than this? Maybe use custom roles instead, like not the identify roles
+                    const role = decodedUser["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
                     setUser({
                         id: storedUserId ? parseInt(storedUserId) : null,
                         username: storedUsername,
+                        role: role,
                         decodedUser
                     });
                     console.log('[Auth] Token valid, restored user state with id:', storedUserId);
@@ -52,13 +56,17 @@ export function AuthProvider({ children }) {
         localStorage.setItem('user', user.username);
         localStorage.setItem('user_id', user.userId);
         console.log('[Auth] Stored user_id in localStorage:', localStorage.getItem('user_id'));
+        
 
         const decodedUser = jwtDecode(user.token);
+        const role = decodedUser["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
         setUser({
             id: user.userId,
             username: user.username,
+            role : role,
             decodedUser
         });
+        alert(`Logged in with role ${role}`)
         console.log('[Auth] Set user state with id:', user.userId);
         setToken(user.token);
     }
