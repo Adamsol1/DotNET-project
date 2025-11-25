@@ -16,6 +16,7 @@ export function Game() {
   const [saves, setSaves] = useState([]);
   const [showGameStart, setShowGameStart] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [showInfoBox, setShowInfoBox] = useState(false);
   const [miniGameType, setMiniGameType] = useState(null);
 
   // get saves that belongs to the logged in user and set the saves state.
@@ -138,11 +139,57 @@ export function Game() {
         </div>
       )}
 
+      {/* INFO POPUP */}
+      {showInfoBox && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] p-6"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowInfoBox(false);
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white text-black border-4 border-black p-8 max-w-lg w-full relative"
+          >
+
+            {/* CLOSE BUTTON */}
+            <button
+              onClick={() => setShowInfoBox(false)}
+              className="absolute top-3 right-3 text-black text-xl font-bold hover:text-gray-700"
+            >
+              ✖
+            </button>
+
+            <h2 className="text-3xl font-bold mb-4">How to play:</h2>
+
+            <ol className="list-decimal list-inside space-y-4 text-3xl font-bold text-black">
+              <li>
+                <br />
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel enim 
+                vitae urna placerat interdum.
+              </li>
+              <li>
+                <br />
+                Sed sit amet justo vitae lorem feugiat consequat.
+              </li>
+            </ol>
+          </motion.div>
+        </div>
+      )}
+
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
-        <header className="p-6 flex justify-between items-center">
-          {/* empty space */}
-          <div className="w-10 h-10"></div>
+        <header className="p-6 flex justify-end items-center gap-4">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowInfoBox(true)}
+            className="px-4 py-2 bg-transparent text-white font-bold border-2 border-white hover:bg-white hover:text-black transition-colors"
+          >
+            INFO
+          </motion.button>
           
           <motion.button
             whileHover={{ scale: 1.05 }}
