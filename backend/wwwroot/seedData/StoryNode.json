@@ -2,55 +2,115 @@
   {
     "Id": 1,
     "Title": "Awakening",
-    "Description": "Protagonist awakens from their crypod with cryosickness, which disorients him. Unsure of when and where they are, they have a goal of finding answers.",
+    "Description": "Ryan wakes disoriented inside a malfunctioning cryopod on a damaged ship.",
     "BackgroundUrl": "images/backgrounds/awakening.png"
   },
   {
     "Id": 2,
-    "Title": "Release hatch",
-    "Description": "You see an release hatch on your left",
+    "Title": "Release Hatch",
+    "Description": "Still trapped inside the pod, Ryan searches for a way out near the hatch.",
     "BackgroundUrl": "images/backgrounds/releaseHatch.png"
   },
   {
     "Id": 3,
-    "Title": "Cryo Bay",
-    "Description": "Rows of pods, most sealed, a few cracked. Silence, except the hum of failing systems.",
+    "Title": "Outside Cryopod",
+    "Description": "Ryan steps out into the cryobay, surrounded by other pods and failing systems.",
     "BackgroundUrl": "images/backgrounds/outsideCryopod.png"
   },
   {
     "Id": 4,
-    "Title": "Medkit",
-    "Description": "You pry open a panel a medkit is found inside, you use it and feel much better",
-    "BackgroundUrl": "images/backgrounds/medkit.png"
+    "Title": "Cryobay Search",
+    "Description": "Ryan searches the damaged cryobay for clues or supplies.",
+    "BackgroundUrl": "images/backgrounds/outsideCryopod.png"
   },
   {
     "Id": 5,
-    "Title": "Exposed Wiring",
-    "Description": "Narrow maintenance corridor, flickering blue lights. Ozone. Loose burned cables.",
-    "BackgroundUrl": "images/backgrounds/exposedWires.png"
+    "Title": "Medkit Found",
+    "Description": "Ryan discovers a cracked medkit under a fallen panel.",
+    "BackgroundUrl": "images/backgrounds/medkit.png"
   },
   {
     "Id": 6,
-    "Title": "The Corridor Door",
-    "Description": "Metallic hallway, dim blue strips. Sealed door with weak access panel.",
-    "BackgroundUrl": "images/backgrounds/hallway.png"
+    "Title": "Cryopod Body",
+    "Description": "Ryan examines a nearby pod and finds a lifeless crewmate inside.",
+    "BackgroundUrl": "images/backgrounds/bodyInCryopod.png"
   },
   {
     "Id": 7,
-    "Title": "Corridor Encounter",
-    "Description": "Dim metallic hallway. Irene and Darius approach, breath clouding in cold air.",
-    "BackgroundUrl": "images/backgrounds/encounter.png"
+    "Title": "Exposed Wiring",
+    "Description": "Live, sparking cables block the exit from the cryobay.",
+    "BackgroundUrl": "images/backgrounds/exposedWires.png"
   },
   {
     "Id": 8,
-    "Title": "Maintenance Corridor",
-    "Description": "Long, dimly lit hallway, flickering blue lights. Mist along the floor.",
-    "BackgroundUrl": "images/backgrounds/maintenenceCorridor.png"
+    "Title": "Corridor Encounter",
+    "Description": "In the corridor outside the cryobay, Ryan meets Irene and Darius.",
+    "BackgroundUrl": "images/backgrounds/encounter.png"
   },
   {
     "Id": 9,
-    "Title": "Airlock Door",
-    "Description": "Thick blast door labeled AIRLOCK under a single flickering red light.",
+    "Title": "Team: Hallway",
+    "Description": "Ryan, Irene, and Darius move together down a damaged hallway.",
+    "BackgroundUrl": "images/backgrounds/hallway.png"
+  },
+  {
+    "Id": 10,
+    "Title": "Alone: Hallway",
+    "Description": "Ryan walks the corridor alone toward the maintenance section.",
+    "BackgroundUrl": "images/backgrounds/hallway.png"
+  },
+  {
+    "Id": 11,
+    "Title": "Maintenance Airlock Hub (TEAM)",
+    "Description": "The team reaches the locked airlock hub with a dead control panel.",
     "BackgroundUrl": "images/backgrounds/airlock.png"
+  },
+  {
+    "Id": 12,
+    "Title": "Maintenance Corridor (ALONE)",
+    "Description": "Alone, Ryan reaches a dead airlock door and a nearby vent.",
+    "BackgroundUrl": "images/backgrounds/maintenenceCorridor.png"
+  },
+  {
+    "Id": 13,
+    "Title": "Ventilation Shaft",
+    "Description": "Ryan prepares to crawl into the ship's ventilation system.",
+    "BackgroundUrl": "images/backgrounds/ventShaft.png"
+  },
+  {
+    "Id": 14,
+    "Title": "Ventilation Fan",
+    "Description": "A powerful fan blocks the duct; a maintenance terminal sits nearby.",
+    "BackgroundUrl": "images/backgrounds/ventFan.png"
+  },
+  {
+    "Id": 15,
+    "Title": "Generator Room",
+    "Description": "The team enters the backup generator room to restore power.",
+    "BackgroundUrl": "images/backgrounds/generatorRoom.png"
+  },
+  {
+    "Id": 16,
+    "Title": "Escape Pods Online (TEAM GOOD)",
+    "Description": "With power restored, the team reaches working escape pods and launches.",
+    "BackgroundUrl": "images/backgrounds/escapePods.png"
+  },
+  {
+    "Id": 17,
+    "Title": "Powerless Drift (TEAM BAD)",
+    "Description": "A failed restart leaves the ship dark and drifting in space.",
+    "BackgroundUrl": "images/backgrounds/powerlessDrift.png"
+  },
+  {
+    "Id": 18,
+    "Title": "Cockpit Control (ALONE GOOD)",
+    "Description": "Ryan reaches the cockpit, activates the beacon, and escapes alone.",
+    "BackgroundUrl": "images/backgrounds/cockpit.png"
+  },
+  {
+    "Id": 19,
+    "Title": "Fan Death (ALONE BAD)",
+    "Description": "A fatal attempt at the ventilation fan ends Ryan's journey.",
+    "BackgroundUrl": "images/backgrounds/ventFanDeath.png"
   }
 ]

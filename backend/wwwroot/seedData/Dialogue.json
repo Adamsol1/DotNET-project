@@ -1,46 +1,872 @@
 [
-  {"StoryNodeId":1,"CharacterId":1,"Order":1,"Text":"What is happening… Where am I???"},
-  {"StoryNodeId":1,"CharacterId":3,"Order":2,"Text":"Cryopod is malfunctioning. Please exit."},
-  {"StoryNodeId":1,"CharacterId":3,"Order":3,"Text":"Please exit"},
-  {"StoryNodeId":1,"CharacterId":1,"Order":4,"Text":"Ugh… My head…"},
-
-  {"StoryNodeId":2,"CharacterId":2,"Order":1,"Text":"A layer of dew covers the seal of your cryopod, preventing you from seeing outside"},
-  {"StoryNodeId":2,"CharacterId":1,"Order":2,"Text":"I need to find a way out"},
-  {"StoryNodeId":2,"CharacterId":2,"Order":3,"Text":"You look around your surroundings, you see a hatch to your left. You could also break out. That would be cool"},
-
-  {"StoryNodeId":3,"CharacterId":2,"Order":1,"Text":"You step outside your cryopod. Cold air bites you, and as you take a breath you feel the stale air. Flickering lights and an aggressive alarm with its accompanying sounds cover you."},
-  {"StoryNodeId":3,"CharacterId":2,"Order":2,"Text":"You look around to see other cryopods, some still sealed others opened"},
-  {"StoryNodeId":3,"CharacterId":1,"Order":3,"Text":"The bay… looks like most are still asleep."},
-  {"StoryNodeId":3,"CharacterId":1,"Order":4,"Text":"I should try to find someone"},
-
-  {"StoryNodeId":4,"CharacterId":2,"Order":1,"Text":"As you take a closer look at the other cryopods, you see alarms blinking at all of them, ceiling panels across the floor, wires spread across the room, and a faint mist covering the room."},
-  {"StoryNodeId":4,"CharacterId":1,"Order":2,"Text":"What happened here? We were supposed to be awaken when we arrived at Terminus."},
-
-  {"StoryNodeId":5,"CharacterId":1,"Order":1,"Text":"Oh my god!"},
-  {"StoryNodeId":5,"CharacterId":1,"Order":2,"Text":"He is dead…"},
-  {"StoryNodeId":5,"CharacterId":1,"Order":3,"Text":"…looks like he died in cryostasis. Guess he wasn't so lucky"},
-
-  {"StoryNodeId":6,"CharacterId":2,"Order":1,"Text":"You enter a corridor stretching a fair distance. The corridor is covered by mist seeping from the cryobay, preventing you from seeing the end."},
-  {"StoryNodeId":6,"CharacterId":2,"Order":2,"Text":"As you look around in the corridor, you see two dark figures. As they approach, you tense up. When they close in, you see them wearing cryosuits, faces grim."},
-  {"StoryNodeId":6,"CharacterId":4,"Order":3,"Text":"Good to see someone else awake too. She smiles nervously. There are not many of us left. She gestures to man beside her."},
-  {"StoryNodeId":6,"CharacterId":2,"Order":4,"Text":"You recognize her. Her name is Irene; she is one of the members of the mechanical team. For the man, you do not recognize him."},
-  {"StoryNodeId":6,"CharacterId":1,"Order":5,"Text":"What happened?"},
-  {"StoryNodeId":6,"CharacterId":2,"Order":6,"Text":"Irene’s lips stiffen and she pauses for a moment. As she opens her mouth to speak, the man besides her speaks up."},
-  {"StoryNodeId":6,"CharacterId":5,"Order":7,"Text":"We were attacked, he says bitterly"},
-  {"StoryNodeId":6,"CharacterId":1,"Order":8,"Text":"By who?"},
-  {"StoryNodeId":6,"CharacterId":5,"Order":9,"Text":"Pirates, he spits out. Venom in his words"},
-  {"StoryNodeId":6,"CharacterId":2,"Order":10,"Text":"There is a quiet moment following the statement"},
-  {"StoryNodeId":6,"CharacterId":1,"Order":11,"Text":"And who are you again?"},
-  {"StoryNodeId":6,"CharacterId":5,"Order":12,"Text":"I am Darius. That is all you need to know"},
-  {"StoryNodeId":6,"CharacterId":2,"Order":13,"Text":"A moment of silence follows. There is tension in the air"},
-  {"StoryNodeId":6,"CharacterId":2,"Order":14,"Text":"Before it can manifest too deeply the ship trembles"},
-  {"StoryNodeId":6,"CharacterId":4,"Order":15,"Text":"We need to escape this ship. It won't last much longer"},
-  {"StoryNodeId":6,"CharacterId":1,"Order":16,"Text":"Escape to where? you say in a hurry"},
-  {"StoryNodeId":6,"CharacterId":4,"Order":17,"Text":"The escape pods are on the other side of the ship. We need to go past an airlock first."},
-  {"StoryNodeId":6,"CharacterId":4,"Order":18,"Text":"The airlock is in the maintenance corridor. She finishes and turns in the direction they came from"},
-  {"StoryNodeId":6,"CharacterId":4,"Order":19,"Text":"We need at least three persons to clear the way. Can you help us"},
-  {"StoryNodeId":6,"CharacterId":3,"Order":20,"Text":"The ship quakes again, making all of you stumble as you try to find your balance."},
-
-  {"StoryNodeId":7,"CharacterId":2,"Order":1,"Text":"The ship creaks and trembles as you enter the corridor. The devastation has hit even this deep in the ship."},
-  {"StoryNodeId":7,"CharacterId":2,"Order":2,"Text":"One of the paths has the sign Airlock"}
+  {
+    "StoryNodeId": 1,
+    "CharacterId": 1,
+    "Order": 1,
+    "Text": "What is happening… Where am I???"
+  },
+  {
+    "StoryNodeId": 1,
+    "CharacterId": 3,
+    "Order": 2,
+    "Text": "Cryopod is malfunctioning. Please exit."
+  },
+  {
+    "StoryNodeId": 1,
+    "CharacterId": 3,
+    "Order": 3,
+    "Text": "Please exit."
+  },
+  {
+    "StoryNodeId": 1,
+    "CharacterId": 1,
+    "Order": 4,
+    "Text": "Ugh… My head…"
+  },
+  {
+    "StoryNodeId": 2,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "Dew beads along the seal, blurring anything beyond."
+  },
+  {
+    "StoryNodeId": 2,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "I need to find a way out."
+  },
+  {
+    "StoryNodeId": 2,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "A recessed hatch sits to your left. You could brute-force it, too."
+  },
+  {
+    "StoryNodeId": 3,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "Cold, stale air. Other pods blink; some open, most sealed."
+  },
+  {
+    "StoryNodeId": 3,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "The bay… looks like most are still asleep."
+  },
+  {
+    "StoryNodeId": 3,
+    "CharacterId": 1,
+    "Order": 3,
+    "Text": "I should try to find someone."
+  },
+  {
+    "StoryNodeId": 4,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "Status lights stutter. Fallen panels form islands; wires snag your boots."
+  },
+  {
+    "StoryNodeId": 4,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "What happened here? We were supposed to wake at Terminus."
+  },
+  {
+    "StoryNodeId": 5,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "A med-tray has wedged under a panel. Inside: a cracked medkit."
+  },
+  {
+    "StoryNodeId": 5,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "This might save me."
+  },
+  {
+    "StoryNodeId": 6,
+    "CharacterId": 1,
+    "Order": 1,
+    "Text": "Oh my god!"
+  },
+  {
+    "StoryNodeId": 6,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "He is dead…"
+  },
+  {
+    "StoryNodeId": 6,
+    "CharacterId": 1,
+    "Order": 3,
+    "Text": "…looks like he died in cryostasis. Guess he wasn’t so lucky."
+  },
+  {
+    "StoryNodeId": 7,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "A live bundle bars the exit. The frame is hot where arcs bite paint."
+  },
+  {
+    "StoryNodeId": 7,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "If I don’t protect myself, I’ll fry."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "Shapes resolve into survivors—faces set, breath visible in the cold."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 4,
+    "Order": 2,
+    "Text": "Good to see someone else awake. There aren’t many of us left."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "You recognize Irene from mechanical. The man’s unfamiliar."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 1,
+    "Order": 4,
+    "Text": "What happened?"
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 2,
+    "Order": 5,
+    "Text": "Irene hesitates. The man answers first."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 5,
+    "Order": 6,
+    "Text": "We were attacked."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 1,
+    "Order": 7,
+    "Text": "By who?"
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 5,
+    "Order": 8,
+    "Text": "Pirates."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 2,
+    "Order": 9,
+    "Text": "The ship trembles; dust rains from the ceiling."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 4,
+    "Order": 10,
+    "Text": "Escape pods are across the ship. We have to pass an airlock in the maintenance corridor."
+  },
+  {
+    "StoryNodeId": 8,
+    "CharacterId": 4,
+    "Order": 11,
+    "Text": "We need at least three to clear the way. Can you help us?"
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The corridor stretches ahead, half-lit and littered with fallen panels. Gravity feels… uneven."
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 4,
+    "Order": 2,
+    "Text": "We can’t stay near the cryobay. If the hull gives, that’s it."
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 5,
+    "Order": 3,
+    "Text": "Cockpit’s our best bet. From there we route power and unlock the escape pods."
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 1,
+    "Order": 4,
+    "Text": "Do we even have a clear path?"
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 4,
+    "Order": 5,
+    "Text": "Maintenance corridor runs behind the main decks. There’s an access point near the airlock hub."
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 5,
+    "Order": 6,
+    "Text": "If it’s not spaced or on fire, that is."
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 1,
+    "Order": 7,
+    "Text": "So… fight the pirates or run?"
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 4,
+    "Order": 8,
+    "Text": "Survive first. Argue about heroics later."
+  },
+  {
+    "StoryNodeId": 9,
+    "CharacterId": 1,
+    "Order": 9,
+    "Text": "Right. Let’s go."
+  },
+  {
+    "StoryNodeId": 10,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The others vanish into the fog. For a moment, the hallway feels bigger than the whole ship."
+  },
+  {
+    "StoryNodeId": 10,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "…I should still head for the maintenance corridor. Cockpit, airlocks, escape pods—it’s all through there."
+  },
+  {
+    "StoryNodeId": 10,
+    "CharacterId": 1,
+    "Order": 3,
+    "Text": "If I stay here, I’m just waiting to die."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The corridor bends like a cracked spine. Frost clings to seams; a big stencil points toward the AIRLOCK HUB."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 4,
+    "Order": 2,
+    "Text": "There. Airlock hub. From there we cut across to the cockpit."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "Irene taps the control panel. It spits a dim error glyph."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 4,
+    "Order": 4,
+    "Text": "It’s… not responding. Door’s locked hard."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 5,
+    "Order": 5,
+    "Text": "Let me try."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 2,
+    "Order": 6,
+    "Text": "Darius swipes an access card. The panel chirps—then dies completely."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 1,
+    "Order": 7,
+    "Text": "That didn’t sound like ‘access granted’."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 5,
+    "Order": 8,
+    "Text": "Panel’s dead. No power on this segment."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 4,
+    "Order": 9,
+    "Text": "Great. That means the generator bus to this section is offline."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 1,
+    "Order": 10,
+    "Text": "Can we fix it?"
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 4,
+    "Order": 11,
+    "Text": "There’s a backup generator room just aft of here. If we bring it online, this door—and the escape pods—should get power."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 5,
+    "Order": 12,
+    "Text": "Or the pirates get power too. But we don’t have a choice."
+  },
+  {
+    "StoryNodeId": 11,
+    "CharacterId": 1,
+    "Order": 13,
+    "Text": "Lead the way."
+  },
+  {
+    "StoryNodeId": 12,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The corridor bends like a cracked spine. The AIRLOCK stencil stops at a bulkhead door, its panel dark."
+  },
+  {
+    "StoryNodeId": 12,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "It’s locked… and the panel’s dead."
+  },
+  {
+    "StoryNodeId": 12,
+    "CharacterId": 1,
+    "Order": 3,
+    "Text": "I don’t have an access card, and even if I did—no power."
+  },
+  {
+    "StoryNodeId": 12,
+    "CharacterId": 2,
+    "Order": 4,
+    "Text": "A wall locker hangs half-open. Above it, a ventilation grate sits askew. Air whistles softly through the gap."
+  },
+  {
+    "StoryNodeId": 12,
+    "CharacterId": 1,
+    "Order": 5,
+    "Text": "Maybe I can’t open the door…"
+  },
+  {
+    "StoryNodeId": 12,
+    "CharacterId": 1,
+    "Order": 6,
+    "Text": "…but I might be able to go around it."
+  },
+  {
+    "StoryNodeId": 13,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "Light spills through an open ventilation shaft. Cold air brushes your face, carrying oil and ozone."
+  },
+  {
+    "StoryNodeId": 13,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "If this runs above the corridor, it might drop me near the cockpit."
+  },
+  {
+    "StoryNodeId": 13,
+    "CharacterId": 1,
+    "Order": 3,
+    "Text": "Or into a spinning fan. Or a vacuum leak. Great options all around."
+  },
+  {
+    "StoryNodeId": 13,
+    "CharacterId": 2,
+    "Order": 4,
+    "Text": "The ship shudders again. Dust drifts from the ceiling."
+  },
+  {
+    "StoryNodeId": 13,
+    "CharacterId": 1,
+    "Order": 5,
+    "Text": "Yeah. I’m not staying out here."
+  },
+  {
+    "StoryNodeId": 14,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The shaft narrows around you. Ahead, a large fan spins so fast the blades blur. Each gust shoves stale air into your face."
+  },
+  {
+    "StoryNodeId": 14,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "Yeah, definitely the ‘spinning fan’ option."
+  },
+  {
+    "StoryNodeId": 14,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "A maintenance terminal blinks weakly beside the shaft, half-buried in cables."
+  },
+  {
+    "StoryNodeId": 14,
+    "CharacterId": 1,
+    "Order": 4,
+    "Text": "If I can hack that terminal, maybe I can slow the fan or kill the power."
+  },
+  {
+    "StoryNodeId": 14,
+    "CharacterId": 1,
+    "Order": 5,
+    "Text": "If I miscalculate… I become ventilation confetti."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The door hisses open into a cramped generator room. A backup reactor squats in the center like a sleeping heart. Its status ring is dark."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 4,
+    "Order": 2,
+    "Text": "Here we are. Backup generator for this section."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 5,
+    "Order": 3,
+    "Text": "Looks like it got knocked offline when the pirates hit us."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 1,
+    "Order": 4,
+    "Text": "Can we bring it back without blowing ourselves up?"
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 4,
+    "Order": 5,
+    "Text": "We reroute the damaged lines, reset the breakers, and spin it up slowly. Simple… in theory."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 5,
+    "Order": 6,
+    "Text": "Panel’s still got some life."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 2,
+    "Order": 7,
+    "Text": "The console flickers on, showing a messy diagram of power nodes and warning triangles."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 4,
+    "Order": 8,
+    "Text": "I’ll guide you, Ryan. You’ve got steady hands from cryo calibration, right?"
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 1,
+    "Order": 9,
+    "Text": "I woke up ten minutes ago from a malfunctioning pod."
+  },
+  {
+    "StoryNodeId": 15,
+    "CharacterId": 4,
+    "Order": 10,
+    "Text": "Then you’re used to things going wrong. Perfect."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The generator’s status ring spins up from red to steady green. Lights flicker back to life in the corridor."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 4,
+    "Order": 2,
+    "Text": "We did it. Power’s routing—airlock hub should be online."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 5,
+    "Order": 3,
+    "Text": "Move! Before someone shoots it off again."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 2,
+    "Order": 4,
+    "Text": "You sprint back. The once-dead door hisses open, revealing a cross-corridor and a row of escape pods. Some are warped and blackened. A few remain intact, lights pulsing calmly."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 1,
+    "Order": 5,
+    "Text": "There are still pods left…"
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 4,
+    "Order": 6,
+    "Text": "Three seats. That’s exactly how many we need."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 5,
+    "Order": 7,
+    "Text": "For now."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 2,
+    "Order": 8,
+    "Text": "Another tremor hits. Somewhere deeper in the ship, something tears. The lights dim, then steady."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 4,
+    "Order": 9,
+    "Text": "We launch, we send a distress beacon. Someone will pick us up before we suffocate. Probably."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 1,
+    "Order": 10,
+    "Text": "Better odds than staying here."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 5,
+    "Order": 11,
+    "Text": "I’ll prime the pod. Ryan, grab emergency supplies; Irene, sync the beacon to our coordinates."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 2,
+    "Order": 12,
+    "Text": "You toss a medkit and a flickering datapad into the pod. Irene’s fingers dance over the controls, locking in a broadcast loop."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 4,
+    "Order": 13,
+    "Text": "Beacon’s ready. Last call: anyone want to stay on the exploding ship?"
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 1,
+    "Order": 14,
+    "Text": "…Pass."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 5,
+    "Order": 15,
+    "Text": "Door’s closing. Strap in."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 2,
+    "Order": 16,
+    "Text": "The pod hatch seals. Through the small viewport, you see the ship’s wounded hull receding. Stars stretch into the void as thrusters ignite."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 1,
+    "Order": 17,
+    "Text": "We made it. Somehow."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 4,
+    "Order": 18,
+    "Text": "One disaster at a time. When we’re picked up, we tell them what happened here."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 5,
+    "Order": 19,
+    "Text": "And maybe next time, we get a quiet transport job."
+  },
+  {
+    "StoryNodeId": 16,
+    "CharacterId": 2,
+    "Order": 20,
+    "Text": "Outside, the broken ship drifts silently, its beacon pulsing into the dark. Your pod carries you toward the unknown—but away from certain death."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The generator shudders as you reroute the last line. For a heartbeat, its status ring flashes green—then flares red."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 2,
+    "Text": "Wait—no, that’s too much load—"
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "A sharp bang echoes through the room. The lights go out. The console dies, mid-error."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 5,
+    "Order": 4,
+    "Text": "Tell me that was a fuse."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 5,
+    "Text": "…That was not a fuse."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 1,
+    "Order": 6,
+    "Text": "Can we try again?"
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 7,
+    "Text": "The core’s fried. We just killed the last clean supply to this section."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 2,
+    "Order": 8,
+    "Text": "The distant alarms wind down, one by one, strangled as power bleeds away. The ship groans, then falls eerily quiet."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 5,
+    "Order": 9,
+    "Text": "So no power to the airlocks. No pods. No doors."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 10,
+    "Text": "No radio. No long-range beacon from here, either."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 1,
+    "Order": 11,
+    "Text": "…We’re stuck."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 2,
+    "Order": 12,
+    "Text": "In the dim emergency strips, their faces look hollow. The floor vibrates faintly as something detonates far away, then nothing."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 13,
+    "Text": "Maybe the primary systems can still auto-broadcast a distress signal. Someone could find the wreck."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 5,
+    "Order": 14,
+    "Text": "In a few weeks. Or years."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 1,
+    "Order": 15,
+    "Text": "We have air and water for… how long?"
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 16,
+    "Text": "Long enough to be uncomfortable. Not long enough to be old."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 2,
+    "Order": 17,
+    "Text": "The three of you sit in the failing light of the dead generator room while the ship drifts into the dark, silent and powerless."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 1,
+    "Order": 18,
+    "Text": "I should have stayed in cryo."
+  },
+  {
+    "StoryNodeId": 17,
+    "CharacterId": 4,
+    "Order": 19,
+    "Text": "At least now you know why they invented dreamless sleep."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The fan whines down, blades slowing until they stop with a final clunk. The duct ahead opens into a grille above the cockpit door."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "Didn’t get turned into confetti. I’ll take that as a win."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "You squeeze through and drop to the deck, landing in front of the cockpit. Its door stands ajar. Smoke curls lazily from a damaged console."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 4,
+    "Text": "Inside, the bridge is a mess of dead screens and cracked panels. The forward window is spidered but intact, framing a field of distant stars."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 5,
+    "Text": "Okay, ship. Show me something good."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 6,
+    "Text": "One main console still glows. A status display shows partial power, life support holding, hull breached in several sections. No other crew signatures detected."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 7,
+    "Text": "…Guess it’s just me."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 8,
+    "Text": "A menu flashes: AUTOPILOT, DISTRESS BEACON, ESCAPE POD CONTROL."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 9,
+    "Text": "All right. Step one: tell the universe I’m not dead yet."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 10,
+    "Text": "You route what’s left of the power into the beacon. A green indicator blinks: BROADCAST ACTIVE."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 11,
+    "Text": "Step two… see if any pods survived."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 12,
+    "Text": "A schematic of the ship appears. Most escape pods are crossed out, but one cluster near the bow still shows green."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 13,
+    "Text": "Perfect. One last ride."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 14,
+    "Text": "You set the ship to orient itself to minimize further hull damage. The engines cough weakly, nudging the vessel into a slow, controlled spin."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 15,
+    "Text": "If anyone finds this wreck, maybe they’ll want to know what happened."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 16,
+    "Text": "You trigger a final log, speaking into the recorder."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 17,
+    "Text": "This is Ryan from the Terminus run. We were attacked by pirates. Most of us never woke up. If you’re hearing this… I made it to the pods."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 18,
+    "Text": "You cut the log, lock in the beacon, and head for the last working escape pod."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 1,
+    "Order": 19,
+    "Text": "No heroes. Just a survivor."
+  },
+  {
+    "StoryNodeId": 18,
+    "CharacterId": 2,
+    "Order": 20,
+    "Text": "As the pod launches, the bridge recedes behind you—a lone, wounded ship broadcasting its story into the void, while you arc away toward an uncertain, but living, future."
+  },
+  {
+    "StoryNodeId": 19,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "You squint at the spinning blades, judge the timing, and take a breath."
+  },
+  {
+    "StoryNodeId": 19,
+    "CharacterId": 1,
+    "Order": 2,
+    "Text": "I can make that."
+  },
+  {
+    "StoryNodeId": 19,
+    "CharacterId": 2,
+    "Order": 3,
+    "Text": "You can’t."
+  },
+  {
+    "StoryNodeId": 19,
+    "CharacterId": 2,
+    "Order": 4,
+    "Text": "There’s a single, blinding moment of motion and metal. Then nothing at all."
+  },
+  {
+    "StoryNodeId": 19,
+    "CharacterId": 2,
+    "Order": 5,
+    "Text": "The fan keeps spinning, indifferent, pushing air through an empty shaft in a ship that drifts farther into the dark."
+  }
 ]
