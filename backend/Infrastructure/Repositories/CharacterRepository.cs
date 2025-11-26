@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Repositories;
 
+/// <summary>
+/// Repository for managing Character entities in the database.
+/// </summary>
 public class CharacterRepository : GenericRepository<Character>, ICharacterRepository
 {
 
@@ -73,15 +76,12 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
     /// <summary>
     /// Get all dialogues associated with a character given by ID
     /// </summary>
-
-
     public async Task<IEnumerable<Dialogue>> GetAllDialoguesOfCharacter(int id)
     {
-        /// Query to get all dialogues associated with a character given by ID
         var dialogues = await _db.Dialogues
                     .Where(characters => characters.CharacterId == id)
                     .ToListAsync();
-        
+
         return dialogues;
     }
 }

@@ -132,10 +132,7 @@ public class StoryController : ControllerBase
             _logger.LogError(ex, " Error making choice for save id {saveId} and choice id {choiceId}", request.SaveId, request.ChoiceId);
             return BadRequest("Failed to make choice: " + ex.Message);
         }
-        
-        
-        
-        
+   
     }
 
     // get available choices for the current story node, the player is on.

@@ -11,8 +11,6 @@ public static class DbSeeder
    /// The method also applies any pending migrations to the database.
    /// The JSON files should be located in the "wwwroot/seedData" directory.
    /// </summary>
-   /// <param name="context"></param>
-   /// <returns></returns>
     public static async Task SeedAsync(AppDbContext context)
     {
         // Deletes database before seeding

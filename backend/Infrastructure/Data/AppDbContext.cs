@@ -56,46 +56,6 @@ public class AppDbContext : DbContext
         // PlayerCharacter rel with Character
         modelBuilder.Entity<PlayerCharacter>()
             .HasBaseType<Character>();
-        
-        
-        // This will have to be fixed later on when we get the save entity :)
-        //
-        // modelBuilder.Entity<PlayerCharacter>()
-        //     .HasOne(pc => pc.User)
-        //     .WithOne(u => u.PlayerCharacter)
-        //     .HasForeignKey<User>(u => u.Id)
-        //     .OnDelete(DeleteBehavior.Cascade);
-        //
-        // modelBuilder.Entity<User>()
-        //     .HasMany(u => u.PlayerCharacter)
-        //     .WithOne(pc => pc.User)
-        //     .HasForeignKey<PlayerCharacter>(pc => pc.UserId)
-        //
-        //
-        
-        
-        //TODO: Uncomment these when GameSave (save progresstions) are to be implemented
-    //     
-    //     //Gamesave rel with user
-    //     modelBuilder.Entity<GameSave>()
-    //         .HasOne(gs => gs.User)
-    //         .WithMany(u => u.GameSaves)
-    //         .HasForeignKey(gs => gs.UserId)
-    //         .OnDelete(DeleteBehavior.Cascade);
-    //     
-    //     //Gamesave rel with player character
-    //     modelBuilder.Entity<GameSave>()
-    //         .HasOne(gs => gs.PlayerCharacter)
-    //         .WithOne()
-    //         .HasForeignKey<GameSave>(gs => gs.PlayerCharacterId)
-    //         .OnDelete(DeleteBehavior.Cascade);
-    //     
-    //     //Gamesave rel with story node
-    //     modelBuilder.Entity<GameSave>()
-    //         .HasOne(gs => gs.CurrentStoryNode)
-    //         .WithMany()
-    //         .HasForeignKey(gs => gs.CurrentStoryNodeId)
-    //         .OnDelete(DeleteBehavior.Restrict);
     
     }
 }

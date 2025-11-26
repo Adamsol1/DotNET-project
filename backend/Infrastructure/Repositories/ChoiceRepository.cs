@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Repositories;
 
-
+/// <summary>
+/// Repository for managing Choice entities in the database.
+/// </summary>
 public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 {
 

@@ -4,7 +4,9 @@ using backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace backend.Infrastructure.Repositories;
 
-
+/// <summary>
+/// Repository for managing PlayerCharacter entities in the database.
+/// </summary>
 public class PlayerCharacterRepository : GenericRepository<PlayerCharacter>, IPlayerCharacterRepository
 {
     private readonly AppDbContext _db;
@@ -16,7 +18,6 @@ public class PlayerCharacterRepository : GenericRepository<PlayerCharacter>, IPl
     /// <summary>
     /// Get health of a player character by its ID.
     /// </summary>
-    
     public async Task<int> GetHealthByIdAsync(int id)
     {
         /// Query to get health of a player character by its ID.

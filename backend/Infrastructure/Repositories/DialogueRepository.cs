@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Repositories;
 
-
+/// <summary>
+/// Repository for managing Dialogue entities in the database.
+/// </summary>
 public class DialogueRepository : GenericRepository<Dialogue>, IDialogueRepository
 {
 

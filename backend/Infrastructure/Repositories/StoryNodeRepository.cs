@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Repositories;
 
+
+/// <summary>
+/// Repository for managing StoryNode entities in the database.
+/// </summary>
 public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepository
 {
     private readonly AppDbContext _db;
@@ -17,7 +21,6 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
     /// Get the story node title with ID
     /// The method expects either one or zero results because the storynode ID is unique.
     /// </summary>
-
     public async Task<String> GetStoryNodeTitleById(int id)
     {
         /// Query to get title of story node with given ID
@@ -89,7 +92,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
     /// <summary>
     /// Get all choices associated with a story node given by ID
     /// </summary>
-    
+
     public async Task<IEnumerable<Choice>> GetAllChoicesOfStoryNode(int id)
     {
         /// Query to get all choices associated with a story node given by ID in list
@@ -100,6 +103,8 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
         return await choices;
     }
 
+    
+    //TODO: Can be removed?
     // Ahmed, 11.10 Added GetAllCharactersOfStoryNode method
     public async Task<IEnumerable<Character>> GetAllCharactersOfStoryNode(int id)
     {

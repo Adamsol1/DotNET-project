@@ -2,6 +2,7 @@
 
 public class GameSave
 {
+    //Primary Key
     public int Id { get; set; }
     
     //User connection
@@ -15,10 +16,11 @@ public class GameSave
     //Which story-node the player is at
     public int CurrentStoryNodeId { get; set; }
     public StoryNode? CurrentStoryNode { get; set; }
+
+    //Player health
     public int Health { get; set; } = 100;
     
     //History tracking for navigation
-    // had to add this to more easily track the history of the game.
     public string VisitedNodeIds { get; set; } = "[]"; // JSON array of visited node IDs
     public int? LastChoiceId { get; set; } // The last choice the player made
     public int CurrentDialogueIndex { get; set; } = 0; // Track which dialogue is currently showing

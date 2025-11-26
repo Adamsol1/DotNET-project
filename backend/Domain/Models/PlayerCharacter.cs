@@ -4,6 +4,7 @@ namespace backend.Domain.Models;
 /// </summary>
 public class PlayerCharacter : Character
 {
+    //Health of the player character
     public int Health { get; set; } = 100;
-    public int CurrentStoryNodeId { get; set; }
+
 }

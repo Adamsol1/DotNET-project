@@ -149,6 +149,7 @@ export const story = {
         return response.data;
     },
 
+    //TODO: Can be removed?
     // go back to the previous story node for a given save id.
     goBack: async (saveId) => {
         const response = await api.post(`/story/back/${saveId}`);

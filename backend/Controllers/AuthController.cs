@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Application.Interfaces.Repositories;
 using backend.Application.Interfaces.Services;
 using backend.Application.Dtos;
-using backend.ViewModels;
 
 namespace backend.Controllers;
 

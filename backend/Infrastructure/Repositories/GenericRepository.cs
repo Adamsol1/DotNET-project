@@ -9,61 +9,39 @@ using backend.Infrastructure.Data;
 
 namespace backend.Infrastructure.Repositories;
 
-/* Notes to myself -Ah
-
-Initally I underestimated how many methods that would be dupes.
-so I will change up stuff. and move frequently used methods to be a generic.
-such as
-- GetByProperty -> which will get properties from entities 
-such as names or what you pass it.
-
-- GetAllByProperty -> which will get all properties from entities
-
-- GetPropertyValue
-
-- this way we can remove all the getCharacterNames, description etc, 
- and keep the codebase clean and more chaotic.
-
-
-*/
+/// <summary>
+/// Generic repository implementation for CRUD operations.
+/// </summary>
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    // set the database context
     private readonly AppDbContext _dbContext;
-    // set the db set
     private readonly DbSet<T> _dbSet;
 
-    // constructor
+    // Constructor
     public GenericRepository(AppDbContext dbContext)
 	{
 		_dbContext = dbContext;
 		_dbSet = _dbContext.Set<T>();
 	}
     
-    // get by Id
-
     public async Task<T> GetById(int id)
     {
-        // get the entity by id
+        // find the entity by id
         var entity = await _dbSet.FindAsync(id);
 
         // if no entity then error
         if (entity == null) throw new KeyNotFoundException($"Entity of type {typeof(T).Name} with id {id} was not found.");
 
-        // return the entity
         return entity;
     }
 
-    // get all
     public async Task<IEnumerable<T>> GetAll()
     {
-        // get all the entities
         return await _dbSet.AsNoTracking().ToListAsync();
-
     }
 
-    // create new entity
+
     public async Task<T> Create(T entity)
     {
         await _dbSet.AddAsync(entity);
@@ -71,7 +49,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		return entity;
     }
 
-    // update entity
     public async Task<T> Update(T entity)
     {
         // attach the entity to the db set
@@ -81,8 +58,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
         // update the entity
         await _dbContext.SaveChangesAsync();
-
-        // return the entity ? or a message?
+        
         return entity;
     }
 
