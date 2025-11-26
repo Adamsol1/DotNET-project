@@ -140,6 +140,7 @@ export function Home() {
     <div 
       className="relative min-h-screen"
     >
+      <audio src="/assets/audio/music/menuMusic.mp3" autoPlay loop hidden />
       <Stars />
       <Planet />
       <Spaceship />
