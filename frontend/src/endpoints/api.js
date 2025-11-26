@@ -46,14 +46,16 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        //Auth error handling. // TODO DEBUGGED WITH CHAT 
-        /*
+        //Auth error handling. 
+        
         if(error.response.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('user_id');
             }
-         */
+            //Redirect to home page due to being unauthorized.
+        console.warn("Unauthorized! Redirecting to home page.");
+         window.location.href = '/'; 
             
          
             
