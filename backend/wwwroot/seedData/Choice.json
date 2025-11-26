@@ -2,148 +2,177 @@
   {
     "StoryNodeId": 1,
     "NextStoryNodeId": 2,
-    "Text": "Continue"
+    "Text": "Continue",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 2,
     "NextStoryNodeId": 3,
-    "Text": "Force hatch open"
+    "Text": "Force hatch open",
+    "HealthEffect": -50
   },
   {
     "StoryNodeId": 2,
     "NextStoryNodeId": 3,
-    "Text": "Use emergency release"
+    "Text": "Use emergency release",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 2,
     "NextStoryNodeId": 2,
     "Text": "Scream",
+    "HealthEffect": null,
     "AudioUrl": "/assets/audio/sfx/scream.mp3"
   },
   {
     "StoryNodeId": 3,
     "NextStoryNodeId": 4,
-    "Text": "Check nearby pods"
+    "Text": "Check nearby pods",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 3,
     "NextStoryNodeId": 7,
-    "Text": "Leave the cryobay"
+    "Text": "Leave the cryobay",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 4,
     "NextStoryNodeId": 5,
-    "Text": "Look around"
+    "Text": "Look around",
+    "HealthEffect": 50
   },
   {
     "StoryNodeId": 4,
     "NextStoryNodeId": 3,
-    "Text": "Go back"
+    "Text": "Go back",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 5,
     "NextStoryNodeId": 6,
-    "Text": "Look at cryopod"
+    "Text": "Look at cryopod",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 5,
     "NextStoryNodeId": 3,
-    "Text": "Return"
+    "Text": "Return",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 6,
     "NextStoryNodeId": 3,
-    "Text": "Go back"
+    "Text": "Go back",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 7,
-    "NextStoryNodeId": 3,
-    "Text": "Go back"
+    "NextStoryNodeId": 6,
+    "Text": "Go back",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 7,
     "NextStoryNodeId": 8,
-    "Text": "Go through"
+    "Text": "Go through",
+    "HealthEffect": -50
   },
   {
     "StoryNodeId": 8,
     "NextStoryNodeId": 9,
-    "Text": "Yes, go with Irene and Darius"
+    "Text": "Yes, go with Irene & Darius",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 8,
     "NextStoryNodeId": 10,
-    "Text": "No, go alone"
+    "Text": "No, go alone",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 9,
     "NextStoryNodeId": 11,
-    "Text": "Continue"
+    "Text": "Continue",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 10,
     "NextStoryNodeId": 12,
-    "Text": "Continue alone"
+    "Text": "Continue alone",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 11,
     "NextStoryNodeId": 15,
-    "Text": "Follow Irene to the generator room"
+    "Text": "Follow Irene to generator",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 12,
     "NextStoryNodeId": 13,
-    "Text": "Approach vent"
+    "Text": "Approach vent",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 12,
     "NextStoryNodeId": 12,
     "Text": "Try the dead panel anyway",
+    "HealthEffect": null,
     "AudioUrl": "/assets/audio/sfx/error-beep.mp3"
   },
   {
     "StoryNodeId": 13,
     "NextStoryNodeId": 14,
-    "Text": "Enter shaft"
+    "Text": "Enter shaft",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 13,
     "NextStoryNodeId": 12,
-    "Text": "Back out"
+    "Text": "Back out",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 14,
     "NextStoryNodeId": 19,
-    "Text": "Enter spinning fan"
+    "Text": "Enter spinning fan",
+    "HealthEffect": -100
   },
   {
     "StoryNodeId": 14,
     "NextStoryNodeId": 18,
-    "Text": "Access maintenance terminal (Vent Fan Override mini-game)"
+    "Text": "Access maintenance terminal (Vent Fan Override mini-game)",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 15,
     "NextStoryNodeId": 16,
-    "Text": "Start generator reset sequence"
+    "Text": "Start generator reset sequence",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 16,
     "NextStoryNodeId": 16,
-    "Text": "Game is finished"
+    "Text": "Game is finished",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 17,
     "NextStoryNodeId": 17,
-    "Text": "Game is finished"
+    "Text": "Game is finished",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 18,
     "NextStoryNodeId": 18,
-    "Text": "Game is finished"
+    "Text": "Game is finished",
+    "HealthEffect": null
   },
   {
     "StoryNodeId": 19,
     "NextStoryNodeId": 19,
-    "Text": "Game is finished"
+    "Text": "Game is finished",
+    "HealthEffect": null
   }
 ]
