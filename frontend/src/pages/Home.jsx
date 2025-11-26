@@ -4,7 +4,7 @@ import { validateLoginForm, validateRegisterForm } from '../utils/validation';
  import { useNavigate } from 'react-router-dom'; 
 
 // component imports . gameContext has api calls and game state management.
-import { useGame } from '../context/GameContext';
+//import { useGame } from '../context/GameContext';
 // planet, spacehsip, stars components. are for the background animation.
 import Planet from '../components/Home/Planet';
 import Spaceship from '../components/Home/Spaceship';
