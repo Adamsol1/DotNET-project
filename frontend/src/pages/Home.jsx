@@ -27,6 +27,7 @@ export function Home() {
 
   const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   const hasUnsavedChanges = username !== '' || password !== '';
+  const normalizeUsername = (value) => (value || '').toLowerCase();
 
   // log inn the user, call the login function. from api.auth.login
   const handleLogin = async () => {
@@ -261,12 +262,14 @@ export function Home() {
                       placeholder="Username"
                       value={username}
                       onChange={(e) => {
-                        setUsername(e.target.value);
+                        const normalizedUsername = normalizeUsername(e.target.value);
+                        setUsername(normalizedUsername);
                         if (validationErrors.username) {
                           setValidationErrors(prev => ({ ...prev, username: [] }));
                         }
                       }}
-                      className={`w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 ${
+                      onBlur={() => setUsername((current) => normalizeUsername(current))}
+                      className={`w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 lowercase ${
                         validationErrors.username?.length > 0 
                           ? 'border-red-600' 
                           : 'border-black'
