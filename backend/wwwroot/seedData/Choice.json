@@ -1,21 +1,149 @@
 [
-  {"StoryNodeId":1,"NextStoryNodeId":2,"Text":"Continue"},
-
-  {"StoryNodeId":2,"NextStoryNodeId":3,"Text":"Force the hatch open"},
-  {"StoryNodeId":2,"NextStoryNodeId":3,"Text":"Use emergency release"},
-  {"StoryNodeId":2,"NextStoryNodeId":3,"Text":"Scream", "AudioUrl":  "/assets/audio/sfx/scream.mp3"},
-
-  {"StoryNodeId":3,"NextStoryNodeId":4,"Text":"Check nearby pods"},
-  {"StoryNodeId":3,"NextStoryNodeId":6,"Text":"Exit Cryobay"},
-
-  {"StoryNodeId":4,"NextStoryNodeId":5,"Text":"Look at one Cryopod"},
-  {"StoryNodeId":4,"NextStoryNodeId":3,"Text":"Go back"},
-
-  {"StoryNodeId":5,"NextStoryNodeId":3,"Text":"Go back"},
-
-  {"StoryNodeId":6,"NextStoryNodeId":7,"Text":"Yes I will"},
-
-  {"StoryNodeId":7,"NextStoryNodeId":9,"Text":"Go to Airlock"},
-
-  {"StoryNodeId":9,"NextStoryNodeId":9,"Text":"Game is finished"}
+  {
+    "StoryNodeId": 1,
+    "NextStoryNodeId": 2,
+    "Text": "Continue"
+  },
+  {
+    "StoryNodeId": 2,
+    "NextStoryNodeId": 3,
+    "Text": "Force hatch open"
+  },
+  {
+    "StoryNodeId": 2,
+    "NextStoryNodeId": 3,
+    "Text": "Use emergency release"
+  },
+  {
+    "StoryNodeId": 2,
+    "NextStoryNodeId": 2,
+    "Text": "Scream",
+    "AudioUrl": "/assets/audio/sfx/scream.mp3"
+  },
+  {
+    "StoryNodeId": 3,
+    "NextStoryNodeId": 4,
+    "Text": "Check nearby pods"
+  },
+  {
+    "StoryNodeId": 3,
+    "NextStoryNodeId": 7,
+    "Text": "Leave the cryobay"
+  },
+  {
+    "StoryNodeId": 4,
+    "NextStoryNodeId": 5,
+    "Text": "Look around"
+  },
+  {
+    "StoryNodeId": 4,
+    "NextStoryNodeId": 3,
+    "Text": "Go back"
+  },
+  {
+    "StoryNodeId": 5,
+    "NextStoryNodeId": 6,
+    "Text": "Look at cryopod"
+  },
+  {
+    "StoryNodeId": 5,
+    "NextStoryNodeId": 3,
+    "Text": "Return"
+  },
+  {
+    "StoryNodeId": 6,
+    "NextStoryNodeId": 3,
+    "Text": "Go back"
+  },
+  {
+    "StoryNodeId": 7,
+    "NextStoryNodeId": 3,
+    "Text": "Go back"
+  },
+  {
+    "StoryNodeId": 7,
+    "NextStoryNodeId": 8,
+    "Text": "Go through"
+  },
+  {
+    "StoryNodeId": 8,
+    "NextStoryNodeId": 9,
+    "Text": "Yes, go with Irene and Darius"
+  },
+  {
+    "StoryNodeId": 8,
+    "NextStoryNodeId": 10,
+    "Text": "No, go alone"
+  },
+  {
+    "StoryNodeId": 9,
+    "NextStoryNodeId": 11,
+    "Text": "Continue"
+  },
+  {
+    "StoryNodeId": 10,
+    "NextStoryNodeId": 12,
+    "Text": "Continue alone"
+  },
+  {
+    "StoryNodeId": 11,
+    "NextStoryNodeId": 15,
+    "Text": "Follow Irene to the generator room"
+  },
+  {
+    "StoryNodeId": 12,
+    "NextStoryNodeId": 13,
+    "Text": "Approach vent"
+  },
+  {
+    "StoryNodeId": 12,
+    "NextStoryNodeId": 12,
+    "Text": "Try the dead panel anyway",
+    "AudioUrl": "/assets/audio/sfx/error-beep.mp3"
+  },
+  {
+    "StoryNodeId": 13,
+    "NextStoryNodeId": 14,
+    "Text": "Enter shaft"
+  },
+  {
+    "StoryNodeId": 13,
+    "NextStoryNodeId": 12,
+    "Text": "Back out"
+  },
+  {
+    "StoryNodeId": 14,
+    "NextStoryNodeId": 19,
+    "Text": "Enter spinning fan"
+  },
+  {
+    "StoryNodeId": 14,
+    "NextStoryNodeId": 18,
+    "Text": "Access maintenance terminal (Vent Fan Override mini-game)"
+  },
+  {
+    "StoryNodeId": 15,
+    "NextStoryNodeId": 16,
+    "Text": "Start generator reset sequence"
+  },
+  {
+    "StoryNodeId": 16,
+    "NextStoryNodeId": 16,
+    "Text": "Game is finished"
+  },
+  {
+    "StoryNodeId": 17,
+    "NextStoryNodeId": 17,
+    "Text": "Game is finished"
+  },
+  {
+    "StoryNodeId": 18,
+    "NextStoryNodeId": 18,
+    "Text": "Game is finished"
+  },
+  {
+    "StoryNodeId": 19,
+    "NextStoryNodeId": 19,
+    "Text": "Game is finished"
+  }
 ]
