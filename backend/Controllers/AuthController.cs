@@ -107,6 +107,23 @@ public class AuthController : ControllerBase
             // return the error
             return BadRequest("Unexpected error occured while creating account.");
         }
+        
+        /* Dev approach (commented out):
+        } catch (InvalidOperationException e)
+        {
+            // log the error
+            _logger.LogError(e, "User with username already exists.");
+            // return the error
+            return BadRequest(new { message = e.Message });
+        }
+        catch(Exception e)
+        {
+            // log the error
+            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to create  account for {$Username}", request.Username);
+            // return the error
+            return BadRequest(new { message = "Failed to create account. Please try again." });
+        }
+        */
     }
 
 

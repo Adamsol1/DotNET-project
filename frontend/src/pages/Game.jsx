@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+// import { useNavigate } from 'react-router-dom'; // Dev approach - commented out, using onNavigate instead
 import { useGame } from '../context/GameContext';
 import { useAuth } from '../context/Authentication';
 import { StartGame } from '../components/Game/NewGame';
@@ -11,10 +12,14 @@ export function Game({ onNavigate }) {
   const { getAllSaves } = useGame();
   const { user } = useAuth();
   const authenticated = !!user;
+  // Dev approach (commented out):
+  // const navigate = useNavigate();
+  // const { authenticated, user, getAllSaves } = useGame();
   const [currentSave, setCurrentSave] = useState(null);
   const [saves, setSaves] = useState([]);
   const [showGameStart, setShowGameStart] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [showInfoBox, setShowInfoBox] = useState(false);
   const [miniGameType, setMiniGameType] = useState(null);
 
   // get saves that belongs to the logged in user and set the saves state.
@@ -60,7 +65,7 @@ export function Game({ onNavigate }) {
 
   // exit game event and navigate to the home page.
   const exitGame = () => {
-    onNavigate('home');
+    navigate('/');
   };
 
   const handleMiniGameWin = () => {
@@ -70,12 +75,6 @@ export function Game({ onNavigate }) {
   const handleMiniGameLose = () => {
     console.log('Player lost the mini-game!');
   };
-
-  // Redirect to login if not authenticated and return null.
-  if (!authenticated) {
-    onNavigate('home');
-    return null;
-  }
 
   // Show StartGame component if new game is requested
   if (showGameStart) {
@@ -124,35 +123,80 @@ export function Game({ onNavigate }) {
             }
           }}
         >
-          {miniGameType === 'rockPaperScissors' ? (
+          {miniGameType === 'rockPaperScissors' && (
             <RockPaperScissors
               onComplete={() => {
-                console.log('Mini-game completed, closing...');
                 setShowMiniGame(false);
                 setMiniGameType(null);
               }}
               onWin={handleMiniGameWin}
               onLose={handleMiniGameLose}
             />
-          ) : miniGameType === 'terminal' ? (
+          )}
+          {miniGameType === 'terminal' && (
             <TerminalPowerRestore
               onComplete={() => {
-                console.log('Terminal game completed, closing...');
                 setShowMiniGame(false);
                 setMiniGameType(null);
               }}
               onWin={handleMiniGameWin}
               onLose={handleMiniGameLose}
             />
-          ) : null}
+          )}
+        </div>
+      )}
+
+      {/* INFO POPUP */}
+      {showInfoBox && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] p-6"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowInfoBox(false);
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white text-black border-4 border-black p-8 max-w-lg w-full relative"
+          >
+
+            {/* CLOSE BUTTON */}
+            <button
+              onClick={() => setShowInfoBox(false)}
+              className="absolute top-3 right-3 text-black text-xl font-bold hover:text-gray-700"
+            >
+              ✖
+            </button>
+
+            <h2 className="text-3xl font-bold mb-4">How to play:</h2>
+
+            <ol className="list-decimal list-inside space-y-4 text-3xl font-bold text-black">
+              <li>
+                <br />
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel enim 
+                vitae urna placerat interdum.
+              </li>
+              <li>
+                <br />
+                Sed sit amet justo vitae lorem feugiat consequat.
+              </li>
+            </ol>
+          </motion.div>
         </div>
       )}
 
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
-        <header className="p-6 flex justify-between items-center">
-          {/* empty space */}
-          <div className="w-10 h-10"></div>
+        <header className="p-6 flex justify-end items-center gap-4">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowInfoBox(true)}
+            className="px-4 py-2 bg-transparent text-white font-bold border-2 border-white hover:bg-white hover:text-black transition-colors"
+          >
+            INFO
+          </motion.button>
           
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -206,7 +250,6 @@ export function Game({ onNavigate }) {
               </motion.button>
             </motion.div>
 
-            {/* Test Mini-Game Buttons */}
             {!showMiniGame && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

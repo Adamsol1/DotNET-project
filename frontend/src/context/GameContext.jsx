@@ -1,5 +1,5 @@
 // react imports
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
 // api imports
 import { game, story, account } from '../endpoints/api';
 
@@ -103,6 +103,14 @@ const startState = {
     dialogueIndex: 0,
     gameOver: false,
     allSaves: [], // store all previous saves
+};
+
+// Initial state to merge saved state with start state for initialization
+const initialState = {
+    ...startState,
+    user: savedState.user,
+    authenticated: savedState.authenticated,
+    currentSaveId: savedState.currentSaveId,
 };
 
 /**
@@ -355,10 +363,15 @@ export function GameProvider({ children }) {
 
             // get the response from the API.
             const user = await auth.login(credentials);
+            console.log(user.id);
 
             // if the login is successful, we dispatch the success action.
             // to update the state.
             dispatch({ type: ActionTypes.LOGIN_SUCCESS, payload: user });
+            
+            // save the token to the local storage.
+            localStorage.setItem('token', user.token);
+            saveUserStateToStorage(user, true);
             // return the user.
             return user;
         } catch (error) {
@@ -490,7 +503,7 @@ export function GameProvider({ children }) {
     };
 
     // get all saves and return the result.
-    const getAllSaves = async (userId) => {
+    const getAllSaves = useCallback( async (userId) => {
         try {
             console.log('[GameContext] getAllSaves called with userId:', userId);
             dispatch({ type: ActionTypes.GET_ALL_SAVES });
@@ -506,7 +519,7 @@ export function GameProvider({ children }) {
             // return the error.
             throw error;
         }
-    };
+    }, []);
 
     const getSaveById = async (saveId) => {
         try {
@@ -783,6 +796,7 @@ export function GameProvider({ children }) {
     const values = {
         // state.
         ...state,
+        authRestored,
         // auth actions.
         //login,
         // register,

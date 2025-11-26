@@ -68,4 +68,3 @@ build/
 *.tmp
 *.bak
 *.swp
-frontend/src/components/miniGames/TerminalPower.jsx

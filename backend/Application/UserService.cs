@@ -24,6 +24,18 @@ public class UserService : IUserService
 
             await _uow.BeginAsync();
 
+            //check if the username already exists if it does, rollback the transaction.
+            // and trow error.
+            var existingUser = await _uow.UserRepository.GetUserByUsername(registerUserDto.Username);
+
+            if(existingUser != null)
+            {
+                _logger.LogWarning("[Userservice] User with username already exists", registerUserDto.Username);
+                await _uow.RollBackAsync();
+                throw new InvalidOperationException($"User with username already exists.");
+            }
+
+
             var user = new User
             {
                 Username = registerUserDto.Username,
@@ -62,7 +74,13 @@ public class UserService : IUserService
                 return null;
             }
 
-            _logger.LogInformation("[Userservice] GameUser found for login - Id: {UserId}, Username: {Username}, AuthUserId: {AuthUserId}", user.Id, user.Username, user.AuthUserId);
+            //validate the password
+            if (user.Password != loginUserDto.Password)
+            {
+                _logger.LogWarning("[Userservice] Invalid password for user {Username}", loginUserDto.Username);
+                return null;
+            }
+
             return ReturnUserDto(user);  
         }
         catch (Exception e)

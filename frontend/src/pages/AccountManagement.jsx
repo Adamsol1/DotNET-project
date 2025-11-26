@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+
 // planet, spacehsip, stars components. are for the background animation.
 import Stars from '../components/Home/Stars';
 import Planet from '../components/Home/Planet';
@@ -12,7 +14,10 @@ import AlertModal from '../components/AlertModal';
 // The AccountManagement component handles user account operations such as
 // updating username/password and deleting the account.
 
-export function AccountManagement({ onNavigate }) {
+export function AccountManagement() {
+  //navigation.
+  const navigate = useNavigate();
+
   const { updateUsername, updatePassword, deleteAccount } = useGame();
   const [username, setUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -55,7 +60,7 @@ export function AccountManagement({ onNavigate }) {
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount();
-      onNavigate('home'); // Redirect to home after deletion
+      navigate('/'); // Redirect to home after deletion
     } catch (error) {
       console.error('Account deletion failed:', error);
     }
@@ -71,7 +76,7 @@ export function AccountManagement({ onNavigate }) {
       setPendingNavigation('home');
       setShowLeaveAlert(true);
     } else {
-      onNavigate('home');
+      navigate('/');
     }
   };
 
@@ -205,7 +210,7 @@ export function AccountManagement({ onNavigate }) {
           }}
           onConfirm={() => {
             setShowLeaveAlert(false);
-            onNavigate(pendingNavigation);
+            navigate(pendingNavigation);
           }}
         />
       )}

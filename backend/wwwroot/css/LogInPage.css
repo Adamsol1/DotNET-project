@@ -32,7 +32,6 @@ body {
     padding: 10px;
     margin: 3px;
     color: white;
-
 }
 
 .button-login {
@@ -71,5 +70,9 @@ body {
     margin: 3px;
     color: #f3f5ff;
 
+}
+
+.username-input {
+    text-transform: lowercase;
 }
 
