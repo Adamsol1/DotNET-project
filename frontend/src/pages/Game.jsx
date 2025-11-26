@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-// import { useNavigate } from 'react-router-dom'; // Dev approach - commented out, using onNavigate instead
+import { useNavigate } from 'react-router-dom'; 
 import { useGame } from '../context/GameContext';
 import { useAuth } from '../context/Authentication';
 import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
-// import TerminalPowerRestore from '../components/miniGames/TerminalPower'; // TODO: Component not yet created
+import TerminalPowerRestore from '../components/miniGames/TerminalPower'; 
 
-export function Game({ onNavigate }) {
+export function Game() {
   const { getAllSaves } = useGame();
   const { user } = useAuth();
   const authenticated = !!user;
-  // Dev approach (commented out):
-  // const navigate = useNavigate();
+   const navigate = useNavigate();
   // const { authenticated, user, getAllSaves } = useGame();
   const [currentSave, setCurrentSave] = useState(null);
   const [saves, setSaves] = useState([]);

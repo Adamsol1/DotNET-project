@@ -796,7 +796,6 @@ export function GameProvider({ children }) {
     const values = {
         // state.
         ...state,
-        authRestored,
         // auth actions.
         //login,
         // register,

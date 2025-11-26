@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { validateLoginForm, validateRegisterForm } from '../utils/validation';
-// import { useNavigate } from 'react-router-dom'; // Dev approach - commented out, using onNavigate instead
+ import { useNavigate } from 'react-router-dom'; 
 
 // component imports . gameContext has api calls and game state management.
 import { useGame } from '../context/GameContext';
@@ -15,12 +15,12 @@ import * as authservice from "../endpoints/AuthenticationService";
 // alert modal for unsaved changes.
 import AlertModal from '../components/AlertModal';
 
-export function Home({ onNavigate }) {
+export function Home() {
   const { user, logout, login, register } = useAuth();
   //CHAT
   const  authenticated= !!user;
   // Dev approach (commented out):
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const { authenticated, user, logout, login, register } = useGame();
   const [activeTab, setActiveTab] = useState('login');
   const [username, setUsername] = useState('');
