@@ -175,7 +175,7 @@ export function Home() {
               <div className="text-center">
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold text-white mb-4 pixel-text">
-                    Welcome back, {user?.username}!
+                    Welcome, {user?.username}!
                   </h2>
                   <p className="text-gray-300 mb-8">
                     Ready to continue your adventure?

@@ -13,12 +13,10 @@ namespace backend.Controllers;
 public class GameController : ControllerBase
 {
     private readonly IGameService _gameService;
-    private readonly IPlayerService _playerService;
 
-    public GameController(IGameService gameService, IPlayerService playerService)
+    public GameController(IGameService gameService)
     {
         _gameService = gameService;
-        _playerService = playerService;
     }
 
     // start a new game from scratch.
@@ -54,26 +52,7 @@ public class GameController : ControllerBase
         }
     }
 
-    // Make a choice
-    [HttpPost("choice")]
-    public async Task<ActionResult<GameStateDto>> MakeChoice(MakeChoiceRequestDto request)
-    {
-        try
-        {
-            var gameState = await _gameService.MakeChoiceAsync(request.SaveId, request.ChoiceId);
-            Console.WriteLine("Gamestate - gamestate: " + gameState);
-            return Ok(gameState);
-        }
-        catch (InvalidOperationException invEx)
-        {
-            // e.g. choice doesn't belong to node
-            return BadRequest(invEx.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Failed to make choice");
-        }
-    }
+    // NOTE: Choice handling is served by StoryController; GameController no longer exposes /game/choice
 
     // Get user's saved games
     [HttpGet("saves/{userId}")]

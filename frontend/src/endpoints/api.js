@@ -195,9 +195,10 @@ export const story = {
     },
 
     // make a choice takes the session/ save id, and the choice id to make.
+    // Use the Story controller choice endpoint (StoryController handles choice flow)
     makeChoice: async (saveId, choiceId) => {
-        const response = await api.post(`/game/choice`, { saveId, choiceId });
-        console.log("I got this from game-api: ", response);
+        const response = await api.post(`/story/choice`, { saveId, choiceId });
+        console.log("I got this from story-api: ", response);
         return response.data;
     },
 
@@ -216,17 +217,6 @@ export const story = {
     // skip to the last dialogue for the current story node.
     skipToLastDialogue: async (saveId) => {
         const response = await api.post(`/story/dialogue/skip/${saveId}`);
-        return response.data;
-    },
-
-    isDialogueComplete: async (saveId) => {
-        const response = await api.get(`/story/dialogue/complete/${saveId}`);
-        return response.data;
-    },
-
-    // modify health from choice.
-    modifyHealth: async (playerCharacterId, healthValue) => {
-        const response = await api.post('/story/health', { playerCharacterId, healthValue });
         return response.data;
     },
 

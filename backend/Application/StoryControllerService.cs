@@ -173,6 +173,14 @@ public class StoryControllerService : IStoryControllerService
                 throw new InvalidOperationException(
                     $"Choice {choiceId} does not belong to node {gameSave.CurrentStoryNodeId}");
 
+            // Apply health effect from the choice if present
+            if (choice.HealthEffect.HasValue && choice.HealthEffect.Value != 0)
+            {
+                var playerCharacter = await _genService.ValidateEntityExists<PlayerCharacter>(gameSave.PlayerCharacterId);
+                playerCharacter.Health = Math.Max(0, playerCharacter.Health + choice.HealthEffect.Value);
+                await _uow.PlayerCharacterRepository.Update(playerCharacter);
+            }
+
             // Oppdater historikk på save før hopp
             gameSave.LastChoiceId = choiceId;
             await _uow.GameRepository.Update(gameSave);
@@ -317,6 +325,28 @@ public class StoryControllerService : IStoryControllerService
     {
         var visitedNodes = await GetVisitedNodes(saveId);
         return visitedNodes.Contains(nodeId);
+    }
+
+    #endregion
+
+    #region Game Save Methods
+
+    public async Task<GameSaveDto> GetGameSaveById(int saveId)
+    {
+        return await _genService.Execute(async () =>
+        {
+            var gameSave = await _genService.ValidateEntityExists<GameSave>(saveId);
+            
+            return new GameSaveDto
+            {
+                Id = gameSave.Id,
+                UserId = gameSave.UserId,
+                PlayerCharacterId = gameSave.PlayerCharacterId,
+                SaveName = gameSave.SaveName,
+                CurrentStoryNodeId = gameSave.CurrentStoryNodeId,
+                LastUpdate = gameSave.LastUpdate
+            };
+        });
     }
 
     #endregion

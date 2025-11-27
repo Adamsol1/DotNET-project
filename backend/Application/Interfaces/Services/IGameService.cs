@@ -16,7 +16,6 @@ public interface IGameService
     // Story methods
     Task<StoryNodeDto> GetStoryNodeById(int id);
     Task<IEnumerable<ChoiceDto>> GetChoicesForNode(int storyNodeId);
-    Task<GameStateDto> MakeChoiceAsync(int saveId, int choiceId);
     Task<StoryNodeDto?> GetNodeAsync(int nodeId);
     Task<int?> ApplyChoiceAsync(int currentNodeId, int choiceId);
 

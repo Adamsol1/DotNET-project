@@ -145,7 +145,6 @@ builder.Services.AddScoped<IChoiceRepository, ChoiceRepository>();
 // Application services
 builder.Services.AddScoped<IGenService, GenService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IStoryService, StoryService>();
 builder.Services.AddScoped<IStoryControllerService, StoryControllerService>();
 builder.Services.AddScoped<IGameService, GameService>();

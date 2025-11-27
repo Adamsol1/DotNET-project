@@ -33,4 +33,8 @@ public interface IStoryControllerService
     Task<List<int>> GetVisitedNodes(int saveId);
     Task<bool> HasVisitedNode(int saveId, int nodeId);
     #endregion
+
+    #region Game Save Methods
+    Task<GameSaveDto> GetGameSaveById(int saveId);
+    #endregion
 }

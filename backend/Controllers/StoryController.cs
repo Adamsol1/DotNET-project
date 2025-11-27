@@ -106,16 +106,30 @@ public class StoryController : ControllerBase
 
     // make a choice should be here instead of in the game controller.
     [HttpPost("choice")]
-    public async Task<ActionResult<StoryNodeDto>> MakeChoice([FromBody] MakeChoiceRequestDto request)
+    public async Task<ActionResult<MakeChoiceResponseDto>> MakeChoice([FromBody] MakeChoiceRequestDto request)
     {
         try {
             // make the choice.
             Console.WriteLine("StroyController saveId check: " + request.SaveId);
-            var choice = await _storyControllerService.MakeChoice(request.SaveId, request.ChoiceId);
-            Console.WriteLine("Stroycontroller - check choice obj. choice is: " + choice);
-            // error handling for validation is done in the service.
-            // return the choice.
-            return Ok(choice);
+            var storyNode = await _storyControllerService.MakeChoice(request.SaveId, request.ChoiceId);
+            Console.WriteLine("Stroycontroller - check choice obj. choice is: " + storyNode);
+            
+            // Get the game save to retrieve player character ID
+            var gameSave = await _storyControllerService.GetGameSaveById(request.SaveId);
+            
+            // Get the updated player state
+            var playerState = await _storyControllerService.GetPlayerState(gameSave.PlayerCharacterId);
+            
+            // Get available choices for the new node
+            var availableChoices = await _storyControllerService.GetAvailableChoices(request.SaveId);
+            
+            // Return complete response with node, choices, and updated player state
+            return Ok(new MakeChoiceResponseDto
+            {
+                CurrentStoryNode = storyNode,
+                AvailableChoices = availableChoices,
+                PlayerCharacter = playerState
+            });
         } 
         catch (KeyNotFoundException ex)
         {
@@ -179,6 +193,8 @@ public class StoryController : ControllerBase
             return BadRequest("Failed to get next dialogue: " + ex.Message);
         }
     }
+
+    // NOTE: skip/check-dialogue endpoints were removed as they were unused.
 
     // modify health from a choice.
     [HttpPost("health")]

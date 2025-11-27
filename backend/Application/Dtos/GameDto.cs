@@ -147,3 +147,11 @@ public sealed class MoveToPreviousNodeDto
     public int PlayerCharacterId { get; set; }
     public int PreviousStoryNodeId { get; set; }
 }
+
+// Response DTO for choice actions, includes updated player state and new story node
+public class MakeChoiceResponseDto
+{
+    public StoryNodeDto CurrentStoryNode { get; set; }
+    public IEnumerable<ChoiceDto> AvailableChoices { get; set; }
+    public PlayerCharacterDto PlayerCharacter { get; set; }
+}

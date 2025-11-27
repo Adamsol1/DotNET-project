@@ -467,6 +467,9 @@ export function GameProvider({ children }) {
             const save = await game.startGame(gameData);
 
             dispatch({ type: ActionTypes.GAME_SUCCESS, payload: save });
+            
+            // Reset gameOver flag for new game
+            dispatch({ type: ActionTypes.SET_GAME_OVER, payload: false });
 
             // return the save.
             return save;
@@ -492,6 +495,10 @@ export function GameProvider({ children }) {
             // send the load game success action to the reducer.
 
             dispatch({ type: ActionTypes.GAME_SUCCESS, payload: save });
+            
+            // Reset gameOver flag when loading a game
+            dispatch({ type: ActionTypes.SET_GAME_OVER, payload: false });
+            
             // return the save.
             return save;
         } catch (error) {
