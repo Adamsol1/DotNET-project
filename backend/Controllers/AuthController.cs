@@ -6,7 +6,6 @@ using backend.Application.Interfaces.Repositories;
 using backend.Application.Interfaces.Services;
 using backend.Application.Dtos;
 using backend.Domain.Models;
-using backend.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +34,7 @@ public class AuthController : ControllerBase
         _logger = logger;
         _configuration = configuration;
         _userManager = userManager;
-        _configuration = configuration;
+        _signInManager = signInManager;
     }
     
     /// <summary>

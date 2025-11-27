@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
             role : role,
             decodedUser
         });
-        alert(`Logged in with role ${role}`)
+        
         console.log('[Auth] Set user state with id:', user.userId);
         setToken(user.token);
     }

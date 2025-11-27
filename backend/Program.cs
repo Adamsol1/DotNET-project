@@ -184,6 +184,13 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Apply AuthDbContext migrations
+using (var scope = app.Services.CreateScope())
+{
+    var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+    await authDbContext.Database.MigrateAsync();
+}
+
 //Seeds for the roles.
 //Based on https://medium.com/@roshanj100/users-and-roles-seeding-in-asp-net-core-identity-with-entity-framework-core-a-step-by-step-guide-28e6f76a18db
 using (var scope = app.Services.CreateScope())
@@ -212,7 +219,7 @@ using (var scope = app.Services.CreateScope())
                 UserName = "admin",
 
             };
-            
+
             var createAdminUser = await userManager.CreateAsync(user, "Admin123!");
             if (createAdminUser.Succeeded)
             {
@@ -223,7 +230,8 @@ using (var scope = app.Services.CreateScope())
                     Password = "Admin123!"
                 }, user.Id);
                 logger.Information("Created the default admin user");
-            } else
+            }
+            else
             {
                 logger.Error("Failed to create the default admin user");
             }
