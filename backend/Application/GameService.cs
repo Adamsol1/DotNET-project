@@ -49,7 +49,7 @@ public class GameService : IGameService
         catch (Exception ex)
         {
             // if the try fails, we rollback the transaction.
-            _logger.LogError(ex, "gameservice l42: StoryNode exists, but could not get it", id);
+            _logger.LogError(ex, "GameService - GetStoryNodeById, StoryNode exists, but could not get it", id);
             throw new Exception("gameservice l42: StoryNode exists, but could not get it: " + ex.Message);
         }
     }
@@ -106,26 +106,20 @@ public class GameService : IGameService
             var playerCharacter = await _uow.PlayerCharacterRepository.GetById(gameSave.PlayerCharacterId);
             if (playerCharacter == null) throw new Exception("playerCharacter: next story node not found");
 
+
+            //TODO: See if we could call the modifyhealth from PlayerService instead
             if (choice.HealthEffect.HasValue)
             {
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine("Choice is: " + choice.HealthEffect.Value);
-                Console.WriteLine();
-                Console.WriteLine("Playchar health before: " + playerCharacter.Health);
                 playerCharacter.Health += choice.HealthEffect.Value;
-                Console.WriteLine("Playchar health after: " + playerCharacter.Health);
-                Console.WriteLine();
-                Console.WriteLine();
-                
+
+                // Clamp health between 0 and 100   
                 if (playerCharacter.Health > 100) playerCharacter.Health = 100;
                 if (playerCharacter.Health < 0) playerCharacter.Health = 0;
-                
+
                 await _uow.PlayerCharacterRepository.Update(playerCharacter);
             }
             
-            Console.WriteLine("Playchar health after update: " + playerCharacter.Health);
-            
+            // deserialize visited nodes
             var visitedNodes = JsonSerializer.Deserialize<List<int>>(gameSave.VisitedNodeIds) 
                                ?? new List<int>();
             
@@ -153,10 +147,11 @@ public class GameService : IGameService
 
             
             var nextNodeDto = await GetNodeAsync(gameSave.CurrentStoryNodeId);
-            
-            
+
+            // check if game over
             var isGameOver = playerCharacter.Health <= 0;
-            
+
+            // prepare the game state dto to return
             var playerDto = new PlayerCharacterDto
             {
                 Id = playerCharacter.Id,
@@ -164,6 +159,7 @@ public class GameService : IGameService
                 Health = playerCharacter.Health,
             };
             
+            // // prepare the game state dto to return
             var gameState = new GameStateDto
             {
                 SaveId = gameSave.Id,
@@ -192,50 +188,33 @@ public class GameService : IGameService
         }
     }
 
+    /// <summary>
+    /// Create a new game save for a user
+    /// </summary>
     public async Task<GameSave> CreateGame(int userId, string saveName)
     {
-        try {
+        try
+        {
             await _uow.BeginAsync();
 
-            // we have a fixed story player character, named Ryan
-            // i asume that player exists in the database, but as a precaution
-            // I will also create that player if it doesn't exist.
-            // var playerCharacter = await _uow.PlayerCharacterRepository.GetByUserId(userId);
-            // PlayerCharacter playerCharacter;
-            //
-            // if (existingPlayer == null) {
-            //     // we create the player character.
-            //     playerCharacter = new PlayerCharacter {
-            //         Name = "Ryan",
-            //         UserId = userId,
-            //         CurrentStoryNodeId = 1,
-            //         Health = 100
-            //     };
-            //     await _uow.PlayerCharacterRepository.Create(playerCharacter);
-            //     await _uow.SaveAsync();
-            // }
-            // else
-            // {
-            //     playerCharacter = playerCharacter;
-            // }
-
             var playerCharacter = await _uow.PlayerCharacterRepository.GetById(1);
-            
+
             // create the game save object.
-            var gameSave = new GameSave {
+            var gameSave = new GameSave
+            {
                 UserId = userId,
                 SaveName = saveName,
-                PlayerCharacterId = playerCharacter.Id,                
+                PlayerCharacterId = playerCharacter.Id,
                 CurrentStoryNodeId = 1,
                 LastUpdate = DateTime.UtcNow,
                 Health = 100,
             };
-            
+
+            // set the player character health to 100 on new game.
             playerCharacter.Health = gameSave.Health;
             await _uow.PlayerCharacterRepository.Update(playerCharacter);
             var playerCharacter2 = await _uow.PlayerCharacterRepository.GetById(1);
-            
-            Console.WriteLine("PlayerCharacter - game save created - health: " + playerCharacter2.Health);
+
 
             // create the game save in the repository.
             await _uow.GameRepository.Create(gameSave);
@@ -276,7 +255,6 @@ public class GameService : IGameService
     public async Task<IEnumerable<GameSave>> GetUserGameSaves(int userId)
     {
         try {
-            // get all
             var gameSaves = await _uow.GameRepository.GetAllByUserId(userId);
 
             if (gameSaves == null) throw new Exception("gameservice l192: no game saves found for user");
@@ -391,7 +369,7 @@ public class GameService : IGameService
         {
             _logger.LogWarning("[Gameservice] StoryNode with id {StoryNodeId} not found", nodeId);
             return null;
-        } 
+        }
 
         var dialogues = await _uow.StoryNodeRepository.GetAllDialoguesOfStoryNode(storyNode.Id);
         var choices = await _uow.StoryNodeRepository.GetAllChoicesOfStoryNode(storyNode.Id);
@@ -402,8 +380,8 @@ public class GameService : IGameService
             Title = storyNode.Title,
             Description = storyNode.Description,
             BackgroundUrl = storyNode.BackgroundUrl,
-			BackgroundMusicUrl = storyNode.BackgroundMusicUrl,
-        	AmbientSoundUrl = storyNode.AmbientSoundUrl, 
+            BackgroundMusicUrl = storyNode.BackgroundMusicUrl,
+            AmbientSoundUrl = storyNode.AmbientSoundUrl,
 
             Dialogues = dialogues
                 .OrderBy(d => d.Order)
@@ -421,11 +399,14 @@ public class GameService : IGameService
                     Text = c.Text,
                     StoryNodeId = c.StoryNodeId,
                     NextStoryNodeId = c.NextStoryNodeId,
-					AudioUrl = c.AudioUrl
+                    AudioUrl = c.AudioUrl
                 }).ToList()
         };
     }
-
+    
+    /// <summary>
+    /// Applies a choice to the current story node and returns the next node ID.
+    /// </summary>
     public async Task<int?> ApplyChoiceAsync(int currentNodeId, int choiceId)
     {
         // Validate that choice belongs to currentNodeId

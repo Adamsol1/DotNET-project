@@ -21,7 +21,7 @@ public class StoryNode
     /// <summary>
     /// URL to a background image for the story node.
     /// </summary>
-    public string? BackgroundUrl { get; set; } = string.Empty;
+    public string BackgroundUrl { get; set; } = string.Empty;
     
     /// <summary>
     /// URL to background music for this story node.

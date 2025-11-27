@@ -6,16 +6,7 @@ namespace backend.Application.Interfaces.Services;
 
 public interface IPlayerService
 {
-    //TODO: Remove uneeded, if needed change to save entity when implemented
-    
-    // // create a player character
-    // Task<PlayerCharacterDto> CreatePlayerCharacter(CreatePlayerCharacterDto request);
-    //
-    // // get a player character by id
-    // Task<PlayerCharacterDto> GetPlayerCharacterById(int id);
-    //
-    // // get all player characters belonging to a user
-    // Task<IEnumerable<PlayerCharacterDto>> GetAllPlayerCharactersByUserId(int userId);
+   
 
     // delete player character
     Task<bool> DeleteCharacter(int id);
@@ -27,10 +18,7 @@ public interface IPlayerService
     /// </summary>
     Task<int> ModifyHealth(int playerCharacterId, int healthChange);
     
-    /// <summary>
-    /// Set player's health to a specific value
-    /// </summary>
-    Task<int> SetHealth(int playerCharacterId, int newHealth);
+  
     
     /// <summary>
     /// Get player's current health
@@ -42,13 +30,4 @@ public interface IPlayerService
     /// </summary>
     Task<bool> IsAlive(int playerCharacterId);
     
-    /// <summary>
-    /// Heal player by a specific amount
-    /// </summary>
-    Task<int> Heal(int playerCharacterId, int healAmount);
-    
-    /// <summary>
-    /// Damage player by a specific amount
-    /// </summary>
-    Task<int> Damage(int playerCharacterId, int damageAmount);
 }

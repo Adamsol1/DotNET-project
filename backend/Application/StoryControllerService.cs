@@ -123,7 +123,6 @@ public class StoryControllerService : IStoryControllerService
     }
 
     // go forward works the same as above just in the opposite direction.
-    
     public async Task<StoryNodeDto?> GoForward(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -183,39 +182,6 @@ public class StoryControllerService : IStoryControllerService
             return next;
         });
     }
-
-    /*
-    public async Task<StoryNodeDto> MakeChoice(int saveId, int choiceId)
-    {
-        return await _genService.Execute(async () =>
-            {
-                Console.WriteLine("Staring MakeChoice in StoryControllerService");
-                var gameSave = await _genService.ValidateEntityExists<GameSave>(saveId);
-                var choice = await _genService.ValidateEntityExists<Choice>(choiceId);
-
-                try
-                {
-                    Console.WriteLine("If-statement in MakeChoice in StoryControllerService");
-                    if (choice.StoryNodeId == gameSave.CurrentStoryNodeId)
-                    {
-                        Console.WriteLine("Ending MakeChoice in StoryControllerService");
-                        return await NavigateToNode(saveId, choice.NextStoryNodeId);
-                    }
-                }
-                catch (InvalidOperationException e)
-                {
-                    Console.WriteLine(
-                        $"Choice {choiceId} does not belong to current node {gameSave.CurrentStoryNodeId}: " + e);
-
-                    throw;
-                }
-
-                return null;
-            }
-       );
-
-    }
-    */
 
     public async Task<IEnumerable<ChoiceDto>> GetAvailableChoices(int saveId)
     {
@@ -323,7 +289,6 @@ public class StoryControllerService : IStoryControllerService
                 Id = player.Id,
                 Name = player.Name,
                 Health = player.Health,
-                CurrentStoryNodeId = player.CurrentStoryNodeId
             };
         });
     }
