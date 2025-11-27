@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { validateLoginForm, validateRegisterForm } from '../utils/validation';
-
-
+ import { useNavigate } from 'react-router-dom'; 
 
 // component imports . gameContext has api calls and game state management.
-import { useGame } from '../context/GameContext';
+//import { useGame } from '../context/GameContext';
 // planet, spacehsip, stars components. are for the background animation.
 import Planet from '../components/Home/Planet';
 import Spaceship from '../components/Home/Spaceship';
 import Stars from '../components/Home/Stars';
+
+import {useAuth} from "../context/Authentication";
+import * as authservice from "../endpoints/AuthenticationService";
 // alert modal for unsaved changes.
 import AlertModal from '../components/AlertModal';
 
 export function Home() {
-  //navigation.
+  const { user, logout, login, register } = useAuth();
+  //CHAT
+  const  authenticated= !!user;
+  // Dev approach (commented out):
   const navigate = useNavigate();
-
-  const { authenticated, user, logout, login, register } = useGame();
+  // const { authenticated, user, logout, login, register } = useGame();
   const [activeTab, setActiveTab] = useState('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -69,7 +72,7 @@ export function Home() {
     try {
       // passes inn the username and password captured from the form 
       // to the register function.
-      await register({ username, password });
+      await authservice.register( username, password );
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to register. Please try again.';
       setError(errorMessage);

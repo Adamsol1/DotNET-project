@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using backend.Application.Interfaces.Services;
 using backend.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class StoryController : ControllerBase
 {
     // dependencies in the constructor.

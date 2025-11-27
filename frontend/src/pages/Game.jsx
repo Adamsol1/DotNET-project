@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom'; 
 import { useGame } from '../context/GameContext';
+import { useAuth } from '../context/Authentication';
 import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
+import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
-import TerminalPowerRestore from '../components/miniGames/TerminalPower';
+import TerminalPowerRestore from '../components/miniGames/TerminalPower'; 
 
 export function Game() {
-  //navigation.
-  const navigate = useNavigate();
-
-  const { authenticated, user, getAllSaves } = useGame();
+  const { getAllSaves } = useGame();
+  const { user } = useAuth();
+  const authenticated = !!user;
+   const navigate = useNavigate();
+  // const { authenticated, user, getAllSaves } = useGame();
   const [currentSave, setCurrentSave] = useState(null);
   const [saves, setSaves] = useState([]);
   const [showGameStart, setShowGameStart] = useState(false);
@@ -23,12 +25,15 @@ export function Game() {
   const loadSaves = useCallback(async () => {
     if (!authenticated || !user) return;
     try {
+      console.log('[Game] loadSaves called, user object:', user);
+      console.log('[Game] user.id (userId):', user?.id);
+      console.log('[Game] localStorage user_id:', localStorage.getItem('user_id'));
       const userSaves = await getAllSaves(user.id);
       setSaves(userSaves);
     } catch (error) {
       console.error('Failed to load saves:', error);
     }
-  }, [authenticated, user, getAllSaves]);
+  }, [authenticated, user]);
 
   // Load saves when component mounts
   useEffect(() => {
@@ -49,6 +54,7 @@ export function Game() {
   const handleBackToMenu = () => {
     setCurrentSave(null);
     setShowGameStart(false);
+    loadSaves(); // Reload saves list to show updated saves from gameplay
   };
 
   // handle the load save event and set the current save state to the selected save.

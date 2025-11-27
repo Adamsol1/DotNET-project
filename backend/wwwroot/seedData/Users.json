@@ -3,12 +3,14 @@
     "Id": 1,
     "Username": "admin",
     "Password": "admin123",
-    "Role": 0
+    "Role": 0,
+    "AuthUserId": "1"
   },
   {
     "Id": 2,
     "Username": "player1",
     "Password": "password",
-    "Role": 1
+    "Role": 1,
+    "AuthUserId": "2"
   }
 ]

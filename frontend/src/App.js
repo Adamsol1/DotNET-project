@@ -6,10 +6,12 @@ import { AccountManagement } from './pages/AccountManagement';
 import { Home } from './pages/Home';
 import { Game } from './pages/Game';
 import './App.css';
+import { AuthProvider } from './context/Authentication';
 
 function App() {
   
   return (
+    <AuthProvider>
     <GameProvider>
       <AudioProvider>
 
@@ -24,6 +26,7 @@ function App() {
 
       </AudioProvider>
     </GameProvider>
+    </AuthProvider>
   );
 }
 

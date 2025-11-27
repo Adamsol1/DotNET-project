@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace backend.Application.Dtos;
 
 public sealed class UserDto
@@ -14,6 +16,20 @@ public sealed class UserDto
 
 public sealed class RegisterUserDto
 {
+    [Required]
+    private string _username = string.Empty;
+    public string Username
+    {
+        get => _username;
+        set => _username = value?.ToLowerInvariant() ?? string.Empty;
+    }
+    public string Password { get; set; } = string.Empty;
+    // TODO : Should maybe implement a email that is required?
+}
+
+public sealed class LoginUserDto
+{
+    [Required]
     private string _username = string.Empty;
     public string Username
     {
@@ -23,14 +39,5 @@ public sealed class RegisterUserDto
     public string Password { get; set; } = string.Empty;
 }
 
-public sealed class LoginUserDto
-{
-    private string _username = string.Empty;
-    public string Username
-    {
-        get => _username;
-        set => _username = value?.ToLowerInvariant() ?? string.Empty;
-    }
-    public string Password { get; set; } = string.Empty;
-}
+
 

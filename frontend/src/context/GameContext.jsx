@@ -1,7 +1,7 @@
 // react imports
 import React, { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
 // api imports
-import { auth, game, story, account } from '../endpoints/api';
+import { game, story, account } from '../endpoints/api';
 
 /**
  * This context file is used to manage the game state and actions that can be taken.
@@ -336,16 +336,26 @@ const GameContext = createContext();
 // and provides the context to the children components.
 
 export function GameProvider({ children }) {
-    // use the reducer to manage the state, initialized with saved state
-    const [state, dispatch] = useReducer(gameReducer, initialState);
-    const [authRestored, setAuthRestored] = useState(false);
-
-    // restore auth from storage on mount
+    // use the reducer to manage the state.
+    const [state, dispatch] = useReducer(gameReducer, startState);
+    //TODO : CHATS ATTEMPT TO FIX ALL THIS DEBUG HELL
     useEffect(() => {
-        setAuthRestored(true);
+        const idStr = localStorage.getItem('user_id');
+        const username = localStorage.getItem('user');
+
+        if (idStr) {
+            dispatch({
+                type: ActionTypes.LOGIN_SUCCESS,
+                payload: {
+                    id: Number(idStr),
+                    username: username || ''
+                }
+            });
+        }
     }, []);
 
     // handles the login process.
+    /*
     const login = async (credentials) => {
         // try to send the credentials to the backend.
         try {
@@ -369,6 +379,9 @@ export function GameProvider({ children }) {
             throw error;
         }
     };
+    */
+     
+    /*
 
     // register user and return the result.
     const register = async (userData) => {
@@ -385,6 +398,9 @@ export function GameProvider({ children }) {
             throw error;
         }
     };
+    
+    */
+     /*
 
     // logout user and return the result.
     const logout = async () => {
@@ -398,6 +414,7 @@ export function GameProvider({ children }) {
         }
         return true;
     };
+    */
 
     // update username
     const updateUsername = async (usernameData) => {
@@ -441,7 +458,6 @@ export function GameProvider({ children }) {
             throw error;
         }
     };
-
 
     // start the game and return the result.
     const startGame = async (gameData) => {
@@ -489,6 +505,7 @@ export function GameProvider({ children }) {
     // get all saves and return the result.
     const getAllSaves = useCallback( async (userId) => {
         try {
+            console.log('[GameContext] getAllSaves called with userId:', userId);
             dispatch({ type: ActionTypes.GET_ALL_SAVES });
             const saves = await game.getAllSaves(userId);
             dispatch({ type: ActionTypes.GAME_SUCCESS, payload: saves });
@@ -497,6 +514,7 @@ export function GameProvider({ children }) {
         }
         catch (error) {
             const errorMessage = error.response?.data || 'Failed to get all saves';
+            console.log('[GameContext] getAllSaves error:', errorMessage);
             dispatch({ type: ActionTypes.GAME_ERROR, payload: errorMessage });
             // return the error.
             throw error;
@@ -778,11 +796,10 @@ export function GameProvider({ children }) {
     const values = {
         // state.
         ...state,
-        authRestored,
         // auth actions.
-        login,
-        register,
-        logout,
+        //login,
+        // register,
+       // logout,
         // game actions.
         startGame,
         loadGame,

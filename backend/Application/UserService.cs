@@ -18,7 +18,7 @@ public class UserService : IUserService
         _uow = uow; 
     }
 
-    public async Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto)
+    public async Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto, string AuthUserId)
     {
         try{
 
@@ -40,6 +40,7 @@ public class UserService : IUserService
             {
                 Username = registerUserDto.Username,
                 Password = registerUserDto.Password,
+                AuthUserId = AuthUserId
 
             };
 

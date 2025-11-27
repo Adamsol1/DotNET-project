@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Application.Interfaces.Repositories;
 using backend.Application.Interfaces.Services;
 using backend.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class GameController : ControllerBase
 {
     private readonly IGameService _gameService;

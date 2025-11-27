@@ -25,10 +25,41 @@ const api = axios.create({
 // should we enforce usage of JWT token for the api requests?
 // for know il not include it.
 
+//TODO: Fiks kilde
+//Based on : https://medium.com/@krishnanand654/jwt-token-refresh-using-axios-interceptors-03ad9fa74d77
+api.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+        
+    },
+    function (error) {
+        return Promise.reject(error);
+    }
+)
+
+
 // interceptor for error handling.
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        //Auth error handling. 
+        
+        if(error.response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('user_id');
+            }
+            //Redirect to home page due to being unauthorized.
+        console.warn("Unauthorized! Redirecting to home page.");
+         window.location.href = '/'; 
+            
+         
+            
+        
         // log the error message or the error data to the console.
         if (error.response?.data) {
             console.error('API Error:', JSON.stringify(error.response.data, null, 2));
@@ -109,6 +140,7 @@ export const game = {
 
     // get all saves that belong to the user.
     getAllSaves: async (userId) => {
+        console.log('[API] getAllSaves called with userId:', userId, 'Type:', typeof userId);
         const response = await api.get(`/game/saves/${userId}`);
         return response.data;
     },

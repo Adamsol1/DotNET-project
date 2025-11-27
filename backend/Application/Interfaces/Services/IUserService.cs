@@ -24,7 +24,7 @@ public interface IUserService
     DeleteUser() -> deletes a user.
     */
 
-    Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto);
+    Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto, string AuthUserId);
     Task<UserDto> Login(LoginUserDto loginUserDto);
     //Task<bool> Logout(int userId);
     //Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
