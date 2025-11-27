@@ -1,56 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-
-// planet, spacehsip, stars components. are for the background animation.
+import { motion } from 'framer-motion'; // For animations
+import { useNavigate } from 'react-router-dom'; // For page navigation
+// Background components
 import Stars from '../components/Home/Stars';
 import Planet from '../components/Home/Planet';
 import Spaceship from '../components/Home/Spaceship';
-// component imports . gameContext has api calls and game state management.
-import { useGame } from '../context/GameContext';
-// alert modal for unsaved changes
-import AlertModal from '../components/AlertModal'; 
 
-// The AccountManagement component handles user account operations such as
-// updating username/password and deleting the account.
+import { useGame } from '../context/GameContext'; // Context for API calls and game state
+import AlertModal from '../components/AlertModal'; // Modal to warn about unsaved changes
 
 export function AccountManagement() {
-  //navigation.
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Navigation hook
+  const { updateUsername, updatePassword, deleteAccount } = useGame(); // Functions from context
 
-  const { updateUsername, updatePassword, deleteAccount } = useGame();
+  // Input field state
   const [username, setUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // 🔹 State for custom alert modal
+  // Error message state
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+
+  // State for custom alert modal
   const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
 
-  // Handles username update form submission
+  // Validates username rules
+  const validateUsername = (value) => {
+    if (!value) return "Username is required";
+    if (value.length < 3) return "Username must be at least 3 characters long";
+    if (value.length > 20) return "Username must be less than 20 characters long";
+    if (!/^[A-Za-z0-9_]+$/.test(value)) return "Username can only contain letters, numbers, and underscores";
+    return '';
+  };
+
+  // Validates password rules
+  const validatePassword = (value) => {
+    if (!value) return "Password is required";
+    if (value.length < 8) return "Password must be at least 8 characters long";
+    if (value.length > 50) return "Password must be less than 50 characters long";
+    if (!/^[A-Za-z0-9!@#$%^&*()_+=-]+$/.test(value)) return "Password can only contain letters, numbers, and special characters";
+    return '';
+  };
+  
+  // Handles username update
   const handleUpdateUsername = async (e) => {
-    e.preventDefault();
-    if (!username) return; // Prevent submission if field is empty
+    e.preventDefault(); // Prevent page reload
+    const error = validateUsername(username); // Validate input
+    setUsernameError(error);
+    if (error) return; // Stop submit if there is an error
 
     try {
       await updateUsername({ username });
-      setUsername(''); // Clear input after successful update
+      setUsername(''); // Reset input
+      setUsernameError(''); // Reset error
     } catch (error) {
       console.error('Update failed:', error);
     }
   };
 
-  // Handles password update form submission
+  // Handles password update
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    // Checks if both fields are filled and match
-    if (!newPassword || newPassword !== confirmPassword) return;
+    const passwordErr = validatePassword(newPassword);
+    setPasswordError(passwordErr);
+
+    const confirmErr = newPassword !== confirmPassword ? "Passwords do not match" : '';
+    setConfirmPasswordError(confirmErr);
+
+    if (passwordErr || confirmErr) return; // Stop submit if there are errors
 
     try {
       await updatePassword({ newPassword, confirmPassword });
-      // Clear inputs after successful update
+      // Reset fields and errors
       setNewPassword('');
       setConfirmPassword('');
+      setPasswordError('');
+      setConfirmPasswordError('');
     } catch (error) {
       console.error('Password update failed:', error);
     }
@@ -60,17 +88,16 @@ export function AccountManagement() {
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount();
-      navigate('/'); // Redirect to home after deletion
+      navigate('/'); // Redirect home after deletion
     } catch (error) {
       console.error('Account deletion failed:', error);
     }
   };
 
-  // Check for unsaved changes
-  const hasUnsavedChanges =
-    username !== '' || newPassword !== '' || confirmPassword !== '';
+  // Checks for unsaved changes
+  const hasUnsavedChanges = username !== '' || newPassword !== '' || confirmPassword !== '';
 
-  // Custom navigation handler with confirmation modal
+  // Handles navigation with alert for unsaved changes
   const handleNavigateHome = () => {
     if (hasUnsavedChanges) {
       setPendingNavigation('home');
@@ -80,15 +107,14 @@ export function AccountManagement() {
     }
   };
 
-  // Warn user if they try to close/refresh the tab
+  // Warns user when closing/refreshing the page if there are unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUnsavedChanges) {
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = ''; // Shows default browser warning
       }
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
@@ -100,7 +126,7 @@ export function AccountManagement() {
       <Planet />
       <Spaceship />
 
-      {/* Foreground container for account management UI */}
+      {/* Foreground container */}
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-6 py-24">
         {/* Animated heading */}
         <motion.h1
@@ -113,12 +139,9 @@ export function AccountManagement() {
           ACCOUNT MANAGEMENT
         </motion.h1>
 
-        {/* Navigation button back to home */}
+        {/* Back to home button */}
         <motion.button
-          whileHover={{
-            scale: 1.05,
-            boxShadow: '0 0 20px rgba(255, 255, 255, 0.5)',
-          }}
+          whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 255, 255, 0.5)' }}
           whileTap={{ scale: 0.95 }}
           onClick={handleNavigateHome}
           className="mb-8 px-6 py-3 bg-gray-200 text-black font-bold border-2 border-black"
@@ -126,7 +149,6 @@ export function AccountManagement() {
           BACK TO HOME
         </motion.button>
 
-        {/* Wrapper for all account management sections */}
         <div className="w-full max-w-md space-y-8">
           {/* Update Username Section */}
           <section>
@@ -139,6 +161,8 @@ export function AccountManagement() {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {/* Display username error */}
+              {usernameError && <p className="text-red-500 text-sm text-center mt-1">{usernameError}</p>}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -161,6 +185,8 @@ export function AccountManagement() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {/* Display password error */}
+              {passwordError && <p className="text-red-500 text-sm text-center mt-1">{passwordError}</p>}
               <input
                 type="password"
                 placeholder="Confirm new password"
@@ -168,6 +194,8 @@ export function AccountManagement() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {/* Display confirm password error */}
+              {confirmPasswordError && <p className="text-red-500 text-sm text-center mt-1">{confirmPasswordError}</p>}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -197,7 +225,7 @@ export function AccountManagement() {
         </div>
       </div>
 
-      {/* Custom AlertModal for unsaved changes */}
+      {/* Custom alert modal for unsaved changes */}
       {showLeaveAlert && (
         <AlertModal
           title="Unsaved Changes"
