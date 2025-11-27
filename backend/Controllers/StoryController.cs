@@ -131,7 +131,7 @@ public class StoryController : ControllerBase
                 PlayerCharacter = playerState
             });
         } 
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             _logger.LogWarning("Game save {SaveId} not found", request.SaveId);
             return NotFound($"Game save {request.SaveId} not found");
@@ -163,7 +163,7 @@ public class StoryController : ControllerBase
             // return the choices.
             return Ok(choices);
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             _logger.LogWarning("Game save {SaveId} not found", saveId);
             return NotFound($"Game save {saveId} not found");
@@ -182,7 +182,7 @@ public class StoryController : ControllerBase
             // return the dialogue.
             return Ok(dialogue);
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             _logger.LogWarning("Game save {SaveId} not found", saveId);
             return NotFound($"Game save {saveId} not found");
@@ -205,7 +205,7 @@ public class StoryController : ControllerBase
             var newHealth = await _storyControllerService.ModifyHealthFromChoice(request.choiceId, request.healthValue);
             return Ok(newHealth);
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             _logger.LogWarning("Choice {ChoiceId} not found", request.choiceId);
             return NotFound($"Choice {request.choiceId} not found");
@@ -247,7 +247,7 @@ public class StoryController : ControllerBase
             var visitedNodes = await _storyControllerService.GetVisitedNodes(saveId);
             return Ok(visitedNodes);
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             _logger.LogWarning("Game save {SaveId} not found", saveId);
             return NotFound($"Game save {saveId} not found");
@@ -268,7 +268,7 @@ public class StoryController : ControllerBase
             var hasVisited = await _storyControllerService.HasVisitedNode(saveId, nodeId);
             return Ok(hasVisited);
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             _logger.LogWarning("Game save {SaveId} not found", saveId);
             return NotFound($"Game save {saveId} not found");

@@ -26,6 +26,6 @@ public class GameSave
     public int CurrentDialogueIndex { get; set; } = 0; // Track which dialogue is currently showing
     
     //Save info
-    public String SaveName { get; set; }
+    public String SaveName { get; set; } = string.Empty;
     public DateTime LastUpdate { get; set; }
 }

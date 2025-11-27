@@ -21,7 +21,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
     /// Get the story node title with ID
     /// The method expects either one or zero results because the storynode ID is unique.
     /// </summary>
-    public async Task<String> GetStoryNodeTitleById(int id)
+    public async Task<string?> GetStoryNodeTitleById(int id)
     {
         /// Query to get title of story node with given ID
         var title = _db.StoryNodes
@@ -49,7 +49,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
     /// <summary>
     /// Get description of the story node with given ID
     /// </summary>
-    public async Task<String> GetStoryNodeDescription(int id)
+    public async Task<string?> GetStoryNodeDescription(int id)
     {
         /// Query to get description of story node with given ID
         var description = _db.StoryNodes
@@ -64,7 +64,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
     /// Get the URL of the StoryNode background given by ID
     /// </summary>
 
-    public async Task<String> GetStoryNodeBackgroundUrl(int id)
+    public async Task<string?> GetStoryNodeBackgroundUrl(int id)
     {
         /// Query to get URL of StoryNode background given by ID
         var background = _db.StoryNodes
@@ -113,13 +113,15 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
         // We might need to delink characters from dialogues in the future?
         // so we dont need to go through the dialogues to get the characters
         // but for now, I will just do it like this to avoid changing alot and touch AppContext
-        var characters = _db.Dialogues
-                    .Where(d => d.StoryNodeId == id && d.CharacterId != null)
-                    .Select(d => d.Character)
-                    .Where(c => c != null)
-                    .Distinct()
-                    .ToListAsync();
-        return await characters;
+        var characters = await _db.Dialogues
+                .Where(d => d.StoryNodeId == id && d.CharacterId != null)
+                .Select(d => d.Character)
+                .Where(c => c != null)
+                .Select(c => c!)
+                .Distinct()
+                .ToListAsync();
+
+        return characters;
     }
 
 }

@@ -30,7 +30,7 @@ public interface IChoiceRepository : IGenericRepository<Choice>
     /// <summary>
     /// Get text given in this choice
     /// </summary>
-    Task<string> GetChoiceText(int id);
+    Task<string?> GetChoiceText(int id);
 
     /// <summary>
     /// Get all choices for a specific story node

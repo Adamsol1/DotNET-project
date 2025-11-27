@@ -37,5 +37,5 @@ public interface IDialogueRepository : IGenericRepository<Dialogue>
     /// <summary>
     /// Get the dialogues text
     /// </summary>
-    Task<string> GetDialogueText(int dialogueId);
+    Task<string?> GetDialogueText(int dialogueId);
 }

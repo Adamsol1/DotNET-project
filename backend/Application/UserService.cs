@@ -62,7 +62,7 @@ public class UserService : IUserService
         
     }
     
-    public async Task<UserDto> Login(LoginUserDto loginUserDto)
+    public async Task<UserDto?> Login(LoginUserDto loginUserDto)
     {
         try
         {
@@ -81,7 +81,7 @@ public class UserService : IUserService
                 return null;
             }
 
-            return ReturnUserDto(user);  
+            return ReturnUserDto(user);
         }
         catch (Exception e)
         {

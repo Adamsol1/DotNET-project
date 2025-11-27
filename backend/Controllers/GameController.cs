@@ -26,7 +26,7 @@ public class GameController : ControllerBase
     {
         try {
             // create a new game save.
-            var gameSave = await _gameService.CreateGame(request.UserId, request.SaveName);
+            var gameSave = await _gameService.CreateGame(request.UserId, request.SaveName ?? string.Empty);
 
             if (gameSave == null) {
                 return BadRequest("Failed to create game save");
@@ -34,7 +34,7 @@ public class GameController : ControllerBase
 
             // return the game save.
             return Ok(gameSave);
-        } catch (Exception ex) {
+        } catch (Exception) {
             return BadRequest($"Failed to start game");
         }
     }
@@ -47,7 +47,7 @@ public class GameController : ControllerBase
             // load the game save.
             var gameSave = await _gameService.GetGameSave(saveId);
             return Ok(gameSave);
-        } catch (Exception ex) {
+        } catch (Exception) {
             return BadRequest($"Failed to load game");
         }
     }
@@ -81,7 +81,7 @@ public class GameController : ControllerBase
 
             return Ok(new { message = "Save deleted successfully" });
 
-        } catch (Exception ex) {
+        } catch (Exception) {
             return BadRequest($"Failed to delete game save");
         }
     }

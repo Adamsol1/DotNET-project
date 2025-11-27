@@ -10,7 +10,7 @@ public interface IStoryNodeRepository : IGenericRepository<StoryNode>
     /// Get the story node title with ID
     /// </summary>
 
-    Task<String> GetStoryNodeTitleById(int id);
+    Task<string?> GetStoryNodeTitleById(int id);
 
     /// <summary>
     /// Get the story node with given title
@@ -20,13 +20,13 @@ public interface IStoryNodeRepository : IGenericRepository<StoryNode>
     /// <summary>
     /// Get description of the story node with given ID
     /// </summary>
-    Task<String> GetStoryNodeDescription(int id);
+    Task<string?> GetStoryNodeDescription(int id);
 
     /// <summary>
     /// Get the URL of the StoryNode background given by ID
     /// </summary>
 
-    Task<String> GetStoryNodeBackgroundUrl(int id);
+    Task<string?> GetStoryNodeBackgroundUrl(int id);
 
     /// <summary>
     /// Get all dialougues associated with a story node given by ID

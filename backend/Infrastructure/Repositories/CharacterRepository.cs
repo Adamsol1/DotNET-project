@@ -33,10 +33,9 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
     /// The method expects either one or zero results because the character name is unique.
     /// </summary>
 
-    public async Task<string> GetCharacterNameById(int id)
+    public async Task<string?> GetCharacterNameById(int id)
     {
         return await GetPropertyValue(id, c => c.Name);
-
     }
 
 
@@ -56,7 +55,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
     /// The method expects either one or zero results because the character description is optional.
     /// </summary>
 
-    public async Task<string> GetCharacterDescription(int id)
+    public async Task<string?> GetCharacterDescription(int id)
     {
         return await GetPropertyValue(id, c => c.Description);
     }
@@ -67,7 +66,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
     /// The method expects either one or zero results because the character image is optional.
     /// </summary>
 
-    public async Task<string> GetCharacterImageUrl(int id)
+    public async Task<string?> GetCharacterImageUrl(int id)
     {
         return await GetPropertyValue(id, c => c.ImageUrl);
     }

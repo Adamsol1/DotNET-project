@@ -38,7 +38,7 @@ public class MiniGameStateDto
 public class PlayerCharacterDto
 {
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public int Health { get; set; }
     public int UserId { get; set; }
     public int CurrentStoryNodeId { get; set; }
@@ -47,9 +47,9 @@ public class PlayerCharacterDto
 public class GameStateDto
 {
     public int SaveId { get; set; }
-    public PlayerCharacterDto PlayerCharacter { get; set; }
-    public StoryNodeDto CurrentStoryNode { get; set; }
-    public IEnumerable<ChoiceDto> AvailableChoices { get; set; }
+    public PlayerCharacterDto? PlayerCharacter { get; set; }
+    public StoryNodeDto? CurrentStoryNode { get; set; }
+    public IEnumerable<ChoiceDto>? AvailableChoices { get; set; }
     public bool IsGameOver { get; set; }
 }
 
@@ -57,7 +57,7 @@ public class GameStateDto
 public class StartGameRequestDto
 {
     public int UserId { get; set; }
-    public string SaveName { get; set; }
+    public string? SaveName { get; set; }
 }
 
 public class ModifyHealthRequestDto
@@ -78,7 +78,7 @@ public class GameSaveDto
     public int Id { get; set; }
     public int UserId { get; set; }
     public int PlayerCharacterId { get; set; }
-    public string SaveName { get; set; }
+    public string? SaveName { get; set; }
     public int CurrentStoryNodeId { get; set; }
     public DateTime LastUpdate { get; set; }
     public int Health { get; set; } = 100;
@@ -90,15 +90,15 @@ public class FullGameStateDto
     // player character they are playing as.
     public int PlayerCharacterId { get; set; }
     // the current story node they are on.
-    public StoryNodeDto CurrentStoryNode { get; set; }
+    public StoryNodeDto? CurrentStoryNode { get; set; }
     // the available choices they can make.
-    public List<ChoiceDto> AvailableChoices { get; set; }
+    public List<ChoiceDto>? AvailableChoices { get; set; }
     // the dialogues in the current story node.
-    public List<DialogueDto> Dialogues { get; set; }
+    public List<DialogueDto>? Dialogues { get; set; }
     // the characters in the current story node.
-    public List<CharacterDto> CharactersInScene { get; set; }
+    public List<CharacterDto>? CharactersInScene { get; set; }
     // the progress of the game.
-    public GameProgressDto Progress { get; set; }
+    public GameProgressDto? Progress { get; set; }
 }
 
 // progression object to track and return the progression of the game.
@@ -109,9 +109,9 @@ public class GameProgressDto
     // the current story node they are on.
     public int CurrentStoryNodeId { get; set; }
     // the story nodes they have visited.
-    public List<int> VisitedStoryNodes { get; set; }
+    public List<int> VisitedStoryNodes { get; set; } = new List<int>();
     // the choices they have completed.
-    public List<int> CompletedChoices { get; set; }
+    public List<int> CompletedChoices { get; set; } = new List<int>();
     // the total choices they have made.
     public int TotalChoicesMade { get; set; }
 }
@@ -151,7 +151,7 @@ public sealed class MoveToPreviousNodeDto
 // Response DTO for choice actions, includes updated player state and new story node
 public class MakeChoiceResponseDto
 {
-    public StoryNodeDto CurrentStoryNode { get; set; }
-    public IEnumerable<ChoiceDto> AvailableChoices { get; set; }
-    public PlayerCharacterDto PlayerCharacter { get; set; }
+    public StoryNodeDto? CurrentStoryNode { get; set; }
+    public IEnumerable<ChoiceDto>? AvailableChoices { get; set; }
+    public PlayerCharacterDto? PlayerCharacter { get; set; }
 }

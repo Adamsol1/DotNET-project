@@ -10,7 +10,7 @@ public interface ICharacterRepository : IGenericRepository<Character>
     /// </summary>
     
    
-    Task<String> GetCharacterNameById(int id);
+    Task<string?> GetCharacterNameById(int id);
     /// <summary>
     /// Get a character associated with given name
     /// </summary>
@@ -25,12 +25,12 @@ public interface ICharacterRepository : IGenericRepository<Character>
     /// Get description of the character given by ID
     /// </summary>
     
-    Task<String> GetCharacterDescription(int id);
+    Task<string?> GetCharacterDescription(int id);
     /// <summary>
     /// Get the URL of the character image given by ID
     /// </summary>
     
-    Task<String> GetCharacterImageUrl(int id);
+    Task<string?> GetCharacterImageUrl(int id);
     /// <summary>
     /// Get all dialogues associated with a character given by ID
     /// </summary>

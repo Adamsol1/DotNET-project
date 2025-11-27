@@ -87,7 +87,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
     /// </summary>
 
 
-    public async Task<string> GetChoiceText(int id)
+    public async Task<string?> GetChoiceText(int id)
     {
         /// Query to get text given in this choice
         var choiceText = _db.Choices

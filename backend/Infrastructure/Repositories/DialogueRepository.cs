@@ -125,7 +125,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
     /// </summary>
     
     
-    public async Task<string> GetDialogueText(int id)
+    public async Task<string?> GetDialogueText(int id)
     {
         /// Query to get the dialogues text
         var dialogueText = _db.Dialogues

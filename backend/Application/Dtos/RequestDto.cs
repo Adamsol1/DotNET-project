@@ -5,7 +5,7 @@ namespace backend.Application.Dtos.Requests;
 public class StartGameRequest
 {
     public int UserId { get; set; }
-    public string SaveName { get; set; }
+    public string? SaveName { get; set; }
 }
 
 public class MakeChoiceRequest
