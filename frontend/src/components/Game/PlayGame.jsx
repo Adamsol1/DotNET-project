@@ -300,13 +300,14 @@ export function PlayGame({ saveId, onBackToMenu }) {
             {/* Main Game Content */}
             <div
                 style={{
-                    width: '100%',
-                    height: 'calc(100vh - 48px)',
+                    width: 'calc(350vh)',
+                    maxWidth: '1400px',
+                    height: 'calc(95vh)',
                     position: 'relative',
                     border: '2px solid #00A2FF',
                     borderRadius: '12px',
                     overflow: 'hidden',
-                    margin: '40px',
+                    margin: '40px auto',
                     boxSizing: 'border-box'
                 }}
             >
