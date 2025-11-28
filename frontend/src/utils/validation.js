@@ -20,8 +20,11 @@ export const validationRules = {
         // setting max to 50
         maxLength: 50,
         // not allow ; -- " ' / \ etc.
-        pattern: /^[A-Za-z0-9!@#$%^&*()_\-+=.,:?]+$/,
+        pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=.,:?])[A-Za-z0-9!@#$%^&*()_\-+=.,:?]{8,50}$/,
         required: true,
+        requiredUppercase: true,
+        requiredDigit: true,
+        requiredSpecialChar: true,
     },
 }
 
@@ -37,7 +40,7 @@ export const validationMessage = {
         required: "Password is required",
         minLength: "Password must be at least 8 characters long",
         maxLength: "Password must be less than 50 characters long",
-        pattern: "Password can only contain letters, numbers, and special characters",
+        pattern: "Password must contain atleast one: uppercase letter, digit, and a special character (!#% etc.)",
     },
 };
 
@@ -83,7 +86,10 @@ export const validatePassword = (password) => {
     if (password.length > validationRules.password.maxLength) {
       errors.push(validationMessage.password.maxLength);
     }
-  
+    
+    if(!password.match(validationRules.password.pattern)) {
+        errors.push(validationMessage.password.pattern);
+    }
     return { isValid: errors.length === 0, errors };
 };
 

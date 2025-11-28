@@ -162,6 +162,7 @@ public class UserService : IUserService
         }
     }
 
+    //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user. 
     public async Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto)
     {
         try

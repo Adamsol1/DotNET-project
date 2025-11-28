@@ -160,7 +160,7 @@ public class AuthController : ControllerBase
                 return Ok(new { token = token, userId = user.Id, username = user.Username });
             }
             _logger.LogWarning("[AuthController] Login attempt failed for user : {@LoginUserDto}", request);
-            return Unauthorized();
+            return Unauthorized(new { message = "Incorrect username or password. Please try again."});
             
         }
             //Todo : Håndet mer konkret error handling.

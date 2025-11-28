@@ -49,13 +49,19 @@ api.interceptors.response.use(
         //Auth error handling. 
         
         if(error.response.status === 401) {
+            //Checks if the token exissts in the local storage. This is to check if the user was logged in, our failed to loign
+            const tokenCheck = localStorage.getItem('token');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('user_id');
+
+            //Checks if the token existed. If yes, it is no longer valid so redirect to home page. 
+            if (tokenCheck) {
+                window.location.href = '/';
             }
             //Redirect to home page due to being unauthorized.
         console.warn("Unauthorized! Redirecting to home page.");
-         window.location.href = '/'; 
+        }
             
          
             

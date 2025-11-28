@@ -10,6 +10,8 @@ import { useGame } from '../context/GameContext'; // Context for API calls and g
 import { useAuth } from '../context/Authentication'; // Context for user authentication
 import AlertModal from '../components/AlertModal'; // Modal to warn about unsaved changes
 
+
+
 export function AccountManagement() {
   const navigate = useNavigate(); // Navigation hook
   const { updateUsername: updateUsernameGame, updatePassword, deleteAccount } = useGame(); // Functions from context
@@ -28,6 +30,9 @@ export function AccountManagement() {
   // State for custom alert modal
   const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
+
+  // State for delete confirmation modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Validates username rules
   const validateUsername = (value) => {
@@ -97,6 +102,8 @@ export function AccountManagement() {
       console.error('Account deletion failed:', error);
     }
   };
+
+  
 
   // Checks for unsaved changes
   const hasUnsavedChanges = username !== '' || newPassword !== '' || confirmPassword !== '';
@@ -220,7 +227,7 @@ export function AccountManagement() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleDeleteAccount}
+              onClick={() =>setShowDeleteModal(true)}
               className="w-full px-4 py-3 bg-red-600 text-white font-bold border-2 border-red-800"
             >
               DELETE ACCOUNT
@@ -228,6 +235,19 @@ export function AccountManagement() {
           </section>
         </div>
       </div>
+
+      {showDeleteModal && (
+              <AlertModal 
+                title='This action deletes the user!'
+                message='Are you sure you want to delete this user? This action cannot be undone.'
+                onConfirm={() => handleDeleteAccount()}
+                onCancel={() => setShowDeleteModal(false)}
+                confirmLabel='Delete'
+                cancelLabel='Cancel'
+                isDangerous={true}
+              />
+            )}
+
 
       {/* Custom alert modal for unsaved changes */}
       {showLeaveAlert && (
