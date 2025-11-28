@@ -117,6 +117,127 @@ public class UserService : IUserService
             throw;
         }
     }
-}
+    public async Task<UserDto> UpdateUsername(string authUserId, UpdateUsernameDto updateUsernameDto)
+    {
+        try
+        {
+            _logger.LogInformation("[Userservice] UpdateUsername called for AuthUserId: {AuthUserId}", authUserId);
+            Console.WriteLine($"[DEBUG] UserService - Searching for user with AuthUserId: {authUserId}");
+            await _uow.BeginAsync();
 
+            // Get the user by AuthUserId
+            var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
+            
+            _logger.LogInformation("[Userservice] User lookup result: {UserFound}", user != null ? $"Found user ID {user.Id}" : "Not found");
+            Console.WriteLine($"[DEBUG] UserService - User found: {(user != null ? $"Yes, ID={user.Id}, Username={user.Username}, AuthUserId={user.AuthUserId}" : "No")}");
+            
+            if (user == null)
+            {
+                _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
+                await _uow.RollBackAsync();
+                throw new KeyNotFoundException($"User not found. Please log out and log back in, or re-register your account.");
+            }
+
+            // Check if the new username already exists
+            var existingUser = await _uow.UserRepository.GetUserByUsername(updateUsernameDto.Username);
+            if (existingUser != null && existingUser.Id != user.Id)
+            {
+                _logger.LogWarning("[Userservice] Username {Username} already exists", updateUsernameDto.Username);
+                await _uow.RollBackAsync();
+                throw new InvalidOperationException($"Username already exists.");
+            }
+
+            // Update the username
+            user.Username = updateUsernameDto.Username;
+            await _uow.UserRepository.Update(user);
+            
+            await _uow.SaveAsync();
+            await _uow.CommitAsync();
+
+            return ReturnUserDto(user);
+        }
+        catch (Exception e)
+        {
+            await _uow.RollBackAsync();
+            _logger.LogError(e, "[Userservice] Error updating username for AuthUserId {AuthUserId}", authUserId);
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto)
+    {
+        try
+        {
+            // Validate that passwords match
+            if (updatePasswordDto.NewPassword != updatePasswordDto.ConfirmPassword)
+            {
+                _logger.LogWarning("[Userservice] Password confirmation doesn't match for AuthUserId {AuthUserId}", authUserId);
+                throw new InvalidOperationException("Passwords do not match.");
+            }
+
+            await _uow.BeginAsync();
+
+            // Get the user by AuthUserId
+            var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
+            
+            if (user == null)
+            {
+                _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
+                await _uow.RollBackAsync();
+                throw new KeyNotFoundException($"User not found. Please log out and log back in, or re-register your account.");
+            }
+
+            // Update the password (Note: In production, this should be hashed)
+            user.Password = updatePasswordDto.NewPassword;
+            await _uow.UserRepository.Update(user);
+            
+            await _uow.SaveAsync();
+            await _uow.CommitAsync();
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            await _uow.RollBackAsync();
+            _logger.LogError(e, "[Userservice] Error updating password for AuthUserId {AuthUserId}", authUserId);
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteAccount(string authUserId)
+    {
+        try
+        {
+            _logger.LogInformation("[Userservice] DeleteAccount called for AuthUserId: {AuthUserId}", authUserId);
+            await _uow.BeginAsync();
+
+            // Get the user by AuthUserId
+            var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
+            
+            if (user == null)
+            {
+                _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
+                await _uow.RollBackAsync();
+                throw new KeyNotFoundException($"User not found.");
+            }
+
+            _logger.LogInformation("[Userservice] Deleting user: Id={UserId}, Username={Username}", user.Id, user.Username);
+            
+            // Delete the user from the game database
+            await _uow.UserRepository.Delete(user.Id);
+            
+            await _uow.SaveAsync();
+            await _uow.CommitAsync();
+
+            _logger.LogInformation("[Userservice] Successfully deleted user with AuthUserId {AuthUserId}", authUserId);
+            return true;
+        }
+        catch (Exception e)
+        {
+            await _uow.RollBackAsync();
+            _logger.LogError(e, "[Userservice] Error deleting account for AuthUserId {AuthUserId}", authUserId);
+            throw;
+        }
+    }
+}
     

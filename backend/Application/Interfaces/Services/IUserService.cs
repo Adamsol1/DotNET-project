@@ -29,6 +29,11 @@ public interface IUserService
     //Task<bool> Logout(int userId);
     //Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
     
+    // Account management methods
+    Task<UserDto> UpdateUsername(string authUserId, UpdateUsernameDto updateUsernameDto);
+    Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto);
+    Task<bool> DeleteAccount(string authUserId);
+    
     // Admin methods
     //Task<IEnumerable<UserDto>> GetAllUsers();
     Task<UserDto> GetUserById(int id);

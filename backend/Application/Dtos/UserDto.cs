@@ -39,5 +39,23 @@ public sealed class LoginUserDto
     public string Password { get; set; } = string.Empty;
 }
 
+public sealed class UpdateUsernameDto
+{
+    [Required]
+    private string _username = string.Empty;
+    public string Username
+    {
+        get => _username;
+        set => _username = value?.ToLowerInvariant() ?? string.Empty;
+    }
+}
+
+public sealed class UpdatePasswordDto
+{
+    [Required]
+    public string NewPassword { get; set; } = string.Empty;
+    [Required]
+    public string ConfirmPassword { get; set; } = string.Empty;
+}
 
 

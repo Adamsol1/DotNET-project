@@ -117,8 +117,8 @@ export const account = {
     },
 
     // delete account
-    deleteAccount: async (userId) => {
-        const response = await api.delete(`/account/${userId}`);
+    deleteAccount: async () => {
+        const response = await api.delete('/account');
         return response.data;
     },
 };

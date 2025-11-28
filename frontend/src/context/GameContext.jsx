@@ -445,10 +445,10 @@ export function GameProvider({ children }) {
     };
 
     // delete account
-    const deleteAccount = async (userId) => {
+    const deleteAccount = async () => {
         try {
             dispatch({ type: ActionTypes.DELETE_ACCOUNT_START });
-            await account.deleteAccount(userId);
+            await account.deleteAccount();
             dispatch({ type: ActionTypes.DELETE_ACCOUNT_SUCCESS });
             clearGameStateFromStorage();
             return true;

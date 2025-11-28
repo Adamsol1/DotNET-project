@@ -7,11 +7,13 @@ import Planet from '../components/Home/Planet';
 import Spaceship from '../components/Home/Spaceship';
 
 import { useGame } from '../context/GameContext'; // Context for API calls and game state
+import { useAuth } from '../context/Authentication'; // Context for user authentication
 import AlertModal from '../components/AlertModal'; // Modal to warn about unsaved changes
 
 export function AccountManagement() {
   const navigate = useNavigate(); // Navigation hook
-  const { updateUsername, updatePassword, deleteAccount } = useGame(); // Functions from context
+  const { updateUsername: updateUsernameGame, updatePassword, deleteAccount } = useGame(); // Functions from context
+  const { updateUsername: updateUsernameAuth, logout } = useAuth(); // Auth functions
 
   // Input field state
   const [username, setUsername] = useState('');
@@ -53,7 +55,8 @@ export function AccountManagement() {
     if (error) return; // Stop submit if there is an error
 
     try {
-      await updateUsername({ username });
+      await updateUsernameGame({ username });
+      updateUsernameAuth(username); // Update Auth context with new username
       setUsername(''); // Reset input
       setUsernameError(''); // Reset error
     } catch (error) {
@@ -88,6 +91,7 @@ export function AccountManagement() {
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount();
+      logout(); // Logout to clear all user data
       navigate('/'); // Redirect home after deletion
     } catch (error) {
       console.error('Account deletion failed:', error);

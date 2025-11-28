@@ -16,6 +16,9 @@ using backend.Infrastructure.Repositories;
 using backend.Application.Interfaces.Repositories;
 using backend.Application.Interfaces.Services;
 
+// Clear default claim mappings to prevent issues with JWT token claims
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>

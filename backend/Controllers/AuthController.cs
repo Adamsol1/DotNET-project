@@ -222,8 +222,8 @@ public class AuthController : ControllerBase
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
             new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName!),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
         };
@@ -241,8 +241,4 @@ public class AuthController : ControllerBase
         _logger.LogInformation("[AuthController] Generated JWT token for user @{UserName}.", user.UserName);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-  
-
-    
 }
