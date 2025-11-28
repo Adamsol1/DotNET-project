@@ -122,14 +122,12 @@ public class UserService : IUserService
         try
         {
             _logger.LogInformation("[Userservice] UpdateUsername called for AuthUserId: {AuthUserId}", authUserId);
-            Console.WriteLine($"[DEBUG] UserService - Searching for user with AuthUserId: {authUserId}");
             await _uow.BeginAsync();
 
             // Get the user by AuthUserId
             var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
             
             _logger.LogInformation("[Userservice] User lookup result: {UserFound}", user != null ? $"Found user ID {user.Id}" : "Not found");
-            Console.WriteLine($"[DEBUG] UserService - User found: {(user != null ? $"Yes, ID={user.Id}, Username={user.Username}, AuthUserId={user.AuthUserId}" : "No")}");
             
             if (user == null)
             {

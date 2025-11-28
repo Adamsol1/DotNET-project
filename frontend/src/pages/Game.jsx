@@ -7,19 +7,28 @@ import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
 import TerminalPowerRestore from '../components/miniGames/TerminalPower'; 
+import AlertModal from '../components/AlertModal';
 
 export function Game() {
-  const { getAllSaves } = useGame();
+
+  // navigation
+  const navigate = useNavigate();
+  // game api function imports.
+  const { getAllSaves, deleteSave } = useGame();
+  // authentication
   const { user } = useAuth();
   const authenticated = !!user;
-   const navigate = useNavigate();
-  // const { authenticated, user, getAllSaves } = useGame();
+  // states
   const [currentSave, setCurrentSave] = useState(null);
   const [saves, setSaves] = useState([]);
   const [showGameStart, setShowGameStart] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [showInfoBox, setShowInfoBox] = useState(false);
   const [miniGameType, setMiniGameType] = useState(null);
+
+  // delete states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [saveToDelete, setSaveToDelete] = useState(null);
 
   // get saves that belongs to the logged in user and set the saves state.
   const loadSaves = useCallback(async () => {
@@ -62,6 +71,38 @@ export function Game() {
     setCurrentSave(save);
   };
 
+  // we want the user so get an alert modal to confirm before deleting the save.
+  const handleDeleteSave = ( save ) => {
+    setSaveToDelete(save);
+
+    setShowDeleteModal(true);
+  }
+  
+  // function to cancel a deletion.
+  const cancelDeleteSave = () => {
+    setShowDeleteModal(false);
+    setSaveToDelete(null);
+  }
+
+  // confirm delete save action.
+  const confirmDeleteSave = async ( saveId ) => {
+
+    try {
+      await deleteSave(saveId); 
+      setShowDeleteModal(false);
+      setSaveToDelete(null);
+      await loadSaves(); // Refresh the saves list
+    
+    } catch (error) {
+      console.error("Failed to delete save:", error);
+      setShowDeleteModal(false);
+    }
+
+  }
+
+
+
+
   // exit game event and navigate to the home page.
   const exitGame = () => {
     navigate('/');
@@ -91,8 +132,13 @@ export function Game() {
     );
   }
 
+
+  // delete modal uses the AlertModal component.
+  
+
   // Main menu view.
   return (
+
     <div 
       className="min-h-screen text-white font-mono relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{
@@ -183,6 +229,19 @@ export function Game() {
             </ol>
           </motion.div>
         </div>
+      )}
+
+      {/* DELETE MODAL */}
+      {showDeleteModal && (
+        <AlertModal 
+          title='This action deletes the game save!'
+          message='Are you sure you want to delete this save? This action cannot be undone.'
+          onConfirm={() => confirmDeleteSave(saveToDelete.id)}
+          onCancel={cancelDeleteSave}
+          confirmLabel='Delete'
+          cancelLabel='Cancel'
+          isDangerous={true}
+        />
       )}
 
       <div className="relative z-10 min-h-screen flex flex-col">
@@ -312,14 +371,29 @@ export function Game() {
                         style={{ boxShadow: '6px 6px 0px rgba(0, 0, 0, 0.8)' }}
                       >
                         <div className="text-left">
-                          <div className="text-xl font-bold">{save.saveName}</div>
-                          <div className="text-sm text-gray-600">
-                            {save.characterName ? `Character: ${save.characterName}` : 'Saved Game'}
-                          </div>
+                            <div className="text-xl font-bold">{save.saveName}</div>
+                            <div className="text-sm text-gray-600">
+                                {save.characterName ? `Character: ${save.characterName}` : 'Saved Game'}
+                            </div>
                         </div>
-                        <div className="text-right text-sm text-gray-500">
-                          {new Date(save.lastUpdate).toLocaleDateString()}
-                        </div>
+                          
+                          
+                        <div className="flex items-center gap-3">
+                            <div className="text-right text-sm text-gray-500">
+                                {new Date(save.lastUpdate).toLocaleDateString()}
+                            </div>
+                            
+                            <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the load save function
+                              handleDeleteSave(save);
+                            }}
+                            className="p-1 rounded-full hover:bg-red-100 text-red-600"
+                            >
+                                <img src="/assets/icons/trash-alt-svgrepo-com.svg" alt="Delete Save" className="w-5 h-5" />
+                            </button>
+                            
+                        </div>  
                       </motion.button>
                     </motion.div>
                   ))}
