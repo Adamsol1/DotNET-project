@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 
 const Stars = () => {
   // Generate random stars for shimmer effect
+  // useMemo ensures stars are only generated once on mount, preventing re-calculation on re-renders
   const stars = useMemo(() => {
     return Array.from({ length: 40 }, (_, i) => ({
       id: i,
@@ -13,6 +14,9 @@ const Stars = () => {
       delay: Math.random() * 3,
     }));
   }, []);
+
+  // Generate initial shooting star IDs
+  const shootingStarIds = useMemo(() => [1, 2], []);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -54,41 +58,65 @@ const Stars = () => {
       ))}
       
       {/* Shooting stars */}
-      {[1, 2].map((i) => (
-        <motion.div
-          key={`shooting-${i}`}
-          className="absolute w-2 h-2 bg-white rounded-full"
-          style={{
-            boxShadow: "0 0 30px 4px rgba(255, 255, 255, 0.9)",
-          }}
-          initial={{
-            top: `${Math.random() * 40}%`,
-            left: "-5%",
-          }}
-          animate={{
-            top: [`${Math.random() * 40}%`, `${Math.random() * 40 + 50}%`],
-            left: ["-5%", "110%"],
-            opacity: [0, 1, 1, 0],
-          }}
-          transition={{
-            duration: 2.5,
-            delay: i * 6,
-            repeat: Infinity,
-            repeatDelay: 10,
-            ease: "easeIn",
-          }}
-        >
-          {/* Shooting star tail */}
-          <div 
-            className="absolute top-0 left-0 w-16 h-0.5 bg-gradient-to-r from-white to-transparent"
-            style={{
-              transform: "translateX(-100%)",
-            }}
-          />
-        </motion.div>
+      {shootingStarIds.map((i) => (
+        <ShootingStar key={`shooting-${i}`} delay={i * 6} />
       ))}
     </div>
   );
 };
+
+const ShootingStar = React.memo(({ delay }) => {
+  // Initialize path data with random values using lazy initializer
+  // Lazy initializer ensures Math.random() only runs once on mount
+  const [pathData, setPathData] = useState(() => ({
+    initialTop: Math.random() * 40, 
+    startTop: Math.random() * 40, 
+    endTop: Math.random() * 40 + 50,
+  }));
+
+  // Callback to generate new random path after animation completes
+  // useCallback prevents function re-creation on re-renders
+  const handleAnimationComplete = useCallback(() => {
+    setPathData({
+      initialTop: Math.random() * 40,
+      startTop: Math.random() * 40,
+      endTop: Math.random() * 40 + 50,
+    });
+  }, []);
+
+  return (
+    <motion.div
+      className="absolute w-2 h-2 bg-white rounded-full"
+      style={{
+        boxShadow: "0 0 30px 4px rgba(255, 255, 255, 0.9)",
+      }}
+      initial={{
+        top: `${pathData.initialTop}%`,
+        left: "-5%", 
+      }}
+      animate={{
+        top: [`${pathData.startTop}%`, `${pathData.endTop}%`],
+        left: ["-5%", "110%"], 
+        opacity: [0, 1, 1, 0], 
+      }}
+      transition={{
+        duration: 2.5,
+        delay: delay, 
+        repeat: Infinity, 
+        repeatDelay: 10, 
+        ease: "easeIn", 
+      }}
+      onAnimationComplete={handleAnimationComplete} // Generate new path when animation finishes
+    >
+      {/* Shooting star tail */}
+      <div 
+        className="absolute top-0 left-0 w-16 h-0.5 bg-gradient-to-r from-white to-transparent"
+        style={{
+          transform: "translateX(-100%)",
+        }}
+      />
+    </motion.div>
+  );
+});
 
 export default Stars;
