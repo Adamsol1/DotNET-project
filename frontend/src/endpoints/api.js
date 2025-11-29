@@ -112,7 +112,7 @@ export const auth = {
 export const account = {
     // update username
     updateUsername: async (data) => {
-        const response = await api.put('/account/profile', data);
+        const response = await api.put('/account/username', data);
         return response.data;
     },
 

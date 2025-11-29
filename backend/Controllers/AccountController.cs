@@ -28,7 +28,7 @@ public class AccountController : ControllerBase
     }
 
     // Update the username for the currently authenticated user
-    [HttpPut("profile")]
+    [HttpPut("username")]
     public async Task<ActionResult<UserDto>> UpdateUsername([FromBody] UpdateUsernameDto request)
     {
         _logger.LogInformation("[AccountController] UpdateUsername called");
