@@ -15,16 +15,13 @@ public class AccountController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ILogger<AccountController> _logger;
-    private readonly UserManager<AuthUser> _userManager;
 
     public AccountController(
         IUserService userService, 
-        ILogger<AccountController> logger,
-        UserManager<AuthUser> userManager)
+        ILogger<AccountController> logger)
     {
         _userService = userService;
         _logger = logger;
-        _userManager = userManager;
     }
 
     // Update the username for the currently authenticated user
@@ -54,33 +51,11 @@ public class AccountController : ControllerBase
             // Update username in the game database
             _logger.LogInformation("[AccountController] Attempting to update username for authUserId: {AuthUserId} to new username: {NewUsername}", authUserId, request.Username);
             var updatedUser = await _userService.UpdateUsername(authUserId, request);
-            
-            // Update username in Identity (AuthUser)
-            var authUser = await _userManager.FindByIdAsync(authUserId);
-            if (authUser != null)
-            {
-                authUser.UserName = request.Username;
-                var result = await _userManager.UpdateAsync(authUser);
-                
-                if (!result.Succeeded)
-                {
-                    _logger.LogWarning("[AccountController] Failed to update AuthUser username: {@Errors}", result.Errors);
-                    return BadRequest(new { message = "Failed to update authentication username" });
-                }
-            }
+
+            // no need to call UserManager as the UserService handles it now. -Ah
 
             _logger.LogInformation("[AccountController] Successfully updated username for user {UserId}", updatedUser.Id);
             return Ok(updatedUser);
-        }
-        catch (InvalidOperationException e)
-        {
-            _logger.LogWarning(e, "[AccountController] Username already exists");
-            return BadRequest(new { message = e.Message });
-        }
-        catch (KeyNotFoundException e)
-        {
-            _logger.LogWarning(e, "[AccountController] User not found");
-            return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
@@ -112,39 +87,11 @@ public class AccountController : ControllerBase
                 return Unauthorized("User not authenticated");
             }
 
-            // Update password in Identity (AuthUser)
-            var authUser = await _userManager.FindByIdAsync(authUserId);
-            if (authUser == null)
-            {
-                _logger.LogWarning("[AccountController] AuthUser not found for ID {AuthUserId}", authUserId);
-                return NotFound(new { message = "User not found" });
-            }
-
-            // Remove old password and add new one (since we don't have the old password)
-            var token = await _userManager.GeneratePasswordResetTokenAsync(authUser);
-            var result = await _userManager.ResetPasswordAsync(authUser, token, request.NewPassword);
-
-            if (!result.Succeeded)
-            {
-                _logger.LogWarning("[AccountController] Failed to update password: {@Errors}", result.Errors);
-                return BadRequest(new { message = "Failed to update password", errors = result.Errors });
-            }
-
-            // Update password in the game database
+            // Update password in both databases
             await _userService.UpdatePassword(authUserId, request);
 
-            _logger.LogInformation("[AccountController] Successfully updated password for AuthUserId {AuthUserId}", authUserId);
+            _logger.LogInformation("[AccountController] Successfully updated password in both databases", authUserId);
             return Ok(new { message = "Password updated successfully" });
-        }
-        catch (InvalidOperationException e)
-        {
-            _logger.LogWarning(e, "[AccountController] Password validation failed");
-            return BadRequest(new { message = e.Message });
-        }
-        catch (KeyNotFoundException e)
-        {
-            _logger.LogWarning(e, "[AccountController] User not found");
-            return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
@@ -174,6 +121,8 @@ public class AccountController : ControllerBase
 
             // Delete from game database
             await _userService.DeleteAccount(authUserId);
+
+            // move this to be handled by the UserService.
 
             // Delete from Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
