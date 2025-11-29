@@ -235,20 +235,18 @@ export function AccountManagement() {
           </section>
         </div>
       </div>
-
+      {/* Custom Delete confirmation modal */}
       {showDeleteModal && (
-              <AlertModal 
-                title='This action deletes the user!'
-                message='Are you sure you want to delete this user? This action cannot be undone.'
-                onConfirm={() => handleDeleteAccount()}
-                onCancel={() => setShowDeleteModal(false)}
-                confirmLabel='Delete'
-                cancelLabel='Cancel'
-                isDangerous={true}
-              />
-            )}
-
-
+        <AlertModal 
+          title='This action deletes the user!'
+          message='Are you sure you want to delete this user? This action cannot be undone.'
+          onConfirm={() => handleDeleteAccount()}
+          onCancel={() => setShowDeleteModal(false)}
+          confirmLabel='Delete'
+          cancelLabel='Cancel'
+          isDangerous={true}
+        />
+      )}
       {/* Custom alert modal for unsaved changes */}
       {showLeaveAlert && (
         <AlertModal
