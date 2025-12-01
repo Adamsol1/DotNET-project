@@ -87,7 +87,7 @@ public class AccountController : ControllerBase
                 return Unauthorized("User not authenticated");
             }
 
-            // Update password in both databases
+            // Updates password in both databases
             await _userService.UpdatePassword(authUserId, request);
 
             _logger.LogInformation("[AccountController] Successfully updated password in both databases", authUserId);
@@ -122,20 +122,7 @@ public class AccountController : ControllerBase
             // Delete from game database
             await _userService.DeleteAccount(authUserId);
 
-            // move this to be handled by the UserService.
-
-            // Delete from Identity (AuthUser)
-            var authUser = await _userManager.FindByIdAsync(authUserId);
-            if (authUser != null)
-            {
-                var result = await _userManager.DeleteAsync(authUser);
-                
-                if (!result.Succeeded)
-                {
-                    _logger.LogWarning("[AccountController] Failed to delete AuthUser: {@Errors}", result.Errors);
-                    return BadRequest(new { message = "Failed to delete authentication account" });
-                }
-            }
+            // same case here, Auth database user is also handled by the UserService now
 
             _logger.LogInformation("[AccountController] Successfully deleted account for authUserId: {AuthUserId}", authUserId);
             return Ok(new { message = "Account deleted successfully" });

@@ -39,10 +39,9 @@ public interface IUserService
     Task<IEnumerable<UserDto>> GetAllUsers();
     // get by userId, usefull when clicking on an user.
     Task<UserDto> GetUserById(int id);
-    // update username
-    Task<UserDto> UpdateUserUsername(int userId, UpdateUsernameDto updateUsernameDto);
-    // update password
-    Task<bool> UpdateUserPassword(int userId, UpdatePasswordDto updatePasswordDto);
+
+    // get auth user id by user id
+    Task<string> GetByAuthId(int userId);
     
     //Task<bool> CheckUserRole(int userId, string role);
     //Task<UserDto> UpdateUser(int id, string username);
