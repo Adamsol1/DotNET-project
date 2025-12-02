@@ -59,5 +59,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return role.ToString(); // Role is an enum
     }
 
+    /// <summary>
+    /// Get user by their AuthUserId (Identity user ID)
+    /// </summary>
+    public async Task<User?> GetByAuthId(string authUserId)
+    {
+        return await GetByProperty(u => u.AuthUserId, authUserId);
+    }
 
 }

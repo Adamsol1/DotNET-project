@@ -35,8 +35,13 @@ public interface IUserService
     Task<bool> DeleteAccount(string authUserId);
     
     // Admin methods
-    //Task<IEnumerable<UserDto>> GetAllUsers();
+    // get all users
+    Task<IEnumerable<UserDto>> GetAllUsers();
+    // get by userId, usefull when clicking on an user.
     Task<UserDto> GetUserById(int id);
+
+    // get auth user id by user id
+    Task<string> GetByAuthId(int userId);
     
     //Task<bool> CheckUserRole(int userId, string role);
     //Task<UserDto> UpdateUser(int id, string username);
