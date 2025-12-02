@@ -28,11 +28,12 @@ public class AccountController : ControllerBase
     }
 
     // Update the username for the currently authenticated user
-    [HttpPut("profile")]
+    [HttpPut("username")]
     public async Task<ActionResult<UserDto>> UpdateUsername([FromBody] UpdateUsernameDto request)
     {
         _logger.LogInformation("[AccountController] UpdateUsername called");
         
+        // Validate the incoming request
         if (!ModelState.IsValid)
         {
             _logger.LogWarning("[AccountController] Invalid ModelState for UpdateUsername: {@ModelState}", ModelState);
@@ -45,6 +46,7 @@ public class AccountController : ControllerBase
             var authUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _logger.LogInformation("[AccountController] Extracted authUserId from token: {AuthUserId}", authUserId);
             
+            // Check if authUserId is null or empty
             if (string.IsNullOrEmpty(authUserId))
             {
                 _logger.LogWarning("[AccountController] Unable to get authenticated user ID");
@@ -57,11 +59,12 @@ public class AccountController : ControllerBase
             
             // Update username in Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
+            // If authUser exists, update the username
             if (authUser != null)
             {
                 authUser.UserName = request.Username;
                 var result = await _userManager.UpdateAsync(authUser);
-                
+                // Check if the update was successful
                 if (!result.Succeeded)
                 {
                     _logger.LogWarning("[AccountController] Failed to update AuthUser username: {@Errors}", result.Errors);
@@ -95,6 +98,7 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("[AccountController] UpdatePassword called");
         
+        // Validate the incoming request
         if (!ModelState.IsValid)
         {
             _logger.LogWarning("[AccountController] Invalid ModelState for UpdatePassword: {@ModelState}", ModelState);
@@ -105,7 +109,7 @@ public class AccountController : ControllerBase
         {
             // Get the authenticated user's ID from the JWT token
             var authUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+            // Check if authUserId is null or empty
             if (string.IsNullOrEmpty(authUserId))
             {
                 _logger.LogWarning("[AccountController] Unable to get authenticated user ID");
@@ -114,6 +118,7 @@ public class AccountController : ControllerBase
 
             // Update password in Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
+            // Check if authUser exists
             if (authUser == null)
             {
                 _logger.LogWarning("[AccountController] AuthUser not found for ID {AuthUserId}", authUserId);
@@ -123,7 +128,7 @@ public class AccountController : ControllerBase
             // Remove old password and add new one (since we don't have the old password)
             var token = await _userManager.GeneratePasswordResetTokenAsync(authUser);
             var result = await _userManager.ResetPasswordAsync(authUser, token, request.NewPassword);
-
+            // Check if the update was successful
             if (!result.Succeeded)
             {
                 _logger.LogWarning("[AccountController] Failed to update password: {@Errors}", result.Errors);
@@ -163,7 +168,7 @@ public class AccountController : ControllerBase
         {
             // Get the authenticated user's ID from the JWT token
             var authUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+            // Check if authUserId is null or empty
             if (string.IsNullOrEmpty(authUserId))
             {
                 _logger.LogWarning("[AccountController] Unable to get authenticated user ID for account deletion");
@@ -177,10 +182,11 @@ public class AccountController : ControllerBase
 
             // Delete from Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
+            // Check if authUser exists
             if (authUser != null)
             {
                 var result = await _userManager.DeleteAsync(authUser);
-                
+                // Check if the deletion was successful
                 if (!result.Succeeded)
                 {
                     _logger.LogWarning("[AccountController] Failed to delete AuthUser: {@Errors}", result.Errors);

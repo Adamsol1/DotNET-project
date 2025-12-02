@@ -117,6 +117,7 @@ public class UserService : IUserService
             throw;
         }
     }
+    // Method to update username for the currently authenticated user
     public async Task<UserDto> UpdateUsername(string authUserId, UpdateUsernameDto updateUsernameDto)
     {
         try
@@ -129,6 +130,7 @@ public class UserService : IUserService
             
             _logger.LogInformation("[Userservice] User lookup result: {UserFound}", user != null ? $"Found user ID {user.Id}" : "Not found");
             
+            // Check if user exists
             if (user == null)
             {
                 _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
@@ -162,6 +164,8 @@ public class UserService : IUserService
         }
     }
 
+    //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user. 
+    // Method to update password for the currently authenticated user
     public async Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto)
     {
         try
@@ -178,6 +182,7 @@ public class UserService : IUserService
             // Get the user by AuthUserId
             var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
             
+            // Check if user exists
             if (user == null)
             {
                 _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
@@ -201,7 +206,7 @@ public class UserService : IUserService
             throw;
         }
     }
-
+    // Method to delete the account of the currently authenticated user
     public async Task<bool> DeleteAccount(string authUserId)
     {
         try
@@ -212,6 +217,7 @@ public class UserService : IUserService
             // Get the user by AuthUserId
             var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
             
+            // Check if user exists
             if (user == null)
             {
                 _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);

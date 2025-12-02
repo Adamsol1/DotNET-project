@@ -29,6 +29,7 @@ export function Home() {
   const [validationErrors, setValidationErrors] = useState({});
 
   const [showLeaveAlert, setShowLeaveAlert] = useState(false);
+  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const hasUnsavedChanges = username !== '' || password !== '';
   const normalizeUsername = (value) => (value || '').toLowerCase();
 
@@ -73,6 +74,9 @@ export function Home() {
       // passes inn the username and password captured from the form 
       // to the register function.
       await authservice.register( username, password );
+      
+      // Automatically log in after successful registration
+      await login({ username, password });
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to register. Please try again.';
       setError(errorMessage);
@@ -132,6 +136,11 @@ export function Home() {
   // handle cancel leave
   const cancelLeave = () => {
     setShowLeaveAlert(false);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setShowLogoutAlert(false);
+    await handleLogout();
   };
 
   // since login becomes essentially the HomePage, 
@@ -204,7 +213,7 @@ export function Home() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={handleLogout}
+                    onClick={() => setShowLogoutAlert(true)}
                     className="w-full px-4 py-3 bg-transparent text-white font-bold border-2 border-white"
                   >
                     LOGOUT
@@ -345,6 +354,16 @@ export function Home() {
           cancelLabel="STAY"
           onCancel={cancelLeave}
           onConfirm={confirmLeave}
+        />
+      )}
+      {showLogoutAlert && (
+        <AlertModal
+          title="Confirm Logout"
+          message="Are you sure you want to log out?"
+          confirmLabel="Confirm"
+          cancelLabel="CANCEL"
+          onConfirm={handleLogoutConfirm}
+          onCancel={() => setShowLogoutAlert(false)}
         />
       )}
     </div>

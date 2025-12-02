@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/miniGames/RockPaperScissors';
 import TerminalPowerRestore from '../components/miniGames/TerminalPower'; 
 import AlertModal from '../components/AlertModal';
+import PixelCloseButton from '../assets/icons/pixel-close-button.svg';
 
 export function Game() {
 
@@ -211,22 +212,41 @@ export function Game() {
               onClick={() => setShowInfoBox(false)}
               className="absolute top-3 right-3 text-black text-xl font-bold hover:text-gray-700"
             >
-              ✖
+              <img src={PixelCloseButton} alt="Close" className="w-6 h-6" />
             </button>
 
-            <h2 className="text-3xl font-bold mb-4">How to play:</h2>
+            <h2 className="text-3xl font-bold mb-6">How to Play</h2>
 
-            <ol className="list-decimal list-inside space-y-4 text-3xl font-bold text-black">
-              <li>
-                <br />
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel enim 
-                vitae urna placerat interdum.
-              </li>
-              <li>
-                <br />
-                Sed sit amet justo vitae lorem feugiat consequat.
-              </li>
-            </ol>
+            <div className="space-y-4 text-lg text-black">
+              <div>
+                <h3 className="font-bold text-xl mb-2">Starting Your Adventure</h3>
+                <p className="ml-4">
+                  Click <strong>NEW GAME</strong> to create a new character and begin your journey. 
+                  Or select a previous save from <strong>CONTINUE ADVENTURE</strong> to pick up where you left.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-bold text-xl mb-2">Story & Dialogue</h3>
+                <p className="ml-4">
+                  Read through dialogue by clicking <strong>NEXT</strong>. Your choices shape the story, 
+                  each decision can lead to different outcomes and paths.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-bold text-xl mb-2">Mini-Games</h3>
+                <p className="ml-4">
+                  Complete mini-games when they appear to overcome challenges. 
+                  The outcome affects your story progression.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-bold text-xl mb-2">Saving Progress</h3>
+                <p className="ml-4">
+                  Your progress is automatically saved. Use the <strong>Back</strong> button to return 
+                  to the main menu. You can manage multiple save files from the game menu.
+                </p>
+              </div>
+            </div>
           </motion.div>
         </div>
       )}
