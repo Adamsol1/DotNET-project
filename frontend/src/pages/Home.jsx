@@ -19,7 +19,11 @@ export function Home() {
   const { user, logout, login, register } = useAuth();
   //CHAT
   const  authenticated= !!user;
-  // Dev approach (commented out):
+
+  //check the role of the user, we create a button for the admin to access the admin page.
+  const isAdmin = user?.role === "admin";
+
+
   const navigate = useNavigate();
   // const { authenticated, user, logout, login, register } = useGame();
   const [activeTab, setActiveTab] = useState('login');
@@ -143,6 +147,15 @@ export function Home() {
     await handleLogout();
   };
 
+  // handle the admin button click
+  const handleAdminClick = () => {
+    if (isAdmin) {
+      navigate('/admin');
+    } else {
+      setError("You are not authorized to access the admin page.");
+    }
+  }
+
   // since login becomes essentially the HomePage, 
   // we check if the user is logged in, if yes, then we show play game button.
   // instead of the login form.
@@ -209,6 +222,17 @@ export function Home() {
                   >
                     ACCOUNT MANAGEMENT
                   </motion.button>
+
+                  {isAdmin && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleAdminClick}
+                      className="w-full px-4 py-3 bg-gray-200 text-black font-bold border-2 border-black"
+                    >
+                      ADMIN
+                    </motion.button>
+                  )}
                   
                   <motion.button
                     whileHover={{ scale: 1.05 }}

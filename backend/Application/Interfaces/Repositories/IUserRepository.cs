@@ -27,4 +27,9 @@ public interface IUserRepository : IGenericRepository<User>
     /// </summary>
     
     Task<string?> GetUserRoleById(int id);
+
+    /// <summary>
+    /// Get user by their AuthUserId (Identity user ID)
+    /// </summary>
+    Task<User?> GetByAuthId(string authUserId);
 }

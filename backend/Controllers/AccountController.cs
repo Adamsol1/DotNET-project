@@ -15,16 +15,13 @@ public class AccountController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ILogger<AccountController> _logger;
-    private readonly UserManager<AuthUser> _userManager;
 
     public AccountController(
         IUserService userService, 
-        ILogger<AccountController> logger,
-        UserManager<AuthUser> userManager)
+        ILogger<AccountController> logger)
     {
         _userService = userService;
         _logger = logger;
-        _userManager = userManager;
     }
 
     // Update the username for the currently authenticated user
@@ -56,6 +53,7 @@ public class AccountController : ControllerBase
             // Update username in the game database
             _logger.LogInformation("[AccountController] Attempting to update username for authUserId: {AuthUserId} to new username: {NewUsername}", authUserId, request.Username);
             var updatedUser = await _userService.UpdateUsername(authUserId, request);
+<<<<<<< HEAD
             
             // Update username in Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
@@ -71,19 +69,13 @@ public class AccountController : ControllerBase
                     return BadRequest(new { message = "Failed to update authentication username" });
                 }
             }
+=======
+
+            // no need to call UserManager as the UserService handles it now. -Ah
+>>>>>>> adminUserManagement
 
             _logger.LogInformation("[AccountController] Successfully updated username for user {UserId}", updatedUser.Id);
             return Ok(updatedUser);
-        }
-        catch (InvalidOperationException e)
-        {
-            _logger.LogWarning(e, "[AccountController] Username already exists");
-            return BadRequest(new { message = e.Message });
-        }
-        catch (KeyNotFoundException e)
-        {
-            _logger.LogWarning(e, "[AccountController] User not found");
-            return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
@@ -116,6 +108,7 @@ public class AccountController : ControllerBase
                 return Unauthorized("User not authenticated");
             }
 
+<<<<<<< HEAD
             // Update password in Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
             // Check if authUser exists
@@ -136,20 +129,13 @@ public class AccountController : ControllerBase
             }
 
             // Update password in the game database
+=======
+            // Updates password in both databases
+>>>>>>> adminUserManagement
             await _userService.UpdatePassword(authUserId, request);
 
-            _logger.LogInformation("[AccountController] Successfully updated password for AuthUserId {AuthUserId}", authUserId);
+            _logger.LogInformation("[AccountController] Successfully updated password in both databases");
             return Ok(new { message = "Password updated successfully" });
-        }
-        catch (InvalidOperationException e)
-        {
-            _logger.LogWarning(e, "[AccountController] Password validation failed");
-            return BadRequest(new { message = e.Message });
-        }
-        catch (KeyNotFoundException e)
-        {
-            _logger.LogWarning(e, "[AccountController] User not found");
-            return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
@@ -180,6 +166,7 @@ public class AccountController : ControllerBase
             // Delete from game database
             await _userService.DeleteAccount(authUserId);
 
+<<<<<<< HEAD
             // Delete from Identity (AuthUser)
             var authUser = await _userManager.FindByIdAsync(authUserId);
             // Check if authUser exists
@@ -193,6 +180,9 @@ public class AccountController : ControllerBase
                     return BadRequest(new { message = "Failed to delete authentication account" });
                 }
             }
+=======
+            // same case here, Auth database user is also handled by the UserService now
+>>>>>>> adminUserManagement
 
             _logger.LogInformation("[AccountController] Successfully deleted account for authUserId: {AuthUserId}", authUserId);
             return Ok(new { message = "Account deleted successfully" });
