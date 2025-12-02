@@ -228,6 +228,17 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     }, [currentNode?.id, currentNode?.Id]);
 
+    useEffect(() => {
+        const nodeId = Number(currentNode?.id ?? currentNode?.Id);
+        const shouldShow = nodeId === 14;
+        console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
+        if (shouldShow) {
+            startTerminal();
+        } else {
+            setShowTerminal(false);
+        }
+    }, [currentNode?.id, currentNode?.Id]);
+
     // Loading / error / empty safeguards
     if (loading && !currentNode) {
         return (
