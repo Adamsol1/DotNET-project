@@ -4,26 +4,45 @@ import { useAudio } from '../../context/AudioContext';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/Authentication';
 
-/**
- *
- * File is meant to start a new game and create a new game save.
- */
-
 export function StartGame({ onGameStart, onBack }) {
     const [formData, setFormData] = useState({
         saveName: ''
     });
     const [errors, setErrors] = useState({});
+    const [saveCount, setSaveCount] = useState(0);
+    const [isLoadingSaveCount, setIsLoadingSaveCount] = useState(true);
 
-    const { startGame, loading, error, clearError } = useGame();
+    const { startGame, loading, error, clearError, getAllSaves } = useGame();
     const { playBackgroundMusic, stopAllAudio } = useAudio();
     const { user } = useAuth();
 
-    // Play menu music when component mounts
-    useEffect(() => {
-        playBackgroundMusic('/assets/audio/menu-music.mp3'); // Add your menu music path
+    // Function to count user's saves
+  const countUserSaves = async () => {
+    try {
+        setIsLoadingSaveCount(true);
+        const userId = Number(localStorage.getItem('user_id'));
+        
+        // Use the existing getAllSaves function from GameContext
+        const saves = await getAllSaves(userId);
+        
+        console.log('[StartGame] User saves:', saves);
+        
+        const count = saves ? saves.length : 0;
+        setSaveCount(count);
+        return count;
+    } catch (error) {
+        console.error('Failed to count saves:', error);
+        return 0;
+    } finally {
+        setIsLoadingSaveCount(false);
+    }
+    };
 
-        // Cleanup: stop audio when leaving this screen
+    // Count saves when component mounts
+    useEffect(() => {
+        playBackgroundMusic('/assets/audio/menu-music.mp3');
+        countUserSaves();
+
         return () => {
             // Don't stop audio here - let it continue to the game
         };
@@ -43,7 +62,7 @@ export function StartGame({ onGameStart, onBack }) {
         }
     };
 
-    const handleSubmit = async (e) => {
+        const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("gamecontext user in startgame:", user)
         setErrors({});
@@ -59,11 +78,30 @@ export function StartGame({ onGameStart, onBack }) {
             return;
         }
 
+        // Check save limit before starting game
+        console.log('[StartGame] Checking save count...');
+        const currentSaveCount = await countUserSaves();
+        console.log('[StartGame] Current save count:', currentSaveCount);
+        
+        if (currentSaveCount >= 3) {
+            setErrors({
+                saveName: 'Maximum 3 saves reached. Please delete an existing save before creating a new one.'
+            });
+            return;
+        }
+
         try {
+            console.log('[StartGame] Creating new save...');
             const gameSave = await startGame({
                 UserId: Number(localStorage.getItem('user_id')),
                 SaveName: formData.saveName
             });
+            console.log('[StartGame] Save created:', gameSave);
+            
+            // Recount after creating save
+            const newCount = await countUserSaves();
+            console.log('[StartGame] New save count:', newCount);
+            
             if (onGameStart) {
                 onGameStart(gameSave);
             }
@@ -100,10 +138,10 @@ export function StartGame({ onGameStart, onBack }) {
                                 NEW GAME
                             </h2>
                             <p className="text-gray-300 mt-2">
-                                Name your save file
+                                Name your save file ({saveCount}/3 saves)
                             </p>
                         </div>
-                        <div className="w-20"></div> {/* Spacer for centering */}
+                        <div className="w-20"></div>
                     </div>
 
                     <form onSubmit={handleSubmit}>
@@ -117,6 +155,7 @@ export function StartGame({ onGameStart, onBack }) {
                                     onChange={handleChange}
                                     className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="SAVE NAME"
+                                    disabled={isLoadingSaveCount}
                                 />
                                 {errors.saveName && (
                                     <p className="text-red-500 text-sm mt-2 text-center">
@@ -135,13 +174,19 @@ export function StartGame({ onGameStart, onBack }) {
 
                             {/* Submit Button */}
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                whileHover={{ scale: saveCount >= 3 ? 1 : 1.05 }}
+                                whileTap={{ scale: saveCount >= 3 ? 1 : 0.95 }}
                                 type="submit"
-                                disabled={loading}
-                                className="w-full px-4 py-3 bg-gray-200 text-black font-bold border-2 border-black hover:bg-gray-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                disabled={loading || isLoadingSaveCount || saveCount >= 3}
+                                className={`w-full px-4 py-3 font-bold border-2 transition-colors disabled:cursor-not-allowed ${
+                                    saveCount >= 3
+                                        ? 'bg-red-600 text-white border-red-800 opacity-90'
+                                        : 'bg-gray-200 text-black border-black hover:bg-gray-300 disabled:opacity-60'
+                                }`}
                             >
-                                {loading ? 'STARTING GAME...' : 'BEGIN ADVENTURE'}
+                                {loading ? 'STARTING GAME...' : 
+                                saveCount >= 3 ? 'DELETE A SAVE FIRST' :
+                                'BEGIN ADVENTURE'}
                             </motion.button>
                         </div>
                     </form>

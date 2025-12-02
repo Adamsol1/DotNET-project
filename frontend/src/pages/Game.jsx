@@ -408,7 +408,7 @@ export function Game() {
                               e.stopPropagation(); // Prevent triggering the load save function
                               handleDeleteSave(save);
                             }}
-                            className="p-1 rounded-full hover:bg-red-100 text-red-600"
+                            className="p-4 rounded-full hover:bg-red-100 text-red-600"
                             >
                                 <img src="/assets/icons/trash-alt-svgrepo-com.svg" alt="Delete Save" className="w-5 h-5" />
                             </button>
