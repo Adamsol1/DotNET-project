@@ -7,15 +7,44 @@ export function AudioProvider({ children }) {
     const ambientSoundRef = useRef(null);
     const choiceAudioRef = useRef(null);
     const fadeIntervalRef = useRef(null);
+    const pendingBackgroundRef = useRef(null);
+    const pendingAmbientRef = useRef(null);
+    const isUnlockedRef = useRef(false);
 
     const [currentBackgroundUrl, setCurrentBackgroundUrl] = useState(null);
     const [currentAmbientUrl, setCurrentAmbientUrl] = useState(null);
     const [isMuted, setIsMuted] = useState(false);
 
-    const playBackgroundMusic = (url) => {
-        // Don't change if same URL or no URL provided
-        if (!url || url === currentBackgroundUrl) return;
+    const unlockAudio = () => {
+        if (isUnlockedRef.current) return;
+        isUnlockedRef.current = true;
 
+        // If there were pending requests before user interaction, start them now
+        if (pendingBackgroundRef.current) {
+            playBackgroundMusic(pendingBackgroundRef.current);
+            pendingBackgroundRef.current = null;
+        }
+        if (pendingAmbientRef.current) {
+            playAmbientSound(pendingAmbientRef.current.url, pendingAmbientRef.current.loop);
+            pendingAmbientRef.current = null;
+        }
+    };
+
+    React.useEffect(() => {
+        // Wait for first user gesture to satisfy autoplay policies
+        const handler = () => unlockAudio();
+        window.addEventListener('pointerdown', handler, { once: true });
+        window.addEventListener('keydown', handler, { once: true });
+        window.addEventListener('touchstart', handler, { once: true });
+
+        return () => {
+            window.removeEventListener('pointerdown', handler);
+            window.removeEventListener('keydown', handler);
+            window.removeEventListener('touchstart', handler);
+        };
+    }, []);
+
+    const startBackgroundMusic = (url) => {
         // Stop existing background music
         if (backgroundMusicRef.current) {
             backgroundMusicRef.current.pause();
@@ -33,7 +62,26 @@ export function AudioProvider({ children }) {
         setCurrentBackgroundUrl(url);
     };
 
+    const playBackgroundMusic = (url) => {
+        // Don't change if same URL or no URL provided
+        if (!url || url === currentBackgroundUrl) return;
+
+        if (!isUnlockedRef.current) {
+            // Defer until the first user gesture unlocks audio
+            pendingBackgroundRef.current = url;
+            return;
+        }
+
+        startBackgroundMusic(url);
+    };
+
     const playAmbientSound = async (url, loop = false, fadeDuration = 800) => {
+        if (!isUnlockedRef.current) {
+            // Defer ambient until unlock
+            pendingAmbientRef.current = { url, loop };
+            return;
+        }
+
         // Fade out existing ambient sound
         if (ambientSoundRef.current) {
             await fadeAudio(ambientSoundRef.current, 0, fadeDuration);
@@ -134,6 +182,9 @@ export function AudioProvider({ children }) {
             choiceAudioRef.current.pause();
             choiceAudioRef.current = null;
         }
+
+        pendingBackgroundRef.current = null;
+        pendingAmbientRef.current = null;
 
         setCurrentBackgroundUrl(null);
         setCurrentAmbientUrl(null);

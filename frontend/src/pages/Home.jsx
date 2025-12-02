@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { validateLoginForm, validateRegisterForm } from '../utils/validation';
  import { useNavigate } from 'react-router-dom'; 
@@ -14,9 +14,12 @@ import {useAuth} from "../context/Authentication";
 import * as authservice from "../endpoints/AuthenticationService";
 // alert modal for unsaved changes.
 import AlertModal from '../components/AlertModal';
+import { useAudio } from '../context/AudioContext';
 
 export function Home() {
   const { user, logout, login, register } = useAuth();
+  const { playBackgroundMusic } = useAudio();
+  const hasStartedMusicRef = useRef(false);
   //CHAT
   const  authenticated= !!user;
 
@@ -115,6 +118,28 @@ export function Home() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
+  // Start menu music only after the first user interaction to satisfy autoplay policies
+  useEffect(() => {
+    const removeListeners = () => {
+      window.removeEventListener('pointerdown', startMusic);
+      window.removeEventListener('keydown', startMusic);
+      window.removeEventListener('touchstart', startMusic);
+    };
+
+    const startMusic = () => {
+      if (hasStartedMusicRef.current) return;
+      hasStartedMusicRef.current = true;
+      playBackgroundMusic('/assets/audio/music/menuMusic.mp3');
+      removeListeners();
+    };
+
+    window.addEventListener('pointerdown', startMusic);
+    window.addEventListener('keydown', startMusic);
+    window.addEventListener('touchstart', startMusic);
+
+    return removeListeners;
+  }, [playBackgroundMusic]);
+
   // handle tab click with unsaved changes check
   const handleTabClick = (tab) => {
     if (tab === activeTab) return;
@@ -165,7 +190,6 @@ export function Home() {
     <div 
       className="relative min-h-screen"
     >
-      <audio src="/assets/audio/music/menuMusic.mp3" autoPlay loop hidden />
       <Stars />
       <Planet />
       <Spaceship />

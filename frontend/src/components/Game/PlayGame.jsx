@@ -200,7 +200,6 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     };
 
-<<<<<<< HEAD
     const handleTerminalWin = () => {
         console.log('Terminal mini-game won');
         setShowTerminal(false);
@@ -239,11 +238,6 @@ export function PlayGame({ saveId, onBackToMenu }) {
             setShowTerminal(false);
         }
     }, [currentNode?.id, currentNode?.Id]);
-=======
-    const hei = () => {
-        get
-    }
->>>>>>> adminUserManagement
 
     // Loading / error / empty safeguards
     if (loading && !currentNode) {
