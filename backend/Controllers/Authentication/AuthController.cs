@@ -58,70 +58,25 @@ public class AuthController : ControllerBase
         // Attempt to contact service layer about the account registration
         try
         {
-            var user = new AuthUser
-            {
-                UserName = request.Username,
-
-            };
+            // UserService now handles all UserManager operations and transaction management
+            var gameUserDto = await _userService.RegisterAccount(request);
             
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
-            {
-                _logger.LogWarning("[AuthController] Unable to create account with {@Username}. Errors: {@Errors}", request.Username, result.Errors);
-                return BadRequest(result.Errors);
-
-            }
-
             _logger.LogInformation("[AuthController] Succesfully created account for {Username}", request.Username);
-            var authUserId = user.Id;
-            
-            // Assign player role to new user
-            await _userManager.AddToRoleAsync(user, "player");
-            _logger.LogInformation("[AuthController] Assigned player role to user {Username}", request.Username);
-            
-            UserDto gameUserDto;
-            try
-            {
-                gameUserDto = await _userService.RegisterAccount(request, authUserId);
-            }
-            catch (Exception e)
-            {
-                //TODO Correct error handling
-                await _userManager.DeleteAsync(user);
-                _logger.LogError(e, "[AuthController] Unable to create account for {Username}. The auth user is rolled back", request.Username);
-                return StatusCode(500,"Registration failed.");
-            }
-            
             
             return Ok(new {message = "Account created successfully", gameUserId = gameUserDto.Id});
-            //Await the answer given by the service layer. 
-            
-        // Todo : håndter mer spesifikke error handlings.    
-        // Catch block for handling unexpected error
-        } catch(Exception e)
-        {
-            // log the error
-            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to create  account for {$Username}", request.Username);
-            // return the error
-            return BadRequest("Unexpected error occured while creating account.");
         }
-        
-        /* Dev approach (commented out):
-        } catch (InvalidOperationException e)
+        catch (InvalidOperationException e)
         {
-            // log the error
-            _logger.LogError(e, "User with username already exists.");
-            // return the error
+            _logger.LogWarning("[AuthController] Registration failed: {Message}", e.Message);
             return BadRequest(new { message = e.Message });
         }
         catch(Exception e)
         {
             // log the error
-            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to create  account for {$Username}", request.Username);
+            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to create account for {Username}", request.Username);
             // return the error
-            return BadRequest(new { message = "Failed to create account. Please try again." });
+            return BadRequest(new { message = "Unexpected error occured while creating account." });
         }
-        */
     }
 
 
@@ -145,32 +100,37 @@ public class AuthController : ControllerBase
         // Try to use user service for login
         try
         {
+            // UserService now handles authentication against AuthDb
+            var user = await _userService.Login(request);
             
-            var userDto = await _userManager.FindByNameAsync(request.Username);
-
-            if (userDto != null && await _userManager.CheckPasswordAsync(userDto, request.Password))
+            if (user == null)
             {
-                _logger.LogInformation("[AuthController] Login attempt authorized for user : {@LoginUserDto}", request);
-                var token = await GenerateJwtToken(userDto);
-
-                var user = await _userService.Login(request);
-                _logger.LogInformation("[AuthController] GameUser found - Id: {UserId}, Username: {Username}", user?.Id, user?.Username);
-
-                return Ok(new { token = token, userId = user.Id, username = user.Username });
+                _logger.LogWarning("[AuthController] Login attempt failed for user : {@LoginUserDto}", request);
+                return Unauthorized(new { message = "Incorrect username or password. Please try again."});
             }
-            _logger.LogWarning("[AuthController] Login attempt failed for user : {@LoginUserDto}", request);
-            return Unauthorized(new { message = "Incorrect username or password. Please try again."});
-            
-        }
-            //Todo : Håndet mer konkret error handling.
-            catch (Exception e)
+
+            // Get AuthUser to generate JWT token
+            var authUser = await _userManager.FindByNameAsync(request.Username);
+            if (authUser == null)
             {
-                // log the error
-                _logger.LogError(e, "[AuthController] Unexpected error occured while trying to login.");
-                // return the error
-                return BadRequest("Unexpected error occured while trying to login.");
+                _logger.LogWarning("[AuthController] AuthUser not found after successful login");
+                return Unauthorized(new { message = "Authentication error. Please try again."});
             }
+
+            _logger.LogInformation("[AuthController] Login attempt authorized for user : {@LoginUserDto}", request);
+            var token = await GenerateJwtToken(authUser);
+            _logger.LogInformation("[AuthController] GameUser found - Id: {UserId}, Username: {Username}", user.Id, user.Username);
+
+            return Ok(new { token = token, userId = user.Id, username = user.Username });
         }
+        catch (Exception e)
+        {
+            // log the error
+            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to login.");
+            // return the error
+            return BadRequest(new { message = "Unexpected error occured while trying to login." });
+        }
+    }
     
 
 

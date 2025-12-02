@@ -165,4 +165,38 @@ public class AdminController : ControllerBase
 
     }
 
+    //delete method for admin.
+    // this endpoint just deletes the user so it has no need for DTO.
+    [HttpDelete("users/{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        // debugging
+        _logger.LogInformation("Deleting user with id: {id} in AdminController", id);
+
+        try {
+
+            var authUserId = await _userService.GetByAuthId(id);
+            
+            if (string.IsNullOrEmpty(authUserId)) {
+                _logger.LogWarning("AuthUserId not found for user with id {id}", id);
+                return NotFound(new { message = "AuthUserId not found" });
+            }
+
+            await _userService.DeleteAccount(authUserId);
+
+            // return a success message.
+            return Ok(new { message = "User deleted successfully" });
+
+        } catch (KeyNotFoundException e) {
+            _logger.LogWarning(e, "User with id {id} not found", id);
+            return NotFound(new { message = e.Message });
+        }
+        catch (Exception e) {
+            _logger.LogError(e, "Error deleting user with id: {id}", id);
+            return StatusCode(500, "Internal server error");
+        }
+
+        
+    }
+
 }

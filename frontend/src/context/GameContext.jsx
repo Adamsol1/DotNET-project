@@ -26,10 +26,19 @@ const loadStateFromStorage = () => {
         const currentSaveId = localStorage.getItem(STORAGE_KEY.CURRENT_SAVE_ID);
         const gameState = localStorage.getItem(STORAGE_KEY.GAME_STATE);
 
+        let parsedUser = null;
+        if (user) {
+            try {
+                parsedUser = JSON.parse(user);
+            } catch (parseError) {
+                parsedUser = null;
+            }
+        }
+
         // return the state object.
         return {
             // we check if the user is logged in, if not we set the user to null.
-            user: user ? JSON.parse(user) : null,
+            user: parsedUser,
             authenticated: authenticated === 'true',
             currentSaveId: currentSaveId ? parseInt(currentSaveId) : null,
         }

@@ -34,7 +34,7 @@ public class UserService : IUserService
     */
 
     // register account - User
-    public async Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto, string AuthUserId)
+    public async Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto)
     {
         try{
 
@@ -51,13 +51,42 @@ public class UserService : IUserService
                 throw new InvalidOperationException($"User with username already exists.");
             }
 
+            // create user in auth database.
+            var authUser = new AuthUser {
+                UserName = registerUserDto.Username,
+            };
 
+            // create the user and password through UserManager.
+            var result = await _userManager.CreateAsync(authUser, registerUserDto.Password);
+
+            // check if it has succeeded 
+            if (!result.Succeeded) {
+                _logger.LogWarning("[Userservice] Unable to create account with {@Username}. Errors: {@Errors}", registerUserDto.Username, result.Errors);
+                // rollback the transaction.
+                await _uow.RollBackAsync();
+                throw new InvalidOperationException($"Unable to create account with username {registerUserDto.Username}. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+
+            // get the AuthUserId from the auth user.
+            var authUserId = authUser.Id;
+
+            // assign player role to the auth user
+            var roleResult = await _userManager.AddToRoleAsync(authUser, "player");
+            if (!roleResult.Succeeded)
+            {
+                _logger.LogWarning("[Userservice] Failed to assign role to user {Username}. Errors: {@Errors}", registerUserDto.Username, roleResult.Errors);
+                await _uow.RollBackAsync();
+                await _userManager.DeleteAsync(authUser);
+                throw new InvalidOperationException($"Failed to assign role to user. Errors: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
+            _logger.LogInformation("[Userservice] Assigned player role to user {Username}", registerUserDto.Username);
+
+            // create game user with the auth user id
             var user = new User
             {
                 Username = registerUserDto.Username,
                 Password = registerUserDto.Password,
-                AuthUserId = AuthUserId
-
+                AuthUserId = authUserId
             };
 
             await _uow.UserRepository.Create(user);
@@ -83,18 +112,29 @@ public class UserService : IUserService
     {
         try
         {
-            var user = await _uow.UserRepository.GetUserByUsername(loginUserDto.Username);
-            //Check if user exists
-            if(user == null)
+            // First authenticate against AuthDb using UserManager
+            var authUser = await _userManager.FindByNameAsync(loginUserDto.Username);
+            
+            if (authUser == null)
             {
-                _logger.LogWarning("[Userservice] User with username {Username} doesn't exist", loginUserDto.Username);
+                _logger.LogWarning("[Userservice] AuthUser with username {Username} doesn't exist", loginUserDto.Username);
                 return null;
             }
 
-            //validate the password
-            if (user.Password != loginUserDto.Password)
+            // Validate password against AuthDb
+            if (!await _userManager.CheckPasswordAsync(authUser, loginUserDto.Password))
             {
                 _logger.LogWarning("[Userservice] Invalid password for user {Username}", loginUserDto.Username);
+                return null;
+            }
+
+            // Get the game user by AuthUserId
+            var user = await _uow.UserRepository.GetByAuthId(authUser.Id);
+            
+            //Check if game user exists
+            if(user == null)
+            {
+                _logger.LogWarning("[Userservice] GameUser with AuthUserId {AuthUserId} doesn't exist", authUser.Id);
                 return null;
             }
 

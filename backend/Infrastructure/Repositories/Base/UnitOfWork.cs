@@ -1,6 +1,9 @@
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories.Implementations;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System;
+using backend.Infrastructure.Logging;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace backend.Infrastructure.Repositories.Base;
@@ -24,6 +27,7 @@ public class UnitOfWork : IUnitOfWork {
     private readonly AppDbContext _context;
     // and context transaction.
     private IDbContextTransaction? _transaction;
+    private readonly IEntityFileLogger _entityLogger;
 
     // Registering all the repositories as Dependancy Injections.
     public IUserRepository UserRepository { get; }
@@ -34,23 +38,24 @@ public class UnitOfWork : IUnitOfWork {
     public IPlayerCharacterRepository PlayerCharacterRepository { get; }
     public IGameRepository GameRepository { get; }
 
-    public UnitOfWork(AppDbContext context) {
+    public UnitOfWork(AppDbContext context, IEntityFileLogger entityLogger) {
         _context = context;
+        _entityLogger = entityLogger;
 
         // entity repositories
-        UserRepository = new UserRepository(_context);
-        StoryNodeRepository = new StoryNodeRepository(_context);
-        CharacterRepository = new CharacterRepository(_context);
-        ChoiceRepository = new ChoiceRepository(_context);
-        DialogueRepository = new DialogueRepository(_context);
-        PlayerCharacterRepository = new PlayerCharacterRepository(_context);
-        GameRepository = new GameRepository(_context);
+        UserRepository = new UserRepository(_context, _entityLogger);
+        StoryNodeRepository = new StoryNodeRepository(_context, _entityLogger);
+        CharacterRepository = new CharacterRepository(_context, _entityLogger);
+        ChoiceRepository = new ChoiceRepository(_context, _entityLogger);
+        DialogueRepository = new DialogueRepository(_context, _entityLogger);
+        PlayerCharacterRepository = new PlayerCharacterRepository(_context, _entityLogger);
+        GameRepository = new GameRepository(_context, _entityLogger);
     }
 
     // method to get the repository we are looking for.
     public IGenericRepository<T> GetRepository<T>() where T : class
     {
-        return new GenericRepository<T>(_context);
+        return new GenericRepository<T>(_context, _entityLogger);
     }
 
     // save changes;

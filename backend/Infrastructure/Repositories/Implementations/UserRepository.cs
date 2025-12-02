@@ -1,16 +1,27 @@
 using backend.Domain.Models;
 using backend.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Linq;
+using backend.Infrastructure.Logging;
+using System;
 using backend.Infrastructure.Repositories.Base;
 
 namespace backend.Infrastructure.Repositories.Implementations;
 
+/*
+
+ */
+
 public class UserRepository : GenericRepository<User>, IUserRepository
 {
     private readonly AppDbContext _db;
+    private readonly IEntityFileLogger _entityLogger;
 
-    public UserRepository(AppDbContext db) : base(db)
+    public UserRepository(AppDbContext db, IEntityFileLogger entityLogger) : base(db, entityLogger)
     {
         _db = db;
+        _entityLogger = entityLogger;
     }
 
     /// <summary>
@@ -20,7 +31,19 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<User?> GetUserByUsername(string username)
     {
-        return await GetByProperty(u => u.Username, username);
+        try {
+            return await GetByProperty(u => u.Username, username);
+        } catch (Exception ex) {
+            await _entityLogger.LogAsync(
+                "GetUserByUsernameError", 
+                new { 
+                    Username = username,
+                    Reason = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                    }, 
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -31,7 +54,19 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<string?> GetUsernameById(int id)
     {
-        return await GetPropertyValue(id, u => u.Username);
+        try {
+            return await GetPropertyValue(id, u => u.Username);
+        } catch (Exception ex) {
+            await _entityLogger.LogAsync(
+                "GetUsernameByIdError", 
+                new { 
+                    Id = id,
+                    Reason = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                    }, 
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -42,7 +77,21 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<string?> GetPasswordById(int id)
     {
-        return await GetPropertyValue(id, u => u.Password);
+        try {
+
+            return await GetPropertyValue(id, u => u.Password);
+            
+        } catch (Exception ex) {
+            await _entityLogger.LogAsync(
+                "GetPasswordByIdError", 
+                new { 
+                    Id = id,
+                    Reason = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                    }, 
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     /// <summary>
@@ -52,8 +101,22 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     
     public async Task<string?> GetUserRoleById(int id)
     {
+        try {
         var role = await GetPropertyValue(id, u => u.Role);
         return role.ToString(); // Role is an enum
+
+        } catch (Exception ex) {
+
+            await _entityLogger.LogAsync(
+                "GetUserRoleByIdError", 
+                new { 
+                    Id = id,
+                    Reason = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                    }, 
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     /// <summary>
@@ -61,7 +124,20 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     /// </summary>
     public async Task<User?> GetByAuthId(string authUserId)
     {
-        return await GetByProperty(u => u.AuthUserId, authUserId);
+        try {
+            return await GetByProperty(u => u.AuthUserId, authUserId);
+        
+        } catch (Exception ex) {
+            await _entityLogger.LogAsync(
+                "GetByAuthIdError", 
+                new { 
+                    AuthUserId = authUserId,
+                    Reason = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                    }, 
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 }

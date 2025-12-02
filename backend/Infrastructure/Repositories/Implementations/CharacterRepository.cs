@@ -2,6 +2,8 @@ using backend.Domain.Models;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
+using backend.Infrastructure.Logging;
+using System;
 
 namespace backend.Infrastructure.Repositories.Implementations;
 
@@ -12,9 +14,12 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
 {
 
     private readonly AppDbContext _db;
-    public CharacterRepository(AppDbContext db) : base(db)
+    private readonly IEntityFileLogger _entityLogger;
+    
+    public CharacterRepository(AppDbContext db, IEntityFileLogger entityLogger) : base(db, entityLogger)
     {
         _db = db;
+        _entityLogger = entityLogger;
     }
 
     /// <summary>
@@ -24,7 +29,27 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
 
     public async Task<Character?> GetCharacterByName(string name)
     {
-        return await GetByProperty(c => c.Name, name);
+        try
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Character name cannot be null or empty", nameof(name));
+            }
+            
+            return await GetByProperty(c => c.Name, name);
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetCharacterByNameError",
+                new { Name = name, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -35,7 +60,27 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
 
     public async Task<string?> GetCharacterNameById(int id)
     {
-        return await GetPropertyValue(id, c => c.Name);
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Character ID must be greater than zero", nameof(id));
+            }
+            
+            return await GetPropertyValue(id, c => c.Name);
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetCharacterNameByIdError",
+                new { Id = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -46,7 +91,27 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
 
     public async Task<IEnumerable<Character>> GetAllCharactersWithName(string name)
     {
-        return await GetAllByProperty(c => c.Name, name);
+        try
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Character name cannot be null or empty", nameof(name));
+            }
+            
+            return await GetAllByProperty(c => c.Name, name);
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetAllCharactersWithNameError",
+                new { Name = name, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -57,7 +122,27 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
 
     public async Task<string?> GetCharacterDescription(int id)
     {
-        return await GetPropertyValue(id, c => c.Description);
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Character ID must be greater than zero", nameof(id));
+            }
+            
+            return await GetPropertyValue(id, c => c.Description);
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetCharacterDescriptionError",
+                new { Id = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -68,7 +153,27 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
 
     public async Task<string?> GetCharacterImageUrl(int id)
     {
-        return await GetPropertyValue(id, c => c.ImageUrl);
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Character ID must be greater than zero", nameof(id));
+            }
+            
+            return await GetPropertyValue(id, c => c.ImageUrl);
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetCharacterImageUrlError",
+                new { Id = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 
@@ -77,10 +182,30 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
     /// </summary>
     public async Task<IEnumerable<Dialogue>> GetAllDialoguesOfCharacter(int id)
     {
-        var dialogues = await _db.Dialogues
-                    .Where(characters => characters.CharacterId == id)
-                    .ToListAsync();
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Character ID must be greater than zero", nameof(id));
+            }
+            
+            var dialogues = await _db.Dialogues
+                        .Where(characters => characters.CharacterId == id)
+                        .ToListAsync();
 
-        return dialogues;
+            return dialogues;
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetAllDialoguesOfCharacterError",
+                new { CharacterId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 }
