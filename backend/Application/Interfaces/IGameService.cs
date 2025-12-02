@@ -1,8 +1,8 @@
-using backend.ApplicationNEW.Dtos.Game;
-using backend.ApplicationNEW.Dtos.Story;
+using backend.Application.Dtos.Game;
+using backend.Application.Dtos.Story;
 using backend.Domain.Models;
 
-namespace backend.ApplicationNEW.Interfaces;
+namespace backend.Application.Interfaces;
 
 /*
 The idea is to have a single service that handles the game logic.

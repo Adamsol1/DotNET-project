@@ -1,9 +1,9 @@
-using backend.ApplicationNEW.Dtos.Story;
-using backend.ApplicationNEW.Interfaces;
+using backend.Application.Dtos.Story;
+using backend.Application.Interfaces;
 using backend.Domain.Models;
 using backend.Infrastructure.Repositories.Base;
 
-namespace backend.ApplicationNEW.Services.Story;
+namespace backend.Application.Services.Story;
 
 public class StoryService : IStoryService
 {

@@ -1,10 +1,10 @@
-using backend.ApplicationNEW.Dtos.Game;
-using backend.ApplicationNEW.Dtos.Story;
-using backend.ApplicationNEW.Interfaces;
+using backend.Application.Dtos.Game;
+using backend.Application.Dtos.Story;
+using backend.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace backend.ControllersNEW.Story;
+namespace backend.Controllers.Story;
 
 [ApiController]
 [Route("api/[controller]")]

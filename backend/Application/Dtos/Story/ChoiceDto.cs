@@ -1,4 +1,4 @@
-namespace backend.ApplicationNEW.Dtos.Story;
+namespace backend.Application.Dtos.Story;
 
 public sealed class ChoiceDto 
 {

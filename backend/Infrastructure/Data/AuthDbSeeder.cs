@@ -1,5 +1,6 @@
-using backend.Application.Dtos;
-using backend.Application.Interfaces.Services;
+using backend.Application.Dtos.Authentication;
+
+using backend.Application.Interfaces;
 using backend.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

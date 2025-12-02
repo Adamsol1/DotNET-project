@@ -1,6 +1,7 @@
-using backend.ApplicationNEW.Dtos.Game;
-using backend.ApplicationNEW.Dtos.Story;
+using backend.Application.Dtos.Game;
+using backend.Application.Dtos.Story;
 using backend.Domain.Models;
+
 // since couple of the functions we use live within system.threading we import that.
 
 /* 
@@ -10,7 +11,7 @@ to eliminate duplication across all services.
 
 -Ah 20.11
 */
-namespace backend.ApplicationNEW.Interfaces;
+namespace backend.Application.Interfaces;
 
 public interface IGenService 
 {

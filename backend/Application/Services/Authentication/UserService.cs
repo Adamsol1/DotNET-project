@@ -1,10 +1,10 @@
-using backend.ApplicationNEW.Dtos.Authentication;
-using backend.ApplicationNEW.Interfaces;
+using backend.Application.Dtos.Authentication;
+using backend.Application.Interfaces;
 using backend.Domain.Models;
 using backend.Infrastructure.Repositories.Base;
 using Microsoft.AspNetCore.Identity;
 
-namespace backend.ApplicationNEW.Services.Authentication;
+namespace backend.Application.Services.Authentication;
 
 public class UserService : IUserService
 {

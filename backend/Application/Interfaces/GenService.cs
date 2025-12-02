@@ -1,9 +1,9 @@
-using backend.ApplicationNEW.Dtos.Game;
-using backend.ApplicationNEW.Dtos.Story;
+using backend.Application.Dtos.Game;
+using backend.Application.Dtos.Story;
 using backend.Domain.Models;
 using backend.Infrastructure.Repositories.Base;
 
-namespace backend.ApplicationNEW.Interfaces;
+namespace backend.Application.Interfaces;
 
 public class GenService : IGenService
 {

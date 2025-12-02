@@ -1,4 +1,4 @@
-namespace backend.ApplicationNEW.Interfaces;
+namespace backend.Application.Interfaces;
 
 // Player service interface: kept empty after cleanup to avoid breaking references.
 // Previously contained health- and character-management methods that were

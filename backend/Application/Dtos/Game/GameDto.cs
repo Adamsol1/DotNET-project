@@ -1,6 +1,6 @@
-using backend.ApplicationNEW.Dtos.Story;
+using backend.Application.Dtos.Story;
 
-namespace backend.ApplicationNEW.Dtos.Game;
+namespace backend.Application.Dtos.Game;
 
 /*
 Instead of creating a new file for each dto, we just group them in 

@@ -4,7 +4,7 @@
 
 using backend.Infrastructure.Repositories.Base;
 
-namespace backend.ApplicationNEW.Services.Story;
+namespace backend.Application.Services.Story;
 
 public class PlayerService
 

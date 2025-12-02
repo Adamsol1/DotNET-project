@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using backend.ApplicationNEW.Dtos.Authentication;
-using backend.ApplicationNEW.Interfaces;
+using backend.Application.Dtos.Authentication;
+using backend.Application.Interfaces;
 using backend.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace backend.ControllersNEW.Authentication;
+namespace backend.Controllers.Authentication;
 
 [ApiController]
 [Route("api/auth")]

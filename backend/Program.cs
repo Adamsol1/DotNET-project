@@ -9,16 +9,14 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.OpenApi.Models;
 using backend.Domain.Models;
 using System.IO;
+using backend.Application.Interfaces;
+using backend.Application.Services.Authentication;
+using backend.Application.Services.Game;
+using backend.Application.Services.Story;
 using backend.Infrastructure.Data;
-using backend.Infrastructure.Repositories;
-using backend.ApplicationNEW.Dtos.Authentication;
-using backend.ApplicationNEW.Interfaces;
-using backend.ApplicationNEW.Services;
-using backend.ApplicationNEW.Services.Authentication;
-using backend.ApplicationNEW.Services.Game;
-using backend.ApplicationNEW.Services.Story;
 using backend.Infrastructure.Repositories.Base;
 using backend.Infrastructure.Repositories.Implementations;
+using backend.Infrastructure.Logging;
 
 // Clear default claim mappings to prevent issues with JWT token claims
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -156,6 +154,7 @@ builder.Services.AddScoped<IStoryService, StoryService>();
 builder.Services.AddScoped<IStoryControllerService, StoryControllerService>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services.AddScoped<IEntityFileLogger, EntityFileLogger>();
 
 
 var loggerConfiguration = new LoggerConfiguration()

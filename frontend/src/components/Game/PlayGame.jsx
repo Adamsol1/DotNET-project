@@ -9,7 +9,7 @@ import { Text } from '../shared/Text';
 import { tokens } from '../../shared/constants/design/tokens';
 import {useAudio} from "../../context/AudioContext";
 import TerminalPowerRestore from '../GameUI/miniGames/TerminalPower';
-import AlertModal from '../AlertModal'
+import AlertModal from '../shared/AlertModal'
 export function PlayGame({ saveId, onBackToMenu }) {
     const {
         currentNode,
@@ -40,6 +40,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
     const [dialogueIndex, setDialogueIndex] = useState(0);
     const [showChoices, setShowChoices] = useState(false);
     const [showTerminal, setShowTerminal] = useState(false);
+    const [showExitModal, setShowExitModal] = useState(false);
 
     let isRevisit = false;
     if (currentSave && currentNode?.id) {
@@ -254,11 +255,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
             setShowTerminal(false);
         }
     }, [currentNode?.id, currentNode?.Id]);
-=======
-    const hei = () => {
-        get
-    }
->>>>>>> adminUserManagement
+
 
     // Loading / error / empty safeguards
     if (loading && !currentNode) {

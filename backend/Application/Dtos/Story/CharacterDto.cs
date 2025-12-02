@@ -1,4 +1,4 @@
-namespace backend.ApplicationNEW.Dtos.Story;
+namespace backend.Application.Dtos.Story;
 
 // NPC character dto.
 public sealed class CharacterDto

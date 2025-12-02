@@ -1,4 +1,4 @@
-namespace backend.ApplicationNEW.Dtos.Game;
+namespace backend.Application.Dtos.Game;
 
 public class StartGameRequest
 {

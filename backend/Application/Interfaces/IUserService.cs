@@ -1,6 +1,6 @@
-using backend.ApplicationNEW.Dtos.Authentication;
+using backend.Application.Dtos.Authentication;
 
-namespace backend.ApplicationNEW.Interfaces;
+namespace backend.Application.Interfaces;
 
 public interface IUserService
 {

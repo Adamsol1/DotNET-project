@@ -1,8 +1,9 @@
-using backend.ApplicationNEW.Dtos.Game;
-using backend.ApplicationNEW.Interfaces;
+using backend.Application.Dtos.Game;
+using backend.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace backend.ControllersNEW.Game;
+namespace backend.Controllers.Game;
 
 
 [ApiController]

@@ -1,8 +1,8 @@
-using backend.ApplicationNEW.Dtos.Story;
+using backend.Application.Dtos.Story;
 
 // Story Service Interface
 
-namespace backend.ApplicationNEW.Interfaces;
+namespace backend.Application.Interfaces;
 
 public interface IStoryService
 {
