@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.OpenApi.Models;
 using backend.Domain.Models;
-using System.IO;
 using backend.Application;
 using backend.Application.Dtos;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories;
 using backend.Application.Interfaces.Repositories;
 using backend.Application.Interfaces.Services;
+using backend.Infrastructure.Logging;
 
 // Clear default claim mappings to prevent issues with JWT token claims
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -152,7 +152,7 @@ builder.Services.AddScoped<IStoryService, StoryService>();
 builder.Services.AddScoped<IStoryControllerService, StoryControllerService>();
 builder.Services.AddScoped<IGameService, GameService>();
 
-
+builder.Services.AddSingleton<IEntityFileLogger, EntityFileLogger>();
 
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Information()
