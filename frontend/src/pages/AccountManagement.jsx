@@ -138,7 +138,8 @@ export function AccountManagement() {
       <Spaceship />
 
       {/* Foreground container */}
-      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-6 py-24">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-6 py-24"
+      style={{ overflowY: 'auto', maxHeight: '100vh' }}>
         {/* Animated heading */}
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -162,7 +163,7 @@ export function AccountManagement() {
 
         <div className="w-full max-w-md space-y-8">
           {/* Update Username Section */}
-          <section>
+          <div>
             <h2 className="font-bold text-white mb-2">Update Username</h2>
             <form onSubmit={handleUpdateUsername} className="space-y-3">
               <input
@@ -183,10 +184,10 @@ export function AccountManagement() {
                 SAVE USERNAME
               </motion.button>
             </form>
-          </section>
+          </div>
 
           {/* Update Password Section */}
-          <section>
+          <div>
             <h2 className="font-bold text-white mb-2">Update Password</h2>
             <form onSubmit={handleUpdatePassword} className="space-y-3">
               <input
@@ -216,10 +217,10 @@ export function AccountManagement() {
                 SAVE PASSWORD
               </motion.button>
             </form>
-          </section>
+          </div>
 
           {/* Delete Account Section */}
-          <section>
+          <div>
             <h2 className="font-bold text-red-500 mb-2">Delete Account</h2>
             <p className="text-white mb-2">
               This action is permanent and cannot be undone.
@@ -232,7 +233,7 @@ export function AccountManagement() {
             >
               DELETE ACCOUNT
             </motion.button>
-          </section>
+          </div>
         </div>
       </div>
       {/* Custom Delete confirmation modal */}

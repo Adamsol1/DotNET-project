@@ -154,9 +154,15 @@ export const admin = {
     updatePassword: async (userId, data) => {
         const response = await api.put(`/admin/users/${userId}/password`, data);
         return response.data;
+    },
+
+    // delete a user.
+    deleteUser: async (userId) => {
+        const response = await api.delete(`/admin/users/${userId}`);
+        return response.data;
     }
 
-}
+};
 
 export const game = {
     //endpoint to start a new game.

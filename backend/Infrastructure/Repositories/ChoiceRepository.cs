@@ -2,6 +2,8 @@ using backend.Domain.Models;
 using backend.Application.Interfaces.Repositories;
 using backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using backend.Infrastructure.Logging;
+using System;
 
 
 namespace backend.Infrastructure.Repositories;
@@ -13,9 +15,12 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 {
 
     private readonly AppDbContext _db;
-    public ChoiceRepository(AppDbContext db) : base(db)
+    private readonly IEntityFileLogger _entityLogger;
+    
+    public ChoiceRepository(AppDbContext db, IEntityFileLogger entityLogger) : base(db, entityLogger)
     {
         _db = db;
+        _entityLogger = entityLogger;
     }
 
     /// <summary>
@@ -25,13 +30,32 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 
     public async Task<int> GetStoryNodeId(int id)
     {
-        /// Query to get StoryNode id this choice belongs to
-        var storyNodeId = _db.Choices
-                    .Where(Choices => Choices.Id == id)
-                    .Select(Choices => Choices.StoryNodeId)
-                    .SingleOrDefaultAsync();
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Choice ID must be greater than zero", nameof(id));
+            }
+            
+            var storyNodeId = await _db.Choices
+                        .Where(Choices => Choices.Id == id)
+                        .Select(Choices => Choices.StoryNodeId)
+                        .SingleOrDefaultAsync();
 
-        return await storyNodeId;
+            return storyNodeId;
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetStoryNodeIdError",
+                new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     /// <summary>
@@ -41,13 +65,32 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 
     public async Task<StoryNode?> GetStoryNode(int id)
     {
-        /// Query to get StoryNode this choice belongs to
-        var storyNode = _db.Choices
-                    .Where(Choices => Choices.Id == id)
-                    .Select(Choices => Choices.StoryNode)
-                    .SingleOrDefaultAsync();
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Choice ID must be greater than zero", nameof(id));
+            }
+            
+            var storyNode = await _db.Choices
+                        .Where(Choices => Choices.Id == id)
+                        .Select(Choices => Choices.StoryNode)
+                        .SingleOrDefaultAsync();
 
-        return await storyNode;
+            return storyNode;
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetStoryNodeError",
+                new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     /// <summary>
@@ -57,13 +100,32 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 
     public async Task<StoryNode?> GetNextStoryNode(int id)
     {
-        /// Query to get id of story node this choice leads to
-        var nextStoryNodeId = _db.Choices
-                    .Where(Choices => Choices.Id == id)
-                    .Select(Choices => Choices.NextStoryNode)
-                    .SingleOrDefaultAsync();
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Choice ID must be greater than zero", nameof(id));
+            }
+            
+            var nextStoryNode = await _db.Choices
+                        .Where(Choices => Choices.Id == id)
+                        .Select(Choices => Choices.NextStoryNode)
+                        .SingleOrDefaultAsync();
 
-        return await nextStoryNodeId;
+            return nextStoryNode;
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetNextStoryNodeError",
+                new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     /// <summary>
@@ -73,13 +135,32 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 
     public async Task<int> GetNextStoryNodeId(int id)
     {
-        /// Query to get id of story node this choice leads to
-        var nextStoryNodeId = _db.Choices
-                    .Where(Choices => Choices.Id == id)
-                    .Select(Choices => Choices.NextStoryNodeId)
-                    .SingleOrDefaultAsync();
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Choice ID must be greater than zero", nameof(id));
+            }
+            
+            var nextStoryNodeId = await _db.Choices
+                        .Where(Choices => Choices.Id == id)
+                        .Select(Choices => Choices.NextStoryNodeId)
+                        .SingleOrDefaultAsync();
 
-        return await nextStoryNodeId;
+            return nextStoryNodeId;
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetNextStoryNodeIdError",
+                new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     /// <summary>
@@ -89,20 +170,59 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
 
     public async Task<string?> GetChoiceText(int id)
     {
-        /// Query to get text given in this choice
-        var choiceText = _db.Choices
-                    .Where(Choices => Choices.Id == id)
-                    .Select(Choices => Choices.Text)
-                    .SingleOrDefaultAsync();
+        try
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Choice ID must be greater than zero", nameof(id));
+            }
+            
+            var choiceText = await _db.Choices
+                        .Where(Choices => Choices.Id == id)
+                        .Select(Choices => Choices.Text)
+                        .SingleOrDefaultAsync();
 
-        return await choiceText;
+            return choiceText;
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetChoiceTextError",
+                new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
     public async Task<IEnumerable<Choice>> GetAllByStoryNodeId(int storyNodeId)
     {
-        return await _db.Choices
-            .Where(c => c.StoryNodeId == storyNodeId)
-            .ToListAsync();
+        try
+        {
+            if (storyNodeId <= 0)
+            {
+                throw new ArgumentException("StoryNode ID must be greater than zero", nameof(storyNodeId));
+            }
+            
+            return await _db.Choices
+                .Where(c => c.StoryNodeId == storyNodeId)
+                .ToListAsync();
+        }
+        catch (ArgumentException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await _entityLogger.LogAsync(
+                "GetAllByStoryNodeIdError",
+                new { StoryNodeId = storyNodeId, Reason = ex.Message, Timestamp = DateTime.UtcNow },
+                LogCategories.SystemLevel.Database);
+            throw;
+        }
     }
 
 }
