@@ -1,6 +1,6 @@
 [
-  {"Id":2,"Name":"Narrator","Description":"Stories narrator","ImageUrl":"/images/characters/narrator.png"},
-  {"Id":3,"Name":"SystemAI","Description":"NPC","ImageUrl":"/images/characters/systemAI.png"},
-  {"Id":4,"Name":"Irene","Description":"NPC","ImageUrl":"/images/characters/irene.png"},
-  {"Id":5,"Name":"Darius","Description":"NPC","ImageUrl":"/images/characters/darius.png"}
+  {"Id":2,"Name":"Narrator","Description":"Stories narrator","ImageUrl":"/assets/characters/narrator.png"},
+  {"Id":3,"Name":"SystemAI","Description":"NPC","ImageUrl":"/assets/characters/systemAI.png"},
+  {"Id":4,"Name":"Irene","Description":"NPC","ImageUrl":"/assets/characters/irene.png"},
+  {"Id":5,"Name":"Darius","Description":"NPC","ImageUrl":"/assets/characters/darius.png"}
 ]

@@ -8,6 +8,7 @@ import { Card } from '../../ui/Card';
 import { Text } from '../../ui/Text';
 import { tokens } from '../../design/tokens';
 import {useAudio} from "../../context/AudioContext";
+import TerminalPowerRestore from '../miniGames/TerminalPower';
 
 export function PlayGame({ saveId, onBackToMenu }) {
     const {
@@ -38,6 +39,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
     // dialogue index for multi-line dialogues loaded in currentNode.Dialogues
     const [dialogueIndex, setDialogueIndex] = useState(0);
     const [showChoices, setShowChoices] = useState(false);
+    const [showTerminal, setShowTerminal] = useState(false);
 
     let isRevisit = false;
     if (currentSave && currentNode?.id) {
@@ -198,6 +200,34 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     };
 
+    const handleTerminalWin = () => {
+        console.log('Terminal mini-game won');
+        setShowTerminal(false);
+        setShowChoices(true); // let the story continue
+    };
+
+    const handleTerminalLose = () => {
+        console.log('Terminal mini-game lost');
+        setShowTerminal(false);
+    };
+
+    // function callback for starting terminal
+    const startTerminal = () => {
+        console.log('STARTER SPILLET NA.');
+        setShowTerminal(true);
+    };
+
+    useEffect(() => {
+        const nodeId = Number(currentNode?.id ?? currentNode?.Id);
+        const shouldShow = nodeId === 15;
+        console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
+        if (shouldShow) {
+            startTerminal();
+        } else {
+            setShowTerminal(false);
+        }
+    }, [currentNode?.id, currentNode?.Id]);
+
     // Loading / error / empty safeguards
     if (loading && !currentNode) {
         return (
@@ -281,8 +311,8 @@ export function PlayGame({ saveId, onBackToMenu }) {
         currentNodeId: currentNode?.id,
         visitedNodeIds: currentSave?.visitedNodeIds
     });
-    
     return (
+        
         <div
             style={{
                 minHeight: '100vh',
@@ -472,6 +502,27 @@ export function PlayGame({ saveId, onBackToMenu }) {
                                 </div>
                             )}
                         </div>
+                    </div>
+                )}
+
+                {showTerminal && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'rgba(0, 0, 0, 0.75)',
+                            zIndex: 1500,
+                            padding: '24px'
+                        }}
+                    >
+                        <TerminalPowerRestore
+                            onWin={handleTerminalWin}
+                            onLose={handleTerminalLose}
+                            onComplete={() => setShowTerminal(false)}
+                        />
                     </div>
                 )}
 

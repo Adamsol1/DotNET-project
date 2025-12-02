@@ -3,7 +3,7 @@
     "Id": 1,
     "Name": "Ryan",
     "Description": "The protagonist",
-    "ImageUrl": "/images/characters/protagonist.png",
+    "ImageUrl": "/assets/characters/protagonist.png",
     "Health": 100,
     "CurrentStoryNodeId": 1
   }
