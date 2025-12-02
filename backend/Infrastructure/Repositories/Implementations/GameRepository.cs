@@ -1,15 +1,10 @@
-using backend.Application.Interfaces.Repositories;
 using backend.Domain.Models;
 using backend.Infrastructure.Data;
+using backend.Infrastructure.Logging;
 using backend.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using backend.Infrastructure.Logging;
-using System;
 
-namespace backend.Infrastructure.Repositories;
+namespace backend.Infrastructure.Repositories.Implementations;
 
 /// <summary>
 /// Repository for managing GameSave entities in the database.

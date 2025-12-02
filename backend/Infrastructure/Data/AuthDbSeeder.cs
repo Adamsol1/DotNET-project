@@ -61,8 +61,7 @@ public static class AuthDbSeeder
                     {
                         Username = "admin",
                         Password = "Admin123!"
-                    },
-                    user.Id
+                    }
                 );
                 logger.Information("Created the default admin user");
             }

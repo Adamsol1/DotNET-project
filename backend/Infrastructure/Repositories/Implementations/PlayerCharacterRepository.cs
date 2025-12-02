@@ -1,14 +1,10 @@
 using backend.Domain.Models;
-using backend.Application.Interfaces.Repositories;
 using backend.Infrastructure.Data;
+using backend.Infrastructure.Logging;
 using backend.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Repositories.Implementations;
-using backend.Infrastructure.Logging;
-using System;
-
-namespace backend.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository for managing PlayerCharacter entities in the database.
