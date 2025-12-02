@@ -124,24 +124,7 @@ public class UserService : IUserService
 
         try {
 
-<<<<<<< HEAD
-            return ReturnUserDto(user);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "[Userservice] Error fetching user with id {id}", id);
-            throw;
-        }
-    }
-    // Method to update username for the currently authenticated user
-    public async Task<UserDto> UpdateUsername(string authUserId, UpdateUsernameDto updateUsernameDto)
-    {
-        try
-        {
-            _logger.LogInformation("[Userservice] UpdateUsername called for AuthUserId: {AuthUserId}", authUserId);
-=======
             // start a transaction
->>>>>>> adminUserManagement
             await _uow.BeginAsync();
             _logger.LogInformation("[Userservice] UpdateUsername called for AuthUserId: {authUserId}", authUserId);
 
@@ -150,20 +133,12 @@ public class UserService : IUserService
 
             // log the result
             _logger.LogInformation("[Userservice] User lookup result: {UserFound}", user != null ? $"Found user ID {user.Id}" : "Not found");
-<<<<<<< HEAD
-            
-            // Check if user exists
-            if (user == null)
-            {
-                _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
-=======
 
             // check if the user exists
             if (user == null) {
                 _logger.LogWarning("[Userservice] User not found.");
                 
                 // if user doesnt exists we dont need the transaction as we dont make changes
->>>>>>> adminUserManagement
                 await _uow.RollBackAsync();
 
                 // throw an error
@@ -234,13 +209,8 @@ public class UserService : IUserService
         }
     }
 
-<<<<<<< HEAD
     //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user. 
     // Method to update password for the currently authenticated user
-=======
-    //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user.
-    // update password - User & admin
->>>>>>> adminUserManagement
     public async Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto)
     {
         try
@@ -256,15 +226,9 @@ public class UserService : IUserService
             await _uow.BeginAsync();
 
             // Get the user by AuthUserId
-<<<<<<< HEAD
             var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
             
             // Check if user exists
-=======
-            var user = await _uow.UserRepository.GetByAuthId(authUserId);
-
-            // check if the user exists
->>>>>>> adminUserManagement
             if (user == null)
             {
                 _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
@@ -316,12 +280,7 @@ public class UserService : IUserService
             throw;
         }
     }
-<<<<<<< HEAD
     // Method to delete the account of the currently authenticated user
-=======
-
-    // delete account - User & admin
->>>>>>> adminUserManagement
     public async Task<bool> DeleteAccount(string authUserId)
     {
         try

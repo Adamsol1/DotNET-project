@@ -53,26 +53,8 @@ public class AccountController : ControllerBase
             // Update username in the game database
             _logger.LogInformation("[AccountController] Attempting to update username for authUserId: {AuthUserId} to new username: {NewUsername}", authUserId, request.Username);
             var updatedUser = await _userService.UpdateUsername(authUserId, request);
-<<<<<<< HEAD
-            
-            // Update username in Identity (AuthUser)
-            var authUser = await _userManager.FindByIdAsync(authUserId);
-            // If authUser exists, update the username
-            if (authUser != null)
-            {
-                authUser.UserName = request.Username;
-                var result = await _userManager.UpdateAsync(authUser);
-                // Check if the update was successful
-                if (!result.Succeeded)
-                {
-                    _logger.LogWarning("[AccountController] Failed to update AuthUser username: {@Errors}", result.Errors);
-                    return BadRequest(new { message = "Failed to update authentication username" });
-                }
-            }
-=======
 
             // no need to call UserManager as the UserService handles it now. -Ah
->>>>>>> adminUserManagement
 
             _logger.LogInformation("[AccountController] Successfully updated username for user {UserId}", updatedUser.Id);
             return Ok(updatedUser);
@@ -108,30 +90,7 @@ public class AccountController : ControllerBase
                 return Unauthorized("User not authenticated");
             }
 
-<<<<<<< HEAD
-            // Update password in Identity (AuthUser)
-            var authUser = await _userManager.FindByIdAsync(authUserId);
-            // Check if authUser exists
-            if (authUser == null)
-            {
-                _logger.LogWarning("[AccountController] AuthUser not found for ID {AuthUserId}", authUserId);
-                return NotFound(new { message = "User not found" });
-            }
-
-            // Remove old password and add new one (since we don't have the old password)
-            var token = await _userManager.GeneratePasswordResetTokenAsync(authUser);
-            var result = await _userManager.ResetPasswordAsync(authUser, token, request.NewPassword);
-            // Check if the update was successful
-            if (!result.Succeeded)
-            {
-                _logger.LogWarning("[AccountController] Failed to update password: {@Errors}", result.Errors);
-                return BadRequest(new { message = "Failed to update password", errors = result.Errors });
-            }
-
-            // Update password in the game database
-=======
             // Updates password in both databases
->>>>>>> adminUserManagement
             await _userService.UpdatePassword(authUserId, request);
 
             _logger.LogInformation("[AccountController] Successfully updated password in both databases");
@@ -166,23 +125,7 @@ public class AccountController : ControllerBase
             // Delete from game database
             await _userService.DeleteAccount(authUserId);
 
-<<<<<<< HEAD
-            // Delete from Identity (AuthUser)
-            var authUser = await _userManager.FindByIdAsync(authUserId);
-            // Check if authUser exists
-            if (authUser != null)
-            {
-                var result = await _userManager.DeleteAsync(authUser);
-                // Check if the deletion was successful
-                if (!result.Succeeded)
-                {
-                    _logger.LogWarning("[AccountController] Failed to delete AuthUser: {@Errors}", result.Errors);
-                    return BadRequest(new { message = "Failed to delete authentication account" });
-                }
-            }
-=======
             // same case here, Auth database user is also handled by the UserService now
->>>>>>> adminUserManagement
 
             _logger.LogInformation("[AccountController] Successfully deleted account for authUserId: {AuthUserId}", authUserId);
             return Ok(new { message = "Account deleted successfully" });

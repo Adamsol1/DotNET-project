@@ -10,6 +10,8 @@ export function Admin() {
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    const isAdmin = user?.role === 'admin';
+
     // State management
     const [users, setUsers] = useState([]); // Ensure this is initialized as an empty array
     const [selectedUser, setSelectedUser] = useState(null);
