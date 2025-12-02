@@ -9,6 +9,7 @@ import { Text } from '../../ui/Text';
 import { tokens } from '../../design/tokens';
 import {useAudio} from "../../context/AudioContext";
 import TerminalPowerRestore from '../miniGames/TerminalPower';
+import AlertModal from '../AlertModal';
 
 export function PlayGame({ saveId, onBackToMenu }) {
     const {
@@ -40,6 +41,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
     const [dialogueIndex, setDialogueIndex] = useState(0);
     const [showChoices, setShowChoices] = useState(false);
     const [showTerminal, setShowTerminal] = useState(false);
+    const [showExitModal, setShowExitModal] = useState(false);
 
     let isRevisit = false;
     if (currentSave && currentNode?.id) {
@@ -200,6 +202,22 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     };
 
+    // Handle back to menu click
+     const handleBackClick = () => {
+        setShowExitModal(true);
+    };
+
+    const confirmExit = () => {
+        setShowExitModal(false);
+        onBackToMenu();
+    };
+
+    const cancelExit = () => {
+        setShowExitModal(false);
+    };
+
+
+    // Terminal mini-game handlers
     const handleTerminalWin = () => {
         console.log('Terminal mini-game won');
         setShowTerminal(false);
@@ -331,11 +349,23 @@ export function PlayGame({ saveId, onBackToMenu }) {
                 paddingTop: '1px'
             }}
         >
+             {/* Exit Confirmation Modal */}
+            {showExitModal && (
+                <AlertModal
+                    title="Exit Game?"
+                    message="Are you sure you want to return to the menu? Your progress is auto-saved."
+                    onConfirm={confirmExit}
+                    onCancel={cancelExit}
+                    confirmLabel="Exit"
+                    cancelLabel="Stay"
+                />
+            )}
+
             {/* HUD now receives playerState and currentNode directly */}
             <HUD
                 playerState={playerState}
                 currentNode={currentNode}
-                onBackToMenu={onBackToMenu}
+                onBackToMenu={handleBackClick}
             />
 
             {/* Main Game Content */}
