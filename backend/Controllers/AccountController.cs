@@ -90,7 +90,7 @@ public class AccountController : ControllerBase
             // Updates password in both databases
             await _userService.UpdatePassword(authUserId, request);
 
-            _logger.LogInformation("[AccountController] Successfully updated password in both databases", authUserId);
+            _logger.LogInformation("[AccountController] Successfully updated password in both databases");
             return Ok(new { message = "Password updated successfully" });
         }
         catch (Exception e)

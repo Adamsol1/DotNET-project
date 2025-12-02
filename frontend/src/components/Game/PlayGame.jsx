@@ -198,6 +198,10 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     };
 
+    const hei = () => {
+        get
+    }
+
     // Loading / error / empty safeguards
     if (loading && !currentNode) {
         return (

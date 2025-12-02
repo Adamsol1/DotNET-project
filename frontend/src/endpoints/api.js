@@ -131,6 +131,33 @@ export const account = {
 
 // game API endpoints.
 
+export const admin = {
+    // get all users (admin method)
+    getAllUsers: async () => {
+        const response = await api.get('/admin/users');
+        return response.data;
+    },
+
+    // get a single user by id (admin method)
+    getUserbyId: async (userId) => {
+        const response = await api.get(`/admin/users/${userId}`);
+        return response.data;
+    },
+
+    // update a usersname
+    updateUsername: async (userId, data) => {
+        const response = await api.put(`/admin/users/${userId}/username`, data);
+        return response.data;
+    },
+
+    // update password.
+    updatePassword: async (userId, data) => {
+        const response = await api.put(`/admin/users/${userId}/password`, data);
+        return response.data;
+    }
+
+}
+
 export const game = {
     //endpoint to start a new game.
     startGame: async (data) => {

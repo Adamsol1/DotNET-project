@@ -149,6 +149,8 @@ const TerminalPowerRestore = ({ onComplete, onWin, onLose }) => {
     return () => clearInterval(interval);
   }, [phase, introComplete, scrollToBottom, startRound]);
 
+  
+
   // function to select an element
   const selectElement = elementId => {
     // if the element is already selected, remove it from the selected elements

@@ -48,7 +48,7 @@ public class UserService : IUserService
 
             if(existingUser != null)
             {
-                _logger.LogWarning("[Userservice] User with username already exists", registerUserDto.Username);
+                _logger.LogWarning("[Userservice] User with username already exists");
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException($"User with username already exists.");
             }
@@ -204,7 +204,7 @@ public class UserService : IUserService
         {
             // rollback the transaction
             await _uow.RollBackAsync();
-            _logger.LogError(e, "[Userservice] Error updating username in both databases", e.Message);
+            _logger.LogError(e, "[Userservice] Error updating username in both databases");
             throw;
         }
     }
