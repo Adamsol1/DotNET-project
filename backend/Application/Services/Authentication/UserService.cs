@@ -207,8 +207,8 @@ public class UserService : IUserService
         }
     }
 
-    //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user.
-    // update password - User & admin
+    //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user. 
+    // Method to update password for the currently authenticated user
     public async Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto)
     {
         try
@@ -224,9 +224,9 @@ public class UserService : IUserService
             await _uow.BeginAsync();
 
             // Get the user by AuthUserId
-            var user = await _uow.UserRepository.GetByAuthId(authUserId);
-
-            // check if the user exists
+            var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
+            
+            // Check if user exists
             if (user == null)
             {
                 _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
@@ -278,8 +278,7 @@ public class UserService : IUserService
             throw;
         }
     }
-
-    // delete account - User & admin
+    // Method to delete the account of the currently authenticated user
     public async Task<bool> DeleteAccount(string authUserId)
     {
         try

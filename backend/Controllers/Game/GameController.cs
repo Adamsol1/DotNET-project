@@ -1,7 +1,6 @@
 using backend.ApplicationNEW.Dtos.Game;
 using backend.ApplicationNEW.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace backend.ControllersNEW.Game;
 
@@ -11,7 +10,7 @@ namespace backend.ControllersNEW.Game;
 [Authorize]
 public class GameController : ControllerBase
 {
-    private readonly IGameService _gameService;
+    private readonly IGameService _gameService; 
 
     public GameController(IGameService gameService)
     {
@@ -28,8 +27,10 @@ public class GameController : ControllerBase
             var gameSave = await _gameService.CreateGame(request.UserId, request.SaveName ?? string.Empty);
 
             if (gameSave == null) {
+                
                 return BadRequest("Failed to create game save");
             }
+            
 
             // return the game save.
             return Ok(gameSave);

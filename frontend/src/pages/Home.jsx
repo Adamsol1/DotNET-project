@@ -11,12 +11,14 @@ import Spaceship from '../components/Home/Spaceship';
 import Stars from '../components/Home/Stars';
 
 import {useAuth} from "../context/Authentication";
-import * as authservice from "../shared/services/AuthenticationService";
+import * as authservice from "../endpoints/AuthenticationService";
 // alert modal for unsaved changes.
 import AlertModal from '../components/shared/AlertModal';
-
+import { useAudio } from '../context/AudioContext';
 export function Home() {
   const { user, logout, login, register } = useAuth();
+  const { playBackgroundMusic } = useAudio();
+  const hasStartedMusicRef = useRef(false);
   //CHAT
   const  authenticated= !!user;
 

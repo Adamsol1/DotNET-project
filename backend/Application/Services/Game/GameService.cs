@@ -4,7 +4,7 @@ using backend.ApplicationNEW.Dtos.Story;
 using backend.ApplicationNEW.Interfaces;
 using backend.Domain.Models;
 using backend.Infrastructure.Repositories.Base;
-
+using backend.Infrastructure.Logging;
 namespace backend.ApplicationNEW.Services.Game;
 
 /*
@@ -17,15 +17,24 @@ public class GameService : IGameService
 {
     private readonly IUnitOfWork _uow;
     private readonly ILogger<GameService> _logger;
+    private readonly IEntityFileLogger _entityLogger;
     private readonly IGenService _genService;
 
     // constructor
-    public GameService(IUnitOfWork uow, ILogger<GameService> logger, IGenService genService)
+    public GameService(IUnitOfWork uow, ILogger<GameService> logger, IGenService genService, IEntityFileLogger entityLogger)
     {
         _uow = uow;
         _logger = logger;
         _genService = genService;
+        _entityLogger = entityLogger;
+
+
+          // Debug: confirm it's injected
+        Console.WriteLine("[GameService] EntityFileLogger injected: " 
+            + (entityLogger != null ? "YES" : "NO"));
     }
+
+    
     
     // Get storyNode by id
     public async Task<StoryNodeDto> GetStoryNodeById(int id)
@@ -125,13 +134,38 @@ public class GameService : IGameService
             await _uow.SaveAsync();
             await _uow.CommitAsync();
 
+
+            // Debug before logging
+            Console.WriteLine("[GameService] About to log GameCreated");
+            Console.WriteLine($"[GameService] SaveId: {gameSave.Id}");
+
+            // log the creation
+            await _entityLogger.LogAsync(
+                "GameCreated", 
+                new { 
+                    gameSave.Id,
+                    gameSave.UserId,
+                    gameSave.SaveName,
+                    Timestamp = DateTime.UtcNow
+                    }, 
+                LogCategories.GamePlay.Creation,
+                "GameCreationLog");
+
             // return the game save object.
             return gameSave;
         }
         catch (Exception ex)
         {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "gameservice l156: failed to create game save");
+            await _entityLogger.LogAsync(
+                    "CreateGameFailed", 
+                    new { 
+                        userId,
+                        saveName,
+                        Reason = "Game save creation returned null",
+                        Timestamp = DateTime.UtcNow
+                        }, 
+                    LogCategories.GamePlay.Creation);
             throw new Exception("gameservice l156: failed to create game save: " + ex.Message);
         }
     }

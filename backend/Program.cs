@@ -197,58 +197,29 @@ using (var scope = app.Services.CreateScope())
     await authDbContext.Database.MigrateAsync();
 }
 
-//TODO MOVE:
-//Seeds for the roles.
-//Based on https://medium.com/@roshanj100/users-and-roles-seeding-in-asp-net-core-identity-with-entity-framework-core-a-step-by-step-guide-28e6f76a18db
+// Seed auth database and apply migrations
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AuthUser>>();
-    var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+    var authDbContext =
+        scope.ServiceProvider.GetRequiredService<AuthDbContext>();
     try
     {
-        var roles = new[] { "player", "admin" };
-        foreach (var role in roles)
-        {
-            if (!await roleManager.RoleExistsAsync(role))
-            {
-                await roleManager.CreateAsync(new IdentityRole(role));
-                logger.Information("Created role: {Role}", role);
-            }
-        }
-
-
-        var checkAdminUser = await userManager.FindByNameAsync("admin");
-        if (checkAdminUser == null)
-        {
-            var user = new AuthUser
-            {
-                UserName = "admin",
-
-            };
-
-            var createAdminUser = await userManager.CreateAsync(user, "Admin123!");
-            if (createAdminUser.Succeeded)
-            {
-                await userManager.AddToRoleAsync(user, "admin");
-                await userService.RegisterAccount(new RegisterUserDto
-                {
-                    Username = "admin",
-                    Password = "Admin123!"
-                }, user.Id);
-                logger.Information("Created the default admin user");
-            }
-            else
-            {
-                logger.Error("Failed to create the default admin user");
-            }
-        }
-        logger.Information("Database migration and seeding completed successfully.");
+        await AuthDbSeeder.SeedAsync(
+            authDbContext,
+            scope.ServiceProvider,
+            logger
+        );
+        logger.Information(
+            "Auth database migration and seeding completed successfully."
+        );
     }
     catch (Exception ex)
     {
-        logger.Error(ex, "An error occurred while migrating or seeding the database.");
-        throw; // Re-throw the exception after logging it
+        logger.Error(
+            ex,
+            "An error occurred while migrating or seeding the auth database."
+        );
+        throw;
     }
 }
 
