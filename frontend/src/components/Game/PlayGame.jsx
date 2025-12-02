@@ -202,7 +202,22 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     };
 
-<<<<<<< HEAD
+    // Handle back to menu click
+     const handleBackClick = () => {
+        setShowExitModal(true);
+    };
+
+    const confirmExit = () => {
+        setShowExitModal(false);
+        onBackToMenu();
+    };
+
+    const cancelExit = () => {
+        setShowExitModal(false);
+    };
+
+
+    // Terminal mini-game handlers
     const handleTerminalWin = () => {
         console.log('Terminal mini-game won');
         setShowTerminal(false);
@@ -241,11 +256,11 @@ export function PlayGame({ saveId, onBackToMenu }) {
             setShowTerminal(false);
         }
     }, [currentNode?.id, currentNode?.Id]);
-=======
+
     const hei = () => {
         get
     }
->>>>>>> adminUserManagement
+
 
     // Loading / error / empty safeguards
     if (loading && !currentNode) {
