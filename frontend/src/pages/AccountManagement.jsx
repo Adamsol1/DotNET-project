@@ -8,7 +8,7 @@ import Spaceship from '../components/Home/Spaceship';
 
 import { useGame } from '../context/GameContext'; // Context for API calls and game state
 import { useAuth } from '../context/Authentication'; // Context for user authentication
-import AlertModal from '../components/AlertModal'; // Modal to warn about unsaved changes
+import AlertModal from '../components/shared/AlertModal'; // Modal to warn about unsaved changes
 
 
 

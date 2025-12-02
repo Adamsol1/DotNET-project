@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { SceneLayout } from '../scene/SceneLayout';
-import { DialoguePanel } from '../DialoguePanel';
-import { HUD } from '../Hudv2';
-import { Button } from '../../ui/Button';
-import { Card } from '../../ui/Card';
-import { Text } from '../../ui/Text';
-import { tokens } from '../../design/tokens';
+import { SceneLayout } from '../GameUI/scene/SceneLayout';
+import { DialoguePanel } from '../GameUI/DialoguePanel';
+import { HUD } from '../GameUI/Hudv2';
+import { Button } from '../shared/Button';
+import { Card } from '../shared/Card';
+import { Text } from '../shared/Text';
+import { tokens } from '../../shared/constants/design/tokens';
 import {useAudio} from "../../context/AudioContext";
-import TerminalPowerRestore from '../miniGames/TerminalPower';
+import TerminalPowerRestore from '../GameUI/miniGames/TerminalPower';
 
 export function PlayGame({ saveId, onBackToMenu }) {
     const {
@@ -200,7 +200,6 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     };
 
-<<<<<<< HEAD
     const handleTerminalWin = () => {
         console.log('Terminal mini-game won');
         setShowTerminal(false);
@@ -239,11 +238,6 @@ export function PlayGame({ saveId, onBackToMenu }) {
             setShowTerminal(false);
         }
     }, [currentNode?.id, currentNode?.Id]);
-=======
-    const hei = () => {
-        get
-    }
->>>>>>> adminUserManagement
 
     // Loading / error / empty safeguards
     if (loading && !currentNode) {

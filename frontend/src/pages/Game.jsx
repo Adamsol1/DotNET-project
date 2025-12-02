@@ -5,10 +5,10 @@ import { useAuth } from '../context/Authentication';
 import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
-import RockPaperScissors from '../components/miniGames/RockPaperScissors';
-import TerminalPowerRestore from '../components/miniGames/TerminalPower'; 
-import AlertModal from '../components/AlertModal';
-import PixelCloseButton from '../assets/icons/pixel-close-button.svg';
+import RockPaperScissors from '../components/GameUI/miniGames/RockPaperScissors';
+import TerminalPowerRestore from '../components/GameUI/miniGames/TerminalPower'; 
+import AlertModal from '../components/shared/AlertModal';
+import PixelCloseButton from '../shared/assets/icons/pixel-close-button.svg';
 
 export function Game() {
 

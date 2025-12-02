@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/Authentication';
 import { useNavigate } from 'react-router-dom';
-import { admin } from '../endpoints/api';
-import AlertModal from '../components/AlertModal';
-import { tokens } from '../design/tokens';
+import { admin } from '../shared/services/api';
+import AlertModal from '../components/shared/AlertModal';
+import { tokens } from '../shared/constants/design/tokens';
 
 
 export function Admin() {

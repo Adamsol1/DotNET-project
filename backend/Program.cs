@@ -9,12 +9,16 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.OpenApi.Models;
 using backend.Domain.Models;
 using System.IO;
-using backend.Application;
-using backend.Application.Dtos;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories;
-using backend.Application.Interfaces.Repositories;
-using backend.Application.Interfaces.Services;
+using backend.ApplicationNEW.Dtos.Authentication;
+using backend.ApplicationNEW.Interfaces;
+using backend.ApplicationNEW.Services;
+using backend.ApplicationNEW.Services.Authentication;
+using backend.ApplicationNEW.Services.Game;
+using backend.ApplicationNEW.Services.Story;
+using backend.Infrastructure.Repositories.Base;
+using backend.Infrastructure.Repositories.Implementations;
 
 // Clear default claim mappings to prevent issues with JWT token claims
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -193,6 +197,7 @@ using (var scope = app.Services.CreateScope())
     await authDbContext.Database.MigrateAsync();
 }
 
+//TODO MOVE:
 //Seeds for the roles.
 //Based on https://medium.com/@roshanj100/users-and-roles-seeding-in-asp-net-core-identity-with-entity-framework-core-a-step-by-step-guide-28e6f76a18db
 using (var scope = app.Services.CreateScope())
@@ -266,7 +271,7 @@ app.UseHttpsRedirection();
     * Images are stored in wwwroot/images folder
     * Example: https://localhost:5169/images/character1.png
     */
-app.UseStaticFiles();
+
 app.UseRouting();
 // Debug middleware: log Origin, Method, Path and small request body for auth endpoints
 app.Use(async (context, next) =>

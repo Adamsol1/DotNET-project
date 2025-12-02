@@ -23,7 +23,7 @@ public static class DbSeeder
         //1. user
         if (!await context.User.AnyAsync())
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "wwwroot", "seedData", "Users.json");
+            var path = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Data", "SeedData","Users.json");
             var jsonData = await File.ReadAllTextAsync(path);
             var users = JsonSerializer.Deserialize<List<User>>(jsonData);
 
@@ -37,7 +37,7 @@ public static class DbSeeder
         // 2. StoryNodes
         if (!await context.StoryNodes.AnyAsync())
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "wwwroot", "seedData", "StoryNode.json");
+            var path = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Data", "SeedData", "StoryNode.json");
             var jsonData = await File.ReadAllTextAsync(path);
             var storyNodes = JsonSerializer.Deserialize<List<StoryNode>>(jsonData);
 
@@ -53,7 +53,7 @@ public static class DbSeeder
         if (!await context.Characters.AnyAsync())
         {
             // Path to the JSON file
-            var path = Path.Combine(AppContext.BaseDirectory, "wwwroot", "seedData", "Character.json");
+            var path = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Data", "SeedData", "Character.json");
             var jsonData = await File.ReadAllTextAsync(path);
             var characters = JsonSerializer.Deserialize<List<Character>>(jsonData);
 
@@ -69,7 +69,7 @@ public static class DbSeeder
         // 4. PlayerCharacters
         if (!await context.PlayerCharacters.AnyAsync())
         {
-            var path = Path.Combine(AppContext.BaseDirectory,  "wwwroot", "seedData", "PlayerCharacter.json");
+            var path = Path.Combine(AppContext.BaseDirectory,  "Infrastructure", "Data", "SeedData", "PlayerCharacter.json");
             var jsonData = await File.ReadAllTextAsync(path);
             var playerCharacters = JsonSerializer.Deserialize<List<PlayerCharacter>>(jsonData);
 
@@ -87,7 +87,7 @@ public static class DbSeeder
         // 5. Choices
         if (!await context.Choices.AnyAsync())
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "wwwroot", "seedData", "Choice.json");
+            var path = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Data", "SeedData", "Choice.json");
             var jsonData = await File.ReadAllTextAsync(path);
             var choices = JsonSerializer.Deserialize<List<Choice>>(jsonData);
 
@@ -101,7 +101,7 @@ public static class DbSeeder
         // 6. Dialogues (depends on Characters & StoryNodes)
         if (!await context.Dialogues.AnyAsync())
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "wwwroot", "seedData", "Dialogue.json");
+            var path = Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Data", "SeedData", "Dialogue.json");
             var jsonData = await File.ReadAllTextAsync(path);
             var dialogues = JsonSerializer.Deserialize<List<Dialogue>>(jsonData);
 

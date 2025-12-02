@@ -1,7 +1,7 @@
 // react imports
 import React, { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
 // api imports
-import { game, story, account } from '../endpoints/api';
+import { game, story, account } from '../shared/services/api';
 
 /**
  * This context file is used to manage the game state and actions that can be taken.

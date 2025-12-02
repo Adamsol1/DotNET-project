@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { validateLoginForm, validateRegisterForm } from '../utils/validation';
+import { validateLoginForm, validateRegisterForm } from '../shared/utils/validation';
  import { useNavigate } from 'react-router-dom'; 
 
 // component imports . gameContext has api calls and game state management.
@@ -11,9 +11,9 @@ import Spaceship from '../components/Home/Spaceship';
 import Stars from '../components/Home/Stars';
 
 import {useAuth} from "../context/Authentication";
-import * as authservice from "../endpoints/AuthenticationService";
+import * as authservice from "../shared/services/AuthenticationService";
 // alert modal for unsaved changes.
-import AlertModal from '../components/AlertModal';
+import AlertModal from '../components/shared/AlertModal';
 
 export function Home() {
   const { user, logout, login, register } = useAuth();

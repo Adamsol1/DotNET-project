@@ -6,7 +6,7 @@
   @font-face {
     font-family: "visitor1";
     src: local("visitor1"),
-         url("./fonts/visitor1.ttf") format("truetype");
+         url("./shared/assets/fonts/visitor1.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
   }
