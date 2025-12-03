@@ -38,9 +38,10 @@ export function Game() {
   const loadSaves = useCallback(async () => {
     if (!authenticated || !user) return;
     try {
-      console.log('[Game] loadSaves called, user object:', user);
-      console.log('[Game] user.id (userId):', user?.id);
-      console.log('[Game] localStorage user_id:', localStorage.getItem('user_id'));
+      //console.log('[Game] loadSaves called, user object:', user);
+      //console.log('[Game] user.id (userId):', user?.id);
+      //console.log('[Game] localStorage user_id:', localStorage.getItem('user_id'));
+      
       const userSaves = await getAllSaves(user.id);
       setSaves(userSaves);
     } catch (error) {

@@ -85,7 +85,8 @@ const TerminalPowerRestore = ({ onComplete, onWin, onLose }) => {
   // function to start a new round
   // function sets the grid elements, and targets that the player has to
   //select, chooses randomly from the elements library.
-  const startRound = useCallback(() => {
+  const startRound = useCallback((roundNumber) => {
+    const currentRound = roundNumber || round;
     // get the keys of the elements library
     const keys = Object.keys(ELEMENT_LIBRARY);
 
@@ -115,7 +116,7 @@ const TerminalPowerRestore = ({ onComplete, onWin, onLose }) => {
     setTerminalLines(prev => [
       ...prev,
       '',
-      `> ROUND ${round}/${maxRounds}: LOCATE EVERY [${ELEMENT_LIBRARY[nextTarget].name.toUpperCase()}]`,
+      `> ROUND ${currentRound}/${maxRounds}: LOCATE EVERY [${ELEMENT_LIBRARY[nextTarget].name.toUpperCase()}]`,
       ''
     ]);
     // scroll to the bottom of the terminal
@@ -178,10 +179,11 @@ const TerminalPowerRestore = ({ onComplete, onWin, onLose }) => {
       if (round >= maxRounds) {
         completeGame(true);
       } else {
-        setRound(prev => prev + 1);
+        const nextRound = round + 1;
+        setRound(nextRound);
 
-        // start the next round
-        setTimeout(startRound, 900);
+        // start the next round with the updated round number
+        setTimeout(() => startRound(nextRound), 900);
       }
     } else {
       setTerminalLines(prev => [...prev, 'ERROR: Incorrect selection. Resetting...', '']);

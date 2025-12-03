@@ -11,6 +11,7 @@ import Spaceship from '../components/Home/Spaceship';
 import Stars from '../components/Home/Stars';
 
 import {useAuth} from "../context/Authentication";
+import {useAudio} from "../context/AudioContext";
 import * as authservice from "../shared/services/AuthenticationService";
 // alert modal for unsaved changes.
 import AlertModal from '../components/Shared/AlertModal';
@@ -18,6 +19,7 @@ import AlertModal from '../components/Shared/AlertModal';
 
 export function Home() {
   const { user, logout, login } = useAuth();
+  const { playBackgroundMusic } = useAudio();
 
   //CHAT
   const  authenticated= !!user;
@@ -104,6 +106,11 @@ export function Home() {
     }
   };
 
+  // Play background music when component mounts
+  useEffect(() => {
+    playBackgroundMusic('/assets/audio/music/menuMusic.mp3');
+  }, [playBackgroundMusic]);
+
   // Warn user if they try to close/refresh the tab
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -167,7 +174,6 @@ export function Home() {
     <div 
       className="relative min-h-screen"
     >
-      <audio src="/assets/audio/music/menuMusic.mp3" autoPlay loop hidden />
       <Stars />
       <Planet />
       <Spaceship />

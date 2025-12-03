@@ -44,10 +44,22 @@ export function AudioProvider({ children }) {
         };
     });
 
-    const startBackgroundMusic = (url) => {
-        // Stop existing background music
+    const startBackgroundMusic = async (url) => {
+        // Stop existing background music and wait for it to pause
         if (backgroundMusicRef.current) {
-            backgroundMusicRef.current.pause();
+            try {
+                backgroundMusicRef.current.pause();
+                await new Promise(resolve => {
+                    if (backgroundMusicRef.current) {
+                        backgroundMusicRef.current.addEventListener('pause', resolve, { once: true });
+                        setTimeout(resolve, 100);
+                    } else {
+                        resolve();
+                    }
+                });
+            } catch (err) {
+                // Ignore pause errors
+            }
             backgroundMusicRef.current = null;
         }
 
@@ -55,9 +67,15 @@ export function AudioProvider({ children }) {
         backgroundMusicRef.current = new Audio(url);
         backgroundMusicRef.current.loop = true;
         backgroundMusicRef.current.volume = isMuted ? 0 : 0.3;
-        backgroundMusicRef.current.play().catch(err => {
-            console.error('Error playing background music:', err);
-        });
+        
+        try {
+            await backgroundMusicRef.current.play();
+        } catch (err) {
+            // AbortError is expected when audio is interrupted - don't log as error
+            if (err.name !== 'AbortError') {
+                console.error('Error playing background music:', err);
+            }
+        }
 
         setCurrentBackgroundUrl(url);
     };
@@ -72,7 +90,11 @@ export function AudioProvider({ children }) {
             return;
         }
 
-        startBackgroundMusic(url);
+        startBackgroundMusic(url).catch(err => {
+            if (err.name !== 'AbortError') {
+                console.error('Error in playBackgroundMusic:', err);
+            }
+        });
     };
 
     const playAmbientSound = async (url, loop = false, fadeDuration = 800) => {

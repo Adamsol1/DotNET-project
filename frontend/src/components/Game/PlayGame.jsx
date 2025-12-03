@@ -96,7 +96,8 @@ export function PlayGame({ saveId, onBackToMenu }) {
             return;
         }
         loadGameData();
-        console.log('[PlayGame] saveId changed:', saveId);
+        
+        //console.log('[PlayGame] saveId changed:', saveId);
     }, [saveId, loadGameData]);
     
     //TODO: there might be a case were we use the backgroundsMusicUrl for ambient sounds for a node, so will see if there is
@@ -263,14 +264,15 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
     // function callback for starting terminal
     const startTerminal = () => {
-        console.log('STARTER SPILLET NA.');
+        //console.log('STARTER SPILLET NA.');
         setShowTerminal(true);
     };
 
     useEffect(() => {
         const nodeId = Number(currentNode?.id ?? currentNode?.Id);
         const shouldShow = nodeId === 14 || nodeId === 16;
-        console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
+        
+        //console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
         if (shouldShow) {
             startTerminal();
         } else {
@@ -355,6 +357,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
     const hp = playerState?.health ?? playerState?.hp ?? 100;
     const isGameOver = (typeof gameOver === 'boolean') ? gameOver : hp <= 0;
 
+    /*
     console.log('Debug:', {
         isRevisit,
         showChoices,
@@ -362,6 +365,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
         currentNodeId: currentNode?.id,
         visitedNodeIds: currentSave?.visitedNodeIds
     });
+    */
     return (
         
         <div

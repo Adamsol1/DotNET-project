@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
                         role: role,
                         decodedUser
                     });
-                    console.log('[Auth] Token valid, restored user state with id:', storedUserId);
+                    //console.log('[Auth] Token valid, restored user state with id:', storedUserId);
                 } else {
                     console.warn("Token is expired!");
                     localStorage.removeItem('token');
