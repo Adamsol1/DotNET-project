@@ -44,22 +44,13 @@ public class GenService : IGenService
             return result;
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // if the try fails, we rollback the transaction.
             await _uow.RollBackAsync();
             // throw the exception to the caller.
             // since we dont know what kind of exception it is, we just throw it
             // and let the caller handle it.
-            await _entityLogger.LogAsync(
-                "GenService: unexpected error occurred",
-                new
-                {
-                    Error = ex.Message,
-                    Timestamp = DateTime.UtcNow
-                },
-                LogCategories.SystemLevel.Errors
-            );
             throw;
         }
     }

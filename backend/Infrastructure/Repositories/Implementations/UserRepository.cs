@@ -41,7 +41,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -64,7 +64,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -95,7 +95,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -116,7 +116,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }

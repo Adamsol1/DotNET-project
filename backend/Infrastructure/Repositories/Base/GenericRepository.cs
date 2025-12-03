@@ -46,7 +46,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                         Reason = "Entity not found",
                         Timestamp = DateTime.UtcNow
                         }, 
-                    LogCategories.SystemLevel.Database);
+                    LogCategories.System);
 
                 throw new KeyNotFoundException($"Entity of type {typeof(T).Name} with id {id} was not found.");
             }
@@ -68,7 +68,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -89,7 +89,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -117,7 +117,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Entity = entity,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
 
             // return the entity
             return entity;
@@ -139,7 +139,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -168,7 +168,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Entity = entity,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             // return the entity
             return entity;
 
@@ -189,7 +189,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
 
@@ -214,7 +214,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                         Reason = "Entity not found",
                         Timestamp = DateTime.UtcNow
                         }, 
-                    LogCategories.SystemLevel.Database);
+                    LogCategories.System);
                     
                 throw new KeyNotFoundException($"Entity of type {typeof(T).Name} with id {id} was not found.");
             }
@@ -232,7 +232,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Id = id,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
 
             // return the entity
             return entity;
@@ -253,7 +253,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -294,7 +294,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -333,7 +333,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -358,7 +358,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw new Exception($"Error retrieving property value for entity of type {typeof(T).Name} with id {id}: {ex.Message}");
         }
     }

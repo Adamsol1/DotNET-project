@@ -52,7 +52,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
             await _entityLogger.LogAsync(
                 "GetStoryNodeIdError",
                 new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -87,7 +87,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
             await _entityLogger.LogAsync(
                 "GetStoryNodeError",
                 new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -122,7 +122,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
             await _entityLogger.LogAsync(
                 "GetNextStoryNodeError",
                 new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -157,7 +157,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
             await _entityLogger.LogAsync(
                 "GetNextStoryNodeIdError",
                 new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -192,7 +192,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
             await _entityLogger.LogAsync(
                 "GetChoiceTextError",
                 new { ChoiceId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -219,7 +219,7 @@ public class ChoiceRepository : GenericRepository<Choice>, IChoiceRepository
             await _entityLogger.LogAsync(
                 "GetAllByStoryNodeIdError",
                 new { StoryNodeId = storyNodeId, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }

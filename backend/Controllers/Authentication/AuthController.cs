@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
             await _entityLogger.LogAsync(
                 "register account successful",
                 gameUserDto,
-                LogCategories.Authentication.Registration
+                LogCategories.Authentication
             );
             
             return Ok(new {message = "Account created successfully", gameUserId = gameUserDto.Id});
@@ -82,7 +82,7 @@ public class AuthController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Authentication.Registration
+                LogCategories.Authentication
             );
             return BadRequest(new { message = e.Message });
         }
@@ -96,7 +96,7 @@ public class AuthController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Authentication.Registration
+                LogCategories.Authentication
             );
             // return the error
             return BadRequest(new { message = "Unexpected error occured while creating account." });
@@ -138,9 +138,9 @@ public class AuthController : ControllerBase
                     {
                         Timestamp = DateTime.UtcNow
                     },
-                    LogCategories.Authentication.Login
+                    LogCategories.Authentication
                 );
-                return Unauthorized(new { message = "Incorrect username or password. Please try again."});
+                return BadRequest(new { message = "Incorrect username or password. Please try again."});
             }
 
             // Get AuthUser to generate JWT token
@@ -154,7 +154,7 @@ public class AuthController : ControllerBase
                     {
                         Timestamp = DateTime.UtcNow
                     },
-                    LogCategories.Authentication.Login
+                    LogCategories.Authentication
                 );
                 return Unauthorized(new { message = "Authentication error. Please try again."});
             }
@@ -170,7 +170,7 @@ public class AuthController : ControllerBase
                     Username = user.Username,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Authentication.Login
+                LogCategories.Authentication
             );
 
             return Ok(new { token = token, userId = user.Id, username = user.Username });
@@ -185,7 +185,7 @@ public class AuthController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Authentication.Login
+                LogCategories.Authentication
             );
             // return the error
             return BadRequest(new { message = "Unexpected error occured while trying to login." });
@@ -211,7 +211,7 @@ public class AuthController : ControllerBase
             {
                 Timestamp = DateTime.UtcNow
             },
-            LogCategories.Authentication.Logout
+            LogCategories.Authentication
         );
         
         return Ok("Logged out successfully");
@@ -245,7 +245,7 @@ public class AuthController : ControllerBase
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
+            expires: DateTime.Now.AddSeconds(20),
             signingCredentials: credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);

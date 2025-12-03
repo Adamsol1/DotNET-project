@@ -68,7 +68,7 @@ public class AdminController : ControllerBase
                     Reason = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserRetrieval,
+                LogCategories.Admin,
                 "UserRetrievalErrorLog");
 
             //Return the not found response to the client with the error message.
@@ -84,7 +84,7 @@ public class AdminController : ControllerBase
                     Reason = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserRetrieval,
+                LogCategories.Admin,
                 "UserRetrievalErrorLog");
 
             //Return a generic internal server error to client. 
@@ -123,7 +123,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserRetrieval,
+                LogCategories.Admin,
                 "UserRetrievalErrorLog");
 
             //Return the not found response to the client with the error message.
@@ -140,7 +140,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserRetrieval,
+                LogCategories.Admin,
                 "UserRetrievalErrorLog");
 
             //Return a generic internal server error to client.
@@ -179,7 +179,7 @@ public class AdminController : ControllerBase
             await _entityLogger.LogAsync(
                 "update username successful",
                 user,
-                LogCategories.Administration.UserModification,
+                LogCategories.Admin,
                 "UserUpdateLog");
 
             return Ok(user);
@@ -196,7 +196,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserRetrieval,
+                LogCategories.Admin,
                 "UserRetrievalErrorLog");
             //Return the not found response to the client with the error message.
             return NotFound(new { message = e.Message });
@@ -212,7 +212,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserModification,
+                LogCategories.Admin,
                 "UserUpdateErrorLog");
             //returns a general error message informing about the internal server error.
             return StatusCode(500, "Internal server error");
@@ -251,7 +251,7 @@ public class AdminController : ControllerBase
                 {
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserModification,
+                LogCategories.Admin,
                 "UserUpdateLog");
 
             return Ok(new { message = "Password updated successfully" });
@@ -268,7 +268,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserRetrieval,
+                LogCategories.Admin,
                 "UserRetrievalErrorLog");
             return NotFound(new { message = e.Message });
         }
@@ -284,7 +284,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserModification,
+                LogCategories.Admin,
                 "UserUpdateErrorLog");
             return StatusCode(500, "Internal server error");
         }
@@ -315,7 +315,7 @@ public class AdminController : ControllerBase
                         UserId = id,
                         Timestamp = DateTime.UtcNow
                     },
-                    LogCategories.Administration.UserDeletion,
+                    LogCategories.Admin,
                     "UserDeletionErrorLog");
                 return NotFound(new { message = "AuthUserId not found" });
             }
@@ -329,7 +329,7 @@ public class AdminController : ControllerBase
                 {
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserDeletion,
+                LogCategories.Admin,
                 "UserDeletionLog");
 
             return Ok(new { message = "User deleted successfully" });
@@ -344,7 +344,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserDeletion,
+                LogCategories.Admin,
                 "UserDeletionErrorLog");
             return NotFound(new { message = e.Message });
         }
@@ -357,7 +357,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserDeletion,
+                LogCategories.Admin,
                 "UserDeletionErrorLog");
             return StatusCode(500, "Internal server error");
         }

@@ -88,7 +88,8 @@ builder.Services.AddAuthentication(options =>
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                     builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key not configured")
-                ))
+                )),
+                ClockSkew = TimeSpan.Zero  // ◄─── Remove default 5-minute grace period
             };
         
         });

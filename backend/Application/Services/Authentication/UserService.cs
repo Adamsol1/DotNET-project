@@ -50,7 +50,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "User with username already exists.",
                     new { Username = registerUserDto.Username, Timestamp = DateTime.UtcNow },
-                    LogCategories.Authentication.Registration
+                    LogCategories.Authentication
                 );
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException($"User with username already exists.");
@@ -69,7 +69,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "register account error user creation failed",
                     new { Username = registerUserDto.Username, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
-                    LogCategories.Authentication.Registration
+                    LogCategories.Authentication
                 );
                 // rollback the transaction.
                 await _uow.RollBackAsync();
@@ -86,7 +86,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "register account error role assignment failed",
                     new { Username = registerUserDto.Username, Errors = roleResult.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
-                    LogCategories.Authentication.Registration
+                    LogCategories.Authentication
                 );
                 await _uow.RollBackAsync();
                 await _userManager.DeleteAsync(authUser);
@@ -130,7 +130,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "AuthUser with username does not exist.",
                     new { Username = loginUserDto.Username, Timestamp = DateTime.UtcNow },
-                    LogCategories.Authentication.Login
+                    LogCategories.Authentication
                 );
                 return null;
             }
@@ -141,7 +141,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "Invalid password for user.",
                     new { Username = loginUserDto.Username, Timestamp = DateTime.UtcNow },
-                    LogCategories.Authentication.Login
+                    LogCategories.Authentication
                 );
                 return null;
             }
@@ -155,7 +155,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "GameUser with AuthUserId does not exist.",
                     new { AuthUserId = authUser.Id, Timestamp = DateTime.UtcNow },
-                    LogCategories.Authentication.Login
+                    LogCategories.Authentication
                 );
                 return null;
             }
@@ -194,7 +194,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "User was not found.",
                     new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Username
+                    LogCategories.Account
                 );
                 
                 // if user doesnt exists we dont need the transaction as we dont make changes
@@ -212,7 +212,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "Username already exists.",
                     new { Username = updateUsernameDto.Username, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Username
+                    LogCategories.Account
                 );
                 // throw the transaction back
                 await _uow.RollBackAsync();
@@ -235,7 +235,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "AuthUser not found in authentication system. Cannot update username.",
                     new { AuthUserId = user.AuthUserId, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Username
+                    LogCategories.Account
                 );
                 
                 // Rollback game database since we can't update AuthUser, as it doesnt exist.
@@ -254,7 +254,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     $"Failed to update username in auth database.",
                     new { AuthUserId = user.AuthUserId, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Username
+                    LogCategories.Account
                 );
 
                 // rollback the transaction on everything / gamedb as auth database as failed.
@@ -290,7 +290,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "Passwords do not match.",
                     new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Password
+                    LogCategories.Account
                 );
                 throw new InvalidOperationException("Passwords do not match.");
             }
@@ -307,7 +307,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "User not found. Please log out and log back in, or re-register your account.",
                     new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Password
+                    LogCategories.Account
                 );
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException($"User not found. Please log out and log back in, or re-register your account.");
@@ -321,7 +321,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "AuthUser not found in authentication system. Cannot update password.",
                     new { AuthUserId = user.AuthUserId, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Password
+                    LogCategories.Account
                 );
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException("AuthUser not found in authentication system. Cannot update password.");
@@ -338,7 +338,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "Failed to update password in auth database.",
                     new { AuthUserId = user.AuthUserId, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Password
+                    LogCategories.Account
                 );
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException("Failed to update password in auth database.");
@@ -372,7 +372,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "User not found.",
                     new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Deletion
+                    LogCategories.Account
                 );
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException($"User not found.");
@@ -401,7 +401,7 @@ public class UserService : IUserService
                 await _entityLogger.LogAsync(
                     "Failed to delete AuthUser in authentication system. Cannot delete account.",
                     new { AuthUserId = user.AuthUserId, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
-                    LogCategories.AccountManagement.Deletion
+                    LogCategories.Account
                 );
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException("Failed to delete AuthUser in authentication system. Cannot delete account.");

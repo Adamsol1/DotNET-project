@@ -51,7 +51,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetStoryNodeTitleByIdError",
                 new { StoryNodeId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -84,7 +84,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetStoryNodeByTitleError",
                 new { Title = title, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -117,7 +117,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetStoryNodeDescriptionError",
                 new { StoryNodeId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -151,7 +151,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetStoryNodeBackgroundUrlError",
                 new { StoryNodeId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -184,7 +184,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetAllDialoguesOfStoryNodeError",
                 new { StoryNodeId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -217,7 +217,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetAllChoicesOfStoryNodeError",
                 new { StoryNodeId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -259,7 +259,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             await _entityLogger.LogAsync(
                 "GetAllCharactersOfStoryNodeError",
                 new { StoryNodeId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }

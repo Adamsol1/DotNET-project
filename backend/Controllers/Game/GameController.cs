@@ -40,7 +40,7 @@ public class GameController : ControllerBase
                         SaveName = request.SaveName,
                         Timestamp = DateTime.UtcNow
                     },
-                    LogCategories.GamePlay.Creation
+                    LogCategories.Game
                 );
                 return BadRequest("Failed to create game save");
             }
@@ -49,7 +49,7 @@ public class GameController : ControllerBase
             await _entityLogger.LogAsync(
                 "start game successful",
                 gameSave,
-                LogCategories.GamePlay.Creation
+                LogCategories.Game
             );
 
             // return the game save.
@@ -63,7 +63,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Creation
+                LogCategories.Game
             );
             return BadRequest($"Failed to start game");
         }
@@ -81,7 +81,7 @@ public class GameController : ControllerBase
             await _entityLogger.LogAsync(
                 "load game successful",
                 gameSave,
-                LogCategories.GamePlay.Load
+                LogCategories.Game
             );
             
             return Ok(gameSave);
@@ -95,7 +95,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Load
+                LogCategories.Game
             );
             return NotFound($"Failed to load game");
         } catch (Exception ex) {
@@ -108,7 +108,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Load
+                LogCategories.Game
             );
             return BadRequest($"Failed to load game");
         }
@@ -133,7 +133,7 @@ public class GameController : ControllerBase
                     SaveCount = gameSaves.Count(),
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Saves
+                LogCategories.Game
             );
             
             return Ok(gameSaves);
@@ -147,7 +147,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Saves
+                LogCategories.Game
             );
             return NotFound($"Failed to get user's saved games: {ex.Message}");
         } catch (Exception ex) {
@@ -160,7 +160,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Saves
+                LogCategories.Game
             );
             return BadRequest($"Failed to get user's saved games: {ex.Message}");
         }
@@ -183,7 +183,7 @@ public class GameController : ControllerBase
                         SaveId = saveId,
                         Timestamp = DateTime.UtcNow
                     },
-                    LogCategories.GamePlay.Delete
+                    LogCategories.Game
                 );
                 return NotFound("Failed to delete game save");
             }
@@ -196,7 +196,7 @@ public class GameController : ControllerBase
                     SaveId = saveId,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Delete
+                LogCategories.Game
             );
 
             return Ok(new { message = "Save deleted successfully" });
@@ -211,7 +211,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Delete
+                LogCategories.Game
             );
             return NotFound("Failed to delete game save");
         } catch (Exception ex) {
@@ -224,7 +224,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Delete
+                LogCategories.Game
             );
             return BadRequest($"Failed to delete game save");
         }
@@ -244,7 +244,7 @@ public class GameController : ControllerBase
             await _entityLogger.LogAsync(
                 "update game save successful",
                 gameSave,
-                LogCategories.GamePlay.Update
+                LogCategories.Game
             );
             
             return Ok(gameSave);
@@ -258,7 +258,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Update
+                LogCategories.Game
             );
             return NotFound($"Failed to update game save: {ex.Message}");
         } catch (Exception ex) {
@@ -271,7 +271,7 @@ public class GameController : ControllerBase
                     Error = ex.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.Update
+                LogCategories.Game
             );
             return BadRequest($"Failed to update game save: {ex.Message}");
         }

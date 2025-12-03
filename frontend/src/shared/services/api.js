@@ -49,30 +49,27 @@ api.interceptors.response.use(
         //Auth error handling. 
         
         if(error.response?.status === 401) {
+            
+            console.log("401 error detected in api.js interceptor");
             //Checks if the token exissts in the local storage. This is to check if the user was logged in, our failed to loign
-            const tokenCheck = localStorage.getItem('token');
+           
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('user_id');
 
-            //Checks if the token existed. If yes, it is no longer valid so redirect to home page. 
-            if (tokenCheck) {
-                window.location.href = '/';
-            }
+            window.location.href = '/login';
             //Redirect to home page due to being unauthorized.
-        console.warn("Unauthorized! Redirecting to home page.");
+            console.warn("Unauthorized! Redirecting to login page.");
         }
-            
-         
-            
-        
+
         // log the error message or the error data to the console.
         if (error.response?.data) {
             console.error('API Error:', JSON.stringify(error.response.data, null, 2));
         } else {
             console.error('API Error:', error.message);
         }
-        // return the error.
+        
+        // return the error so the caller can handle it
         return Promise.reject(error);
     }
 );

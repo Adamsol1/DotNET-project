@@ -131,7 +131,7 @@ export function AccountManagement() {
   }, [hasUnsavedChanges]);
 
   return (
-    <div className="relative min-h-screen overflow-auto">
+    <div className="relative min-h-screen">
       {/* Background decorative components */}
       <Stars />
       <Planet />

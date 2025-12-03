@@ -47,7 +47,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
             await _entityLogger.LogAsync(
                 "GetCharacterByNameError",
                 new { Name = name, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -78,7 +78,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
             await _entityLogger.LogAsync(
                 "GetCharacterNameByIdError",
                 new { Id = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -109,7 +109,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
             await _entityLogger.LogAsync(
                 "GetAllCharactersWithNameError",
                 new { Name = name, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -140,7 +140,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
             await _entityLogger.LogAsync(
                 "GetCharacterDescriptionError",
                 new { Id = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -171,7 +171,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
             await _entityLogger.LogAsync(
                 "GetCharacterImageUrlError",
                 new { Id = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -204,7 +204,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
             await _entityLogger.LogAsync(
                 "GetAllDialoguesOfCharacterError",
                 new { CharacterId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }

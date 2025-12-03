@@ -45,7 +45,7 @@ public class GameRepository : GenericRepository<GameSave>, IGameRepository
                     Reason = ex.Message,
                     Timestamp = DateTime.UtcNow
                     }, 
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }

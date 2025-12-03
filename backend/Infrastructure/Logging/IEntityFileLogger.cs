@@ -48,14 +48,13 @@ public class EntityFileLogger : IEntityFileLogger
             Data = entity
         };
 
-        var folderPath = string.IsNullOrEmpty(category) 
-            ? _basePath 
-            : Path.Combine(_basePath, category);
+        var folderPath = _basePath;
         
         Directory.CreateDirectory(folderPath);
 
-        var typeName = logName ?? SanitizeFileName(typeof(T).Name);
-        var fileName = $"{typeName}-{DateTime.UtcNow:yyyyMMdd}.log";
+        var fileName = string.IsNullOrEmpty(category) 
+            ? $"Default-{DateTime.UtcNow:yyyyMMdd}.log"
+            : $"{category}-{DateTime.UtcNow:yyyyMMdd}.log";
         var filePath = Path.Combine(folderPath, fileName);
 
             var json = JsonSerializer.Serialize(

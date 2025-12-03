@@ -39,7 +39,7 @@ public class StoryController : ControllerBase
                 await _entityLogger.LogAsync(
                     "get current node error not found",
                     new { SaveId = saveId, Timestamp = DateTime.UtcNow },
-                    LogCategories.GamePlay.StoryHandling
+                    LogCategories.Story
                 );
                 return NotFound("Current node not found");
             }
@@ -48,7 +48,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get current node successful",
                 currentNode,
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
 
             // return the current node.
@@ -58,7 +58,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get current node error",
                 new { SaveId = saveId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return StatusCode(500, "Error getting current node");
         }
@@ -77,7 +77,7 @@ public class StoryController : ControllerBase
                 await _entityLogger.LogAsync(
                     "navigate to node error not found",
                     new { SaveId = saveId, NodeId = nodeId, Timestamp = DateTime.UtcNow },
-                    LogCategories.GamePlay.StoryHandling
+                    LogCategories.Story
                 );
                 return NotFound("Node not found");
             }
@@ -86,7 +86,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "navigate to node successful",
                 node,
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
 
             // return the node.
@@ -96,7 +96,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "navigate to node error",
                 new { SaveId = saveId, NodeId = nodeId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to navigate to node");
         }
@@ -114,7 +114,7 @@ public class StoryController : ControllerBase
                 await _entityLogger.LogAsync(
                     "go back error not found",
                     new { SaveId = saveId, Timestamp = DateTime.UtcNow },
-                    LogCategories.GamePlay.StoryHandling
+                    LogCategories.Story
                 );
                 return NotFound("Previous node not found");
             }
@@ -123,7 +123,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "go back successful",
                 previousNode,
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
 
             // return the previous node.
@@ -132,7 +132,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "go back error",
                 new { SaveId = saveId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to go back");
         }
@@ -150,7 +150,7 @@ public class StoryController : ControllerBase
                 await _entityLogger.LogAsync(
                     "go forward error not found",
                     new { SaveId = saveId, Timestamp = DateTime.UtcNow },
-                    LogCategories.GamePlay.StoryHandling
+                    LogCategories.Story
                 );
                 return NotFound("Next node not found");
             }
@@ -159,7 +159,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "go forward successful",
                 nextNode,
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
 
             // return the next node.
@@ -170,7 +170,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "go forward error",
                 new { SaveId = saveId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to go forward");
         }
@@ -199,7 +199,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "make choice successful",
                 new { SaveId = request.SaveId, ChoiceId = request.ChoiceId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             
             // Return complete response with node, choices, and updated player state
@@ -215,7 +215,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "make choice error not found",
                 new { SaveId = request.SaveId, ChoiceId = request.ChoiceId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Game save {request.SaveId} not found");
         }
@@ -224,7 +224,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "make choice error invalid",
                 new { SaveId = request.SaveId, ChoiceId = request.ChoiceId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Choice does not belong to current node");
         }
@@ -233,7 +233,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "make choice error",
                 new { SaveId = request.SaveId, ChoiceId = request.ChoiceId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to make choice");
         }
@@ -253,7 +253,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get available choices successful",
                 new { SaveId = saveId, ChoiceCount = choices.Count(), Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
 
             // return the choices.
@@ -264,7 +264,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get available choices error not found",
                 new { SaveId = saveId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Game save {saveId} not found");
         }
@@ -282,7 +282,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get next dialogue successful",
                 dialogue,
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
 
             // return the dialogue.
@@ -293,7 +293,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get next dialogue error not found",
                 new { SaveId = saveId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Game save {saveId} not found");
         }
@@ -302,7 +302,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get next dialogue error",
                 new { SaveId = saveId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to get next dialogue");
         }
@@ -322,7 +322,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "modify health successful",
                 new { ChoiceId = request.choiceId, NewHealth = newHealth, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             
             return Ok(newHealth);
@@ -332,7 +332,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "modify health error not found",
                 new { ChoiceId = request.choiceId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Choice {request.choiceId} not found");
         }
@@ -341,7 +341,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "modify health error",
                 new { ChoiceId = request.choiceId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to modify health");
         }
@@ -359,7 +359,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get player state successful",
                 playerState,
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             
             return Ok(playerState);
@@ -369,7 +369,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get player state error not found",
                 new { PlayerCharacterId = playerCharacterId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Player character {playerCharacterId} not found");
         }
@@ -378,7 +378,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get player state error",
                 new { PlayerCharacterId = playerCharacterId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return StatusCode(500, "Failed to get player state");
         }
@@ -396,7 +396,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get visited nodes successful",
                 new { SaveId = saveId, NodeCount = visitedNodes.Count, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             
             return Ok(visitedNodes);
@@ -406,7 +406,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get visited nodes error not found",
                 new { SaveId = saveId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Game save {saveId} not found");
         }
@@ -415,7 +415,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "get visited nodes error",
                 new { SaveId = saveId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to get visited nodes");
         }
@@ -433,7 +433,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "check visited node successful",
                 new { SaveId = saveId, NodeId = nodeId, HasVisited = hasVisited, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             
             return Ok(hasVisited);
@@ -443,7 +443,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "check visited node error not found",
                 new { SaveId = saveId, NodeId = nodeId, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return NotFound($"Game save {saveId} not found");
         }
@@ -452,7 +452,7 @@ public class StoryController : ControllerBase
             await _entityLogger.LogAsync(
                 "check visited node error",
                 new { SaveId = saveId, NodeId = nodeId, Error = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.GamePlay.StoryHandling
+                LogCategories.Story
             );
             return BadRequest("Failed to check visited status");
         }

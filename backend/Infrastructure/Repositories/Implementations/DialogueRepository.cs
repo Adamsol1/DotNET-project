@@ -47,7 +47,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetByIdWithCharacterError",
                 new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -79,7 +79,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetAllByStoryNodeWithCharacterError",
                 new { StoryNodeId = storyNodeId, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -114,7 +114,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetStoryNodeIdError",
                 new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -149,7 +149,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
                 await _entityLogger.LogAsync(
                     "GetStoryNodeError",
                     new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                    LogCategories.SystemLevel.Database);
+                    LogCategories.System);
                 throw;
             }
         }
@@ -184,7 +184,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetDialogueOrderError",
                 new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -219,7 +219,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetCharacterIdError",
                 new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -254,7 +254,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetCharacterError",
                 new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }
@@ -290,7 +290,7 @@ public class DialogueRepository : GenericRepository<Dialogue>, IDialogueReposito
             await _entityLogger.LogAsync(
                 "GetDialogueTextError",
                 new { DialogueId = id, Reason = ex.Message, Timestamp = DateTime.UtcNow },
-                LogCategories.SystemLevel.Database);
+                LogCategories.System);
             throw;
         }
     }

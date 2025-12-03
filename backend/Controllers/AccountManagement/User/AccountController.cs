@@ -59,7 +59,7 @@ public class AccountController : ControllerBase
             await _entityLogger.LogAsync(
                 "update username successful",
                 updatedUser,
-                LogCategories.AccountManagement.Username
+                LogCategories.Account
             );
 
             return Ok(updatedUser);
@@ -74,7 +74,7 @@ public class AccountController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.AccountManagement.Username
+                LogCategories.Account
             );
             return StatusCode(500, new { message = "An error occurred while updating username" });
         }
@@ -114,7 +114,7 @@ public class AccountController : ControllerBase
             await _entityLogger.LogAsync(
                 "update password successful",
                 new { Timestamp = DateTime.UtcNow },
-                LogCategories.AccountManagement.Password
+                LogCategories.Account
             );
 
             return Ok(new { message = "Password updated successfully" });
@@ -129,7 +129,7 @@ public class AccountController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.AccountManagement.Password
+                LogCategories.Account
             );
             return StatusCode(500, new { message = "An error occurred while updating password" });
         }
@@ -157,7 +157,7 @@ public class AccountController : ControllerBase
             await _entityLogger.LogAsync(
                 "delete account successful",
                 new { Timestamp = DateTime.UtcNow },
-                LogCategories.AccountManagement.Deletion
+                LogCategories.Account
             );
 
             return Ok(new { message = "Account deleted successfully" });
@@ -172,7 +172,7 @@ public class AccountController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.AccountManagement.Deletion
+                LogCategories.Account
             );
             return NotFound(new { message = e.Message });
         }
@@ -186,7 +186,7 @@ public class AccountController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.AccountManagement.Deletion
+                LogCategories.Account
             );
             return StatusCode(500, new { message = "An error occurred while deleting account" });
         }

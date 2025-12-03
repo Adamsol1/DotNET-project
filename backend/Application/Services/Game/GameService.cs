@@ -425,7 +425,7 @@ public class GameService : IGameService
                     CurrentNodeId = currentNodeId,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.GamePlay.StoryHandling,
+                LogCategories.Game,
                 "ChoiceDoesNotBelongToCurrentNodeLog");
             throw new InvalidOperationException("Choice does not belong to current node.");
         }
