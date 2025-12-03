@@ -172,7 +172,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
             if (choice.audioUrl) playChoiceAudio(choice.audioUrl);
 
             // Call makeChoice
-            const res = await makeChoice(saveId, choice.id);
+            await makeChoice(saveId, choice.id);
 
             // After making a choice, refresh the current node and playerState
             await loadGameData();
