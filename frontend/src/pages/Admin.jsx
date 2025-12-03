@@ -45,8 +45,13 @@ export function Admin() {
     const [editUsername, setEditUsername] = useState('');
     // state management to store the password
     const [editPassword, setEditPassword] = useState('');
+    // state management to store the confirm password
+    const [editConfirmPassword, setEditConfirmPassword] = useState('');
     // state management to show the delete modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    // state management to show success modals
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     // function / method to load all users.
     const loadUsers = useCallback(async () => {
@@ -142,10 +147,14 @@ export function Admin() {
             await admin.updateUsername(selectedUser.id, { username: editUsername });
             // reload the users
             await loadUsers();
+            // show success modal
+            setSuccessMessage('Username updated successfully!');
+            setShowSuccessModal(true);
             // clear the selected user and and form fields.
             clearSelection();
         } catch (err) {
-            setError('Failed to update username.');
+            const errorMessage = err.response?.data?.message || 'Failed to update username. Please try again.';
+            setError(errorMessage);
             console.error(err);
             setLoading(false);
         }
@@ -157,6 +166,12 @@ export function Admin() {
         // check if the selected user is not null and the password is not empty.
         if (!selectedUser || !editPassword) {
             setError("Cannot update to empty password.");
+            return;
+        }
+
+        // check if passwords match
+        if (editPassword !== editConfirmPassword) {
+            setError("Passwords do not match.");
             return;
         }
 
@@ -177,9 +192,12 @@ export function Admin() {
         try {
 
             // call the update password /API
-            await admin.updatePassword(selectedUser.id, { password: editPassword });
+            await admin.updatePassword(selectedUser.id, { newPassword: editPassword, confirmPassword: editConfirmPassword });
             // reload the users for constistancy, if something is changed.
             await loadUsers();
+            // show success modal
+            setSuccessMessage('Password updated successfully!');
+            setShowSuccessModal(true);
             // clear the selected user and and form fields.
             clearSelection();
         } catch (err) {
@@ -194,6 +212,7 @@ export function Admin() {
         setSelectedUser(null);
         setEditUsername('');
         setEditPassword('');
+        setEditConfirmPassword('');
         setLoading(false);
     };
 
@@ -339,7 +358,7 @@ export function Admin() {
                                                             whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.06)' }}
                                                             className="cursor-pointer"
                                                             style={{
-                                                                backgroundColor: isSelected ? tokens.color.primary : 'transparent',
+                                                                backgroundColor: isSelected ? tokens.color.primary : 'rgba(0,0,0,0)',
                                                                 color: isSelected ? 'black' : tokens.color.text,
                                                                 borderBottom: `1px solid ${tokens.color.surfaceBorder}`,
                                                             }}
@@ -404,6 +423,13 @@ export function Admin() {
                                                 type="password" 
                                                 value={editPassword}
                                                 onChange={(e) => setEditPassword(e.target.value)}
+                                                className="w-full p-2 bg-gray-200 text-black font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                                            />
+                                            <label className="block text-sm font-bold mb-2">Confirm new password</label>
+                                            <input 
+                                                type="password" 
+                                                value={editConfirmPassword}
+                                                onChange={(e) => setEditConfirmPassword(e.target.value)}
                                                 className="w-full p-2 bg-gray-200 text-black font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
@@ -441,6 +467,14 @@ export function Admin() {
                     confirmLabel='Delete'
                     cancelLabel='Cancel'
                     isDangerous={true}
+                />
+            )}
+            {showSuccessModal && (
+                <AlertModal 
+                    title='Success!'
+                    message={successMessage}
+                    onConfirm={() => setShowSuccessModal(false)}
+                    confirmLabel='OK'
                 />
             )}
         </div>

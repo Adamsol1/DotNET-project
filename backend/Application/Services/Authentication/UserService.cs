@@ -210,14 +210,14 @@ public class UserService : IUserService
 
             if (exists != null && exists.Id != user.Id) {
                 await _entityLogger.LogAsync(
-                    "Username already exists.",
+                    "User with username already exists.",
                     new { Username = updateUsernameDto.Username, Timestamp = DateTime.UtcNow },
                     LogCategories.Account
                 );
                 // throw the transaction back
                 await _uow.RollBackAsync();
                 // throw an error
-                throw new InvalidOperationException("Username already exists.");
+                throw new InvalidOperationException($"Username already taken.");
             }
 
             // update the username in the game database aswell as the auth database.

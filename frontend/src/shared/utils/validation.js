@@ -42,6 +42,10 @@ export const validationMessage = {
         maxLength: "Password must be less than 50 characters long",
         pattern: "Password must contain atleast one: uppercase letter, digit, and a special character (!#% etc.)",
     },
+    passwordConfirm: {
+        required: "Confirm password is required",
+        match: "Passwords do not match",
+    },
 };
 
 // function to validate the username.
