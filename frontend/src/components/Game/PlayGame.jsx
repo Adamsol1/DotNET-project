@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { SceneLayout } from '../gameui/scene/SceneLayout';
-import { DialoguePanel } from '../gameui/DialoguePanel';
-import { HUD } from '../gameui/Hudv2';
+import { SceneLayout } from '../GameUI/scene/SceneLayout';
+import { DialoguePanel } from '../GameUI/DialoguePanel';
+import { HUD } from '../GameUI/Hudv2';
 import { Button } from '../shared/Button';
 import { Card } from '../shared/Card';
 import { Text } from '../shared/Text';
 import { tokens } from '../../shared/constants/design/tokens';
 import {useAudio} from "../../context/AudioContext";
-import TerminalPowerRestore from '../gameui/miniGames/TerminalPower';
+import TerminalPowerRestore from '../GameUI/miniGames/TerminalPower';
 import AlertModal from '../shared/AlertModal'
 export function PlayGame({ saveId, onBackToMenu }) {
     const {

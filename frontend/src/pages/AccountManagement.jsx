@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion'; // For animations
 import { useNavigate } from 'react-router-dom'; // For page navigation
 // Background components
-import Stars from '../components/home/Stars';
-import Planet from '../components/home/Planet';
-import Spaceship from '../components/home/Spaceship';
+import Stars from '../components/Home/Stars';
+import Planet from '../components/Home/Planet';
+import Spaceship from '../components/Home/Spaceship';
 
 import { useGame } from '../context/GameContext'; // Context for API calls and game state
 import { useAuth } from '../context/Authentication'; // Context for user authentication

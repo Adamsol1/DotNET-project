@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { useGame } from '../context/GameContext';
 import { useAuth } from '../context/Authentication';
-import { StartGame } from '../components/game/NewGame';
-import { PlayGame } from '../components/game/PlayGame';
+import { StartGame } from '../components/Game/NewGame';
+import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
-import RockPaperScissors from '../components/gameui/miniGames/RockPaperScissors';
-import TerminalPowerRestore from '../components/gameui/miniGames/TerminalPower'; 
+import RockPaperScissors from '../components/GameUI/miniGames/RockPaperScissors';
+import TerminalPowerRestore from '../components/GameUI/miniGames/TerminalPower'; 
 import AlertModal from '../components/shared/AlertModal';
 import PixelCloseButton from '../shared/assets/icons/pixel-close-button.svg';
 
