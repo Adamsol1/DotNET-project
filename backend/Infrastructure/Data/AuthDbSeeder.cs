@@ -46,7 +46,7 @@ public static class AuthDbSeeder
         var checkAdminUser = await userManager.FindByNameAsync("admin");
         if (checkAdminUser == null)
         {
-            var user = new AuthUser { UserName = "admin" };
+            var user = new AuthUser { UserName = "admin2" };
 
             var createAdminUser = await userManager.CreateAsync(
                 user,
@@ -59,7 +59,7 @@ public static class AuthDbSeeder
                 await userService.RegisterAccount(
                     new RegisterUserDto
                     {
-                        Username = "admin",
+                        Username = "admin2",
                         Password = "Admin123!"
                     }
                 );
