@@ -674,7 +674,8 @@ export function GameProvider({ children }) {
                 }
             });
             
-            return gameState;
+            return;
+
         } catch (error) {
             dispatch({ type: ActionTypes.CHOICE_ERROR, payload: error.message || 'Failed to make choice' });
             throw error;
