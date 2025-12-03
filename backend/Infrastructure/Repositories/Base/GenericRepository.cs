@@ -96,7 +96,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
     }
 
-
+    // create entity
     public async Task<T> Create(T entity)
     {
 
@@ -145,7 +145,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             throw;
         }
     }
-
+    
     public async Task<T> Update(T entity)
     {
         try {

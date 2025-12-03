@@ -70,7 +70,6 @@ public class UnitOfWork : IUnitOfWork {
 
     // start a transaction
     public async Task BeginAsync() {
-         Console.WriteLine("Starting transaction");
          if (_context.Database.CurrentTransaction == null)
          {
              _transaction = await _context.Database.BeginTransactionAsync();
@@ -82,12 +81,15 @@ public class UnitOfWork : IUnitOfWork {
         // if sucessfull it goes through else we rollback the transaction.
 
         try {
-             Console.WriteLine("Commiting transaction");
              // relies on the db connection
              await _transaction!.CommitAsync();
         } catch {
             await RollBackAsync();
             // throw invalidException
+            await _entityLogger.LogAsync(
+                "Transaction failed to commit, rolling back.",
+                LogCategories.System
+            );
             throw new InvalidOperationException("Transaction failed to commit.");
         }
        

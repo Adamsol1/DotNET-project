@@ -18,11 +18,14 @@ using backend.Infrastructure.Repositories.Base;
 using backend.Infrastructure.Repositories.Implementations;
 using backend.Infrastructure.Logging;
 
+
 // Clear default claim mappings to prevent issues with JWT token claims
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+// Create builder
 var builder = WebApplication.CreateBuilder(args);
 
+// Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -67,6 +70,7 @@ builder.Services.AddSwaggerGen(c =>
     }});
 });
 
+// JWT Authentication configuration
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
     {
@@ -76,10 +80,12 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
         {
+            // Configure JWT Bearer options
             options.SaveToken = true;
             options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = new TokenValidationParameters()
             {
+                // Validate the JWT token parameters
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
@@ -102,6 +108,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -125,9 +132,11 @@ builder.Services.AddScoped<IStoryService, StoryService>();
 builder.Services.AddScoped<IStoryControllerService, StoryControllerService>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+// Logging service
 builder.Services.AddScoped<IEntityFileLogger, EntityFileLogger>();
 
 
+// Configure Serilog TODO: REMOVE
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
@@ -148,14 +157,21 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var entityLogger = scope.ServiceProvider.GetRequiredService<IEntityFileLogger>();
     try
     {
         await DbSeeder.SeedAsync(dbContext);
-        logger.Information("Database migration and seeding completed successfully.");
+        await entityLogger.LogAsync(
+            "AppDbContext seeding completed successfully.",
+            new { Timestamp = DateTime.UtcNow },
+            LogCategories.System);
     }
     catch (Exception ex)
     {
-        logger.Error(ex, "An error occurred while migrating or seeding the database.");
+        await entityLogger.LogAsync(
+            "Error during AppDbContext seeding",
+            new { Exception = ex.Message, StackTrace = ex.StackTrace },
+            LogCategories.System);
         throw; // Re-throw the exception after logging it
     }
 }
@@ -172,23 +188,26 @@ using (var scope = app.Services.CreateScope())
 {
     var authDbContext =
         scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+    var entityLogger = scope.ServiceProvider.GetRequiredService<IEntityFileLogger>();
     try
     {
+        await authDbContext.Database.MigrateAsync();
         await AuthDbSeeder.SeedAsync(
             authDbContext,
             scope.ServiceProvider,
-            logger
+            entityLogger
         );
-        logger.Information(
-            "Auth database migration and seeding completed successfully."
-        );
+        await entityLogger.LogAsync(
+            "Auth database migration and seeding completed successfully.",
+            new { Timestamp = DateTime.UtcNow },
+            LogCategories.System);
     }
     catch (Exception ex)
     {
-        logger.Error(
-            ex,
-            "An error occurred while migrating or seeding the auth database."
-        );
+        await entityLogger.LogAsync(
+            "Error during auth database migration/seeding",
+            new { Exception = ex.Message, StackTrace = ex.StackTrace },
+            LogCategories.System);
         throw;
     }
 }
@@ -203,24 +222,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+/// In production, use the standard exception handler and HSTS
 app.UseExceptionHandler("/Home/Error");
 app.UseHsts();
 app.UseHttpsRedirection();
 
-/**
-    * Enable static files to serve images from wwwroot folder
-    * Images are stored in wwwroot/images folder
-    * Example: https://localhost:5169/images/character1.png
-    */
+
 
 app.UseRouting();
 // Debug middleware: log Origin, Method, Path and small request body for auth endpoints
 app.Use(async (context, next) =>
 {
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    var entityLogger = app.Services.GetRequiredService<IEntityFileLogger>();
     var origin = context.Request.Headers["Origin"].FirstOrDefault() ?? "<no-origin>";
-    logger.LogInformation("Incoming request: {Method} {Path} Origin:{Origin} Content-Type:{ContentType}",
-        context.Request.Method, context.Request.Path, origin, context.Request.ContentType);
+    await entityLogger.LogAsync(
+        "Incoming request",
+        new { Method = context.Request.Method, Path = context.Request.Path.Value, Origin = origin, ContentType = context.Request.ContentType },
+        LogCategories.System);
 
     // If this is an auth POST, read and log the small JSON body (enable buffering)
     if (context.Request.Path.StartsWithSegments("/api/auth") && context.Request.Method == HttpMethods.Post)
@@ -229,12 +247,15 @@ app.Use(async (context, next) =>
         using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
         var body = await reader.ReadToEndAsync();
         context.Request.Body.Position = 0;
-        logger.LogDebug("Auth request body: {Body}", body);
+        await entityLogger.LogAsync("Auth request body", new { Body = body }, LogCategories.System);
     }
 
     await next();
 
-    logger.LogInformation("Response for {Path} -> {StatusCode}", context.Request.Path, context.Response.StatusCode);
+    await entityLogger.LogAsync(
+        "Response sent",
+        new { Path = context.Request.Path.Value, StatusCode = context.Response.StatusCode },
+        LogCategories.System);
 });
 app.UseCors("CorsPolicy");
 

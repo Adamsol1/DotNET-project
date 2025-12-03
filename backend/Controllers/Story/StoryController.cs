@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers.Story;
 
+
+/// <summary>
+/// Controller for story navigation and choice handling.
+/// Handles endpoints related to story nodes, dialogues, choices, and player state.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -16,6 +21,7 @@ public class StoryController : ControllerBase
     private readonly IStoryControllerService _storyControllerService;
     private readonly IEntityFileLogger _entityLogger;
 
+    // constructor
     public StoryController(IStoryControllerService storyControllerService, IEntityFileLogger entityFileLogger)
     {
         _storyControllerService = storyControllerService;
@@ -23,7 +29,6 @@ public class StoryController : ControllerBase
     }
 
     // navigational endpoints.
-
     // this method is meant to get the current story node for a given save id.
     // used to display the current story node the user is on.
     [HttpGet("current/{saveId}")]
@@ -353,6 +358,7 @@ public class StoryController : ControllerBase
     {
         try
         {
+            // get the player state.
             var playerState = await _storyControllerService.GetPlayerState(playerCharacterId);
             
             // Log successful retrieval

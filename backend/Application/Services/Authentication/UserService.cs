@@ -39,8 +39,6 @@ public class UserService : IUserService
     - Get specific user and get all users. 
 
     All these operations, both admin and user, will force ensync the auth user database and the game user database with transactions and rollback. 
-    
-
 
     */
 
