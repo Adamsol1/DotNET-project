@@ -10,7 +10,10 @@ import { tokens } from '../../shared/constants/design/tokens';
 import {useAudio} from "../../context/AudioContext";
 import TerminalPowerRestore from '../GameUI/miniGames/TerminalPower';
 import AlertModal from '../Shared/AlertModal'
+
+
 export function PlayGame({ saveId, onBackToMenu }) {
+    
     const {
         currentNode,
         availableChoices,
@@ -41,6 +44,9 @@ export function PlayGame({ saveId, onBackToMenu }) {
     const [showChoices, setShowChoices] = useState(false);
     const [showTerminal, setShowTerminal] = useState(false);
     const [showExitModal, setShowExitModal] = useState(false);
+    // addig state management for loading, 
+    const [isLoading, setLoading] = useState(false);
+
 
     let isRevisit = false;
     if (currentSave && currentNode?.id) {
@@ -167,7 +173,14 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
     // Handle making a choice
     const handleChoice = async (choice) => {
+
+        //guard statement against rapid clicking
+        if (isLoading || loading) return;
+
         try {
+            // set loading state to true
+            setLoading(true);
+
             // Play choice audio if present on the choice
             if (choice.audioUrl) playChoiceAudio(choice.audioUrl);
 
@@ -183,12 +196,21 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
         } catch (err) {
             console.error('Failed to make choice:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
     // Next dialogue (advance through currentNode.dialogues)
     const handleNextDialogue = async () => {
+
+        //guard statement against rapid clicking
+        if (isLoading || loading) return;
+
         try {
+            // set loading state to true
+            setLoading(true);
+
             // If there is a next dialogue, advance index
             if (dialogues && dialogueIndex + 1 < dialogues.length) {
                 setDialogueIndex((prev) => prev + 1);
@@ -196,8 +218,11 @@ export function PlayGame({ saveId, onBackToMenu }) {
                 // end of dialogues -> show choices
                 setShowChoices(true);
             }
+
         } catch (err) {
             console.error('Failed to advance dialogue:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -236,18 +261,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
     useEffect(() => {
         const nodeId = Number(currentNode?.id ?? currentNode?.Id);
-        const shouldShow = nodeId === 15;
-        console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
-        if (shouldShow) {
-            startTerminal();
-        } else {
-            setShowTerminal(false);
-        }
-    }, [currentNode?.id, currentNode?.Id]);
-
-    useEffect(() => {
-        const nodeId = Number(currentNode?.id ?? currentNode?.Id);
-        const shouldShow = nodeId === 14;
+        const shouldShow = nodeId === 14 || nodeId === 15;
         console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
         if (shouldShow) {
             startTerminal();
@@ -475,7 +489,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                                             <button
                                                 key={choice.id}
                                                 onClick={() => handleChoice(choice)}
-                                                disabled={loading}
+                                                disabled={loading || isLoading}
                                                 style={{
                                                     padding: '8px 12px',
                                                     background: '#0a0f1a',
@@ -485,13 +499,13 @@ export function PlayGame({ saveId, onBackToMenu }) {
                                                     fontSize: '20px',
                                                     lineHeight: '1.4',
                                                     fontFamily: '"visitor1", monospace',
-                                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                                    cursor: (loading || isLoading) ? 'not-allowed' : 'pointer',
                                                     textAlign: 'left',
                                                     boxShadow: '0 0 6px #003644, 0 0 2px #3ae6ff inset',
                                                     imageRendering: 'pixelated'
                                                 }}
                                                 onMouseEnter={(e) => {
-                                                    if (!loading) e.target.style.background = '#112032';
+                                                    if (!loading && !isLoading) e.target.style.background = '#112032';
                                                 }}
                                                 onMouseLeave={(e) => {
                                                     e.target.style.background = '#0a0f1a';
@@ -514,7 +528,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                                 >
                                     <button
                                         onClick={handleNextDialogue}
-                                        disabled={loading}
+                                        disabled={loading || isLoading}
                                         style={{
                                             padding: '8px 12px',
                                             background: '#0a0f1a',
@@ -525,14 +539,14 @@ export function PlayGame({ saveId, onBackToMenu }) {
                                             lineHeight: '1.4',
                                             fontWeight: 'bold',
                                             fontFamily: '"visitor1", monospace',
-                                            cursor: loading ? 'not-allowed' : 'pointer',
+                                            cursor: (loading || isLoading) ? 'not-allowed' : 'pointer',
                                             boxShadow:
                                                 '0 0 6px #003644, 0 0 2px #3ae6ff inset',
                                             imageRendering: 'pixelated',
                                             whiteSpace: 'nowrap'
                                         }}
                                         onMouseEnter={(e) => {
-                                            if (!loading) e.target.style.background = '#112032';
+                                            if (!loading && !isLoading) e.target.style.background = '#112032';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.target.style.background = '#0a0f1a';
