@@ -195,11 +195,8 @@ export function PlayGame({ saveId, onBackToMenu }) {
             // Play choice audio if present on the choice
             if (choice.audioUrl) playChoiceAudio(choice.audioUrl);
 
-            // Call makeChoice
+            // Call makeChoice - this already updates currentNode, availableChoices, and playerState
             await makeChoice(saveId, choice.id);
-
-            // After making a choice, refresh the current node and playerState
-            await loadGameData();
 
             // Reset dialogue index
             setDialogueIndex(0);

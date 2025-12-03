@@ -1,5 +1,4 @@
 import React, { useState} from "react";
-import {HoloButton} from "./UI/HoloButton";
 
 
 /*
@@ -30,7 +29,7 @@ const labels = {
 const choiceSVGS = {
     rock: "/assets/icons/asteroid-2-svgrepo-com.svg",
     paper: "/assets/icons/paper-svgrepo-com.svg",
-    scissors: "/assets/icons/scissors-svgrepo-com.svg",
+    scissors: "/assets/icons/scissors-variant-svgrepo-com.svg",
 }
 
 
@@ -110,12 +109,6 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
     const [playerScore, setPlayerScore] = useState(0);
     const [computerScore, setComputerScore] = useState(0);
 
-    // tracks how many rounds the user has played.
-    const [setRounds] = useState(0);
-
-    // tracks the last result.
-    const [setLastResult] = useState(null);
-
     // and if the game is over. starting as false.
     const [gameOver, setGameOver] = useState(false);
 
@@ -167,12 +160,6 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
                 // if the score is equal or bigger than winscore
                 // player has won
                 setGameOver(true);
-                setLastResult({
-                    playerChoice: playerChoiceValue,
-                    computerChoice: computerChoiceValue,
-                    winner: 'player',
-                    roundWinner: 'player',
-                });
                 // if onWin is defined, call it. else nothing happens.
                 onWin?.();
                 return;
@@ -183,27 +170,11 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
 
             if (newComputerScore >= winScore) {
                 setGameOver(true);
-                setLastResult({
-                    playerChoice: playerChoiceValue,
-                    computerChoice: computerChoiceValue,
-                    winner: 'computer',
-                    roundWinner: 'computer',
-                });
                 onLose?.();
                 return;
             }
         }
 
-        // set the last result to the choice and computer choice.
-        setLastResult({
-            playerChoice: playerChoiceValue,
-            computerChoice: computerChoiceValue,
-            winner,
-            roundWinner: winner,
-        });
-
-        // increment the rounds.
-        setRounds(prev => prev + 1);
         setRoundWinner(winner);
     };
 
@@ -268,7 +239,7 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
             <div className="relative w-full bg-slate-900/90 border border-slate-700/50 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden">
 
                 {/* Decorative Top Bar */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-rose-500 opacity-70" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-slate-800/50" />
 
                 <div className="p-6 md:p-8">
 
@@ -363,25 +334,29 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
                                 </div>
 
                                 {/* Button to continue after the game is over.*/}
-                                <HoloButton onClick={onComplete} color={playerScore > computerScore ? 'emerald' : 'rose'}>
+                                <button
+                                    onClick={onComplete}
+                                    className={`w-full px-6 py-3 font-bold border-2 transition-colors`}
+                                >
                                     Continue
-                                </HoloButton>
+                                </button>
                             </div>
                         ) : (
                             <div className="grid grid-cols-3 gap-4">
                                 {choices.map(choice => (
-                                    <HoloButton
+                                    <button
                                         key={choice}
                                         onClick={() => handleChoice(choice)}
                                         disabled={gameOver || rolling}
+                                        className="px-4 py-3 bg-slate-800 text-white border-2 border-slate-600 hover:bg-slate-700 hover:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2"
                                     >
                                         <img
                                             src={choiceSVGS[choice]}
                                             alt={choice}
-                                            className="w-6 h-6 invert opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                                            className="w-6 h-6 invert opacity-80 hover:opacity-100 hover:scale-110 transition-all"
                                         />
                                         <span className="hidden md:inline text-sm">{labels[choice]}</span>
-                                    </HoloButton>
+                                    </button>
                                 ))}
                             </div>
                         )}
