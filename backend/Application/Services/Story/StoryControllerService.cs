@@ -178,7 +178,8 @@ public class StoryControllerService : IStoryControllerService
             if (choice.HealthEffect.HasValue && choice.HealthEffect.Value != 0)
             {
                 var playerCharacter = await _genService.ValidateEntityExists<PlayerCharacter>(gameSave.PlayerCharacterId);
-                playerCharacter.Health = Math.Max(0, playerCharacter.Health + choice.HealthEffect.Value);
+                playerCharacter.Health = Math.Clamp(playerCharacter.Health + choice.HealthEffect.Value, 0, 100);
+
                 await _uow.PlayerCharacterRepository.Update(playerCharacter);
             }
 
