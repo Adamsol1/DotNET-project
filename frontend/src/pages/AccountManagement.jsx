@@ -33,6 +33,9 @@ export function AccountManagement() {
 
   // State for delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // State for success modals
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Validates username rules
   const validateUsername = (value) => {
@@ -64,6 +67,8 @@ export function AccountManagement() {
       updateUsernameAuth(username); // Update Auth context with new username
       setUsername(''); // Reset input
       setUsernameError(''); // Reset error
+      setSuccessMessage('Username updated successfully!');
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Update failed:', error);
     }
@@ -87,6 +92,8 @@ export function AccountManagement() {
       setConfirmPassword('');
       setPasswordError('');
       setConfirmPasswordError('');
+      setSuccessMessage('Password updated successfully!');
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Password update failed:', error);
     }
@@ -263,6 +270,15 @@ export function AccountManagement() {
             setShowLeaveAlert(false);
             navigate(pendingNavigation);
           }}
+        />
+      )}
+      {/* Success modal */}
+      {showSuccessModal && (
+        <AlertModal 
+          title='Success!'
+          message={successMessage}
+          onConfirm={() => setShowSuccessModal(false)}
+          confirmLabel='OK'
         />
       )}
     </div>
