@@ -146,7 +146,7 @@ export function Game() {
     <div 
       className="min-h-screen text-white font-mono relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url('/assets/bg/afterLogin.png')`,
+        backgroundImage: `url('/assets/backgrounds/afterLogin.png')`,
       }}
     >
       {/* Mini-game overlay */}

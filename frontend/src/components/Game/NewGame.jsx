@@ -114,7 +114,7 @@ export function StartGame({ onGameStart, onBack }) {
         <div
             className="min-h-screen text-white font-mono relative overflow-hidden bg-cover bg-center bg-no-repeat"
             style={{
-                backgroundImage: `url('/assets/bg/afterLogin.png')`,
+                backgroundImage: `url('/assets/backgrounds/afterLogin.png')`,
             }}
         >
             <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
