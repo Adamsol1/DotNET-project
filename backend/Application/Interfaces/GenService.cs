@@ -51,6 +51,15 @@ public class GenService : IGenService
             // throw the exception to the caller.
             // since we dont know what kind of exception it is, we just throw it
             // and let the caller handle it.
+            await _entityLogger.LogAsync(
+                "GenService: unexpected error occurred",
+                new
+                {
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.SystemLevel.Errors
+            );
             throw;
         }
     }
@@ -70,7 +79,7 @@ public class GenService : IGenService
             await _uow.SaveAsync();
             await _uow.CommitAsync();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await _uow.RollBackAsync();
             throw;

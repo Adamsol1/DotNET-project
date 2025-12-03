@@ -86,7 +86,7 @@ public class AuthController : ControllerBase
             );
             return BadRequest(new { message = e.Message });
         }
-        catch(Exception )
+        catch(Exception e )
         {
             // Log unexpected error
             await _entityLogger.LogAsync(
