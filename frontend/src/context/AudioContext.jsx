@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useRef, useState } from 'react';
+import React, { createContext, useContext, useRef, useState } from 'react';
 
 const AudioContext = createContext();
 
