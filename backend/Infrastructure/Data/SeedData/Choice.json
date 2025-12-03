@@ -111,7 +111,7 @@
   {
     "StoryNodeId": 12,
     "NextStoryNodeId": 13,
-    "Text": "Approach vent",
+    "Text": "Enter vent shaft",
     "HealthEffect": null
   },
   {
@@ -123,26 +123,20 @@
   },
   {
     "StoryNodeId": 13,
-    "NextStoryNodeId": 14,
-    "Text": "Enter shaft",
-    "HealthEffect": null
+    "NextStoryNodeId": 120,
+    "Text": "Enter spinning fan",
+    "HealthEffect": -100
   },
   {
     "StoryNodeId": 13,
-    "NextStoryNodeId": 12,
-    "Text": "Back out",
+    "NextStoryNodeId": 14,
+    "Text": "Access maintenance terminal (Vent Fan Override mini-game)",
     "HealthEffect": null
   },
   {
     "StoryNodeId": 14,
     "NextStoryNodeId": 19,
-    "Text": "Enter spinning fan",
-    "HealthEffect": -100
-  },
-  {
-    "StoryNodeId": 14,
-    "NextStoryNodeId": 18,
-    "Text": "Access maintenance terminal (Vent Fan Override mini-game)",
+    "Text": "Continue",
     "HealthEffect": null
   },
   {
@@ -153,26 +147,26 @@
   },
   {
     "StoryNodeId": 16,
-    "NextStoryNodeId": 16,
-    "Text": "Game is finished",
+    "NextStoryNodeId": 17,
+    "Text": "Continue",
     "HealthEffect": null
   },
   {
     "StoryNodeId": 17,
-    "NextStoryNodeId": 17,
-    "Text": "Game is finished",
+    "NextStoryNodeId": 119,
+    "Text": "Finish game",
     "HealthEffect": null
   },
   {
     "StoryNodeId": 18,
-    "NextStoryNodeId": 18,
-    "Text": "Game is finished",
+    "NextStoryNodeId": 119,
+    "Text": "Finish game",
     "HealthEffect": null
   },
   {
     "StoryNodeId": 19,
-    "NextStoryNodeId": 19,
-    "Text": "Game is finished",
+    "NextStoryNodeId": 119,
+    "Text": "Finish game",
     "HealthEffect": null
   }
 ]

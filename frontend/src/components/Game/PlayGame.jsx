@@ -261,7 +261,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
     useEffect(() => {
         const nodeId = Number(currentNode?.id ?? currentNode?.Id);
-        const shouldShow = nodeId === 14 || nodeId === 15;
+        const shouldShow = nodeId === 14 || nodeId === 16;
         console.log('[Terminal] current node id:', nodeId, 'showTerminal:', shouldShow);
         if (shouldShow) {
             startTerminal();

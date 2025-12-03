@@ -3,7 +3,8 @@
     "Id": 1,
     "Title": "Awakening",
     "Description": "Ryan wakes disoriented inside a malfunctioning cryopod on a damaged ship.",
-    "BackgroundUrl": "assets/backgrounds/awakening.png"
+    "BackgroundUrl": "assets/backgrounds/awakening.png",
+    "BackgroundMusicUrl":"assets/audio/music/ambience.mp3"
   },
   {
     "Id": 2,
@@ -69,13 +70,13 @@
     "Id": 12,
     "Title": "Maintenance Corridor (ALONE)",
     "Description": "Alone, Ryan reaches a dead airlock door and a nearby vent.",
-    "BackgroundUrl": "assets/backgrounds/maintenenceCorridor.png"
+    "BackgroundUrl": "assets/backgrounds/ventShaft.png"
   },
   {
     "Id": 13,
     "Title": "Ventilation Shaft",
     "Description": "Ryan prepares to crawl into the ship's ventilation system.",
-    "BackgroundUrl": "assets/backgrounds/ventShaft.png"
+    "BackgroundUrl": "assets/backgrounds/ventFan.png"
   },
   {
     "Id": 14,
@@ -89,26 +90,38 @@
     "Description": "The team enters the backup generator room to restore power.",
     "BackgroundUrl": "assets/backgrounds/generatorRoom.png"
   },
-  {
+    {
     "Id": 16,
+    "Title": "Game",
+    "Description": "The team enters the backup generator room to restore power.",
+    "BackgroundUrl": "assets/backgrounds/generatorRoom.png"
+  },
+  {
+    "Id": 17,
     "Title": "Escape Pods Online (TEAM GOOD)",
     "Description": "With power restored, the team reaches working escape pods and launches.",
     "BackgroundUrl": "assets/backgrounds/escapePods.png"
   },
   {
-    "Id": 17,
+    "Id": 18,
     "Title": "Powerless Drift (TEAM BAD)",
     "Description": "A failed restart leaves the ship dark and drifting in space.",
     "BackgroundUrl": "assets/backgrounds/powerlessDrift.png"
   },
   {
-    "Id": 18,
+    "Id": 19,
     "Title": "Cockpit Control (ALONE GOOD)",
     "Description": "Ryan reaches the cockpit, activates the beacon, and escapes alone.",
     "BackgroundUrl": "assets/backgrounds/cockpit.png"
   },
+    {
+    "Id": 119,
+    "Title": "The end",
+    "Description": "The end",
+    "BackgroundUrl": "assets/backgrounds/Endscreen.png"
+  },
   {
-    "Id": 19,
+    "Id": 120,
     "Title": "Fan Death (ALONE BAD)",
     "Description": "A fatal attempt at the ventilation fan ends Ryan's journey.",
     "BackgroundUrl": "assets/backgrounds/ventFanDeath.png"
