@@ -118,8 +118,6 @@ export function PlayGame({ saveId, onBackToMenu }) {
         //console.log('[PlayGame] saveId changed:', saveId);
     }, [saveId, loadGameData]);
     
-    //TODO: there might be a case were we use the backgroundsMusicUrl for ambient sounds for a node, so will see if there is
-    // a need to change the nesting of the if statements under
     
     // Play audio when node changes
     useEffect(() => {
@@ -148,11 +146,11 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
             return; // Exit before any new ambient or dialogues start
         }
-        
+
+        // Background music and ambient sound        
         if (currentNode.backgroundMusicUrl) {
             playBackgroundMusic(currentNode.backgroundMusicUrl);
         }
-        
         if (currentNode.ambientSoundUrl) {
             playAmbientSound(currentNode.ambientSoundUrl, false);
         } else {
@@ -166,6 +164,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
         setShowChoices(!hasDialogues);
     }, [currentNode, currentSave?.visitedNodeIds, playAmbientSound, playBackgroundMusic]);
 
+    // Check for game over when playerState changes
     useEffect(() => {
         const hp = playerState?.health ?? playerState?.hp ?? 100;
         const shouldBeGameOver = hp <= 0;
@@ -194,11 +193,9 @@ export function PlayGame({ saveId, onBackToMenu }) {
             const found = chars.find(c => c.id === currentDialogue.characterId);
             if (found?.imageUrl) return found.imageUrl;
         }
-
-        // 3) Default avatar
-        return '/assets/characters/hero.png';
     };
 
+    // get character image url
     const characterImageUrl = resolveCharacterImage();
 
     // Handle making a choice
@@ -220,7 +217,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
             // Reset dialogue index
             setDialogueIndex(0);
             setShowChoices(false);
-
+        
         } catch (err) {
             console.error('Failed to make choice:', err);
         } finally {
@@ -257,12 +254,12 @@ export function PlayGame({ saveId, onBackToMenu }) {
      const handleBackClick = () => {
         setShowExitModal(true);
     };
-
+    // Confirm exit from Alert modal
     const confirmExit = () => {
         setShowExitModal(false);
         onBackToMenu();
     };
-
+    // Cancel exit from Alert modal
     const cancelExit = () => {
         setShowExitModal(false);
     };
@@ -286,6 +283,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
         setShowTerminal(true);
     };
 
+    // useEffect to monitor currentNode changes and trigger terminal mini-game
     useEffect(() => {
         const nodeId = Number(currentNode?.id ?? currentNode?.Id);
         const shouldShow = nodeId === 14 || nodeId === 16;
@@ -318,6 +316,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
         );
     }
 
+    // Error state
     if (error) {
         return (
             <div
@@ -352,7 +351,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
             </div>
         );
     }
-
+    // Error state
     if (!currentNode) {
         return (
             <div
@@ -375,15 +374,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
     const hp = playerState?.health ?? playerState?.hp ?? 100;
     const isGameOver = (typeof gameOver === 'boolean') ? gameOver : hp <= 0;
 
-    /*
-    console.log('Debug:', {
-        isRevisit,
-        showChoices,
-        availableChoices: availableChoices?.length,
-        currentNodeId: currentNode?.id,
-        visitedNodeIds: currentSave?.visitedNodeIds
-    });
-    */
+    // Main game render
     return (
         
         <div
@@ -434,7 +425,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                     }}
                 />
 
-                {/* Dialogue Panel - Fixed at Bottom */}
+                {/* Dialogue Panel */}
                 {!isGameOver && (
                     <div
                         style={{
@@ -453,7 +444,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                             alignItems: 'flex-start'
                         }}
                     >
-                        {/* Avatar - only show if NOT a revisit */}
+                        {/* Avatar */}
                         {!isRevisit && (
                             <div
                                 style={{
@@ -488,7 +479,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                             }}
                         >
                             <div style={{ flex: 1, paddingRight: '12px' }}>
-                                {/* Only show dialogue text if NOT a revisit */}
+                                {/* Show dialogue on first visit */}
                                 {!isRevisit && (
                                     <p
                                         style={{
@@ -548,7 +539,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                                 )}
                             </div>
 
-                            {/* Next button column - only show if NOT revisit AND NOT showing choices */}
+                            {/* Next button column when not showChoice and not revisit */}
                             {!showChoices && !isRevisit && (
                                 <div
                                     style={{
@@ -590,6 +581,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
                     </div>
                 )}
 
+                {/* Terminal Mini-Game Overlay */}
                 {showTerminal && (
                     <div
                         style={{

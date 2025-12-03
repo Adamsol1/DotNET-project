@@ -21,7 +21,7 @@ export function Home() {
   const { user, logout, login } = useAuth();
   const { playBackgroundMusic } = useAudio();
 
-  //CHAT
+  // check if the user is authenticated !! treats it as boolean.t
   const  authenticated= !!user;
 
   //check the role of the user, we create a button for the admin to access the admin page.
@@ -151,6 +151,8 @@ export function Home() {
     setShowLeaveAlert(false);
   };
 
+  // sets the state to show the logout alert modal
+  // so that the user can click to confirm.
   const handleLogoutConfirm = async () => {
     setShowLogoutAlert(false);
     await handleLogout();

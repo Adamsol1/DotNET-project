@@ -3,6 +3,10 @@ using backend.Domain.Models;
 
 namespace backend.Infrastructure.Data;
 
+
+/// <summary>
+/// Database context for the application setting up the entities and their relationships.
+/// </summary>
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -10,16 +14,16 @@ public class AppDbContext : DbContext
         
     }
 
+    // DbSets for each entity
     public DbSet<Character> Characters { get; set; } = null!;
     public DbSet<StoryNode> StoryNodes { get; set; } = null!;
     public DbSet<Dialogue> Dialogues { get; set; } = null!;
     public DbSet<Choice> Choices { get; set; } = null!;
     public DbSet<PlayerCharacter> PlayerCharacters { get; set; } = null!;
     public DbSet<User> User { get; set; } = null!;
-    
     public DbSet<GameSave> GameSaves { get; set; }
     
-
+    // Configuring entity relationships and constraints
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -57,54 +61,16 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PlayerCharacter>()
             .HasBaseType<Character>();
         
+        // User AuthUserId constraints
         modelBuilder.Entity<User>()
             .Property(u => u.AuthUserId)
             .HasMaxLength(450)
             .IsRequired();
-
+            
+        // Unique index on AuthUserId
         modelBuilder.Entity<User>()
             .HasIndex(u => u.AuthUserId)
             .IsUnique();
-        
-        
-        // This will have to be fixed later on when we get the save entity :)
-        //
-        // modelBuilder.Entity<PlayerCharacter>()
-        //     .HasOne(pc => pc.User)
-        //     .WithOne(u => u.PlayerCharacter)
-        //     .HasForeignKey<User>(u => u.Id)
-        //     .OnDelete(DeleteBehavior.Cascade);
-        //
-        // modelBuilder.Entity<User>()
-        //     .HasMany(u => u.PlayerCharacter)
-        //     .WithOne(pc => pc.User)
-        //     .HasForeignKey<PlayerCharacter>(pc => pc.UserId)
-        //
-        //
-        
-        
-        //TODO: Uncomment these when GameSave (save progresstions) are to be implemented
-    //     
-    //     //Gamesave rel with user
-    //     modelBuilder.Entity<GameSave>()
-    //         .HasOne(gs => gs.User)
-    //         .WithMany(u => u.GameSaves)
-    //         .HasForeignKey(gs => gs.UserId)
-    //         .OnDelete(DeleteBehavior.Cascade);
-    //     
-    //     //Gamesave rel with player character
-    //     modelBuilder.Entity<GameSave>()
-    //         .HasOne(gs => gs.PlayerCharacter)
-    //         .WithOne()
-    //         .HasForeignKey<GameSave>(gs => gs.PlayerCharacterId)
-    //         .OnDelete(DeleteBehavior.Cascade);
-    //     
-    //     //Gamesave rel with story node
-    //     modelBuilder.Entity<GameSave>()
-    //         .HasOne(gs => gs.CurrentStoryNode)
-    //         .WithMany()
-    //         .HasForeignKey(gs => gs.CurrentStoryNodeId)
-    //         .OnDelete(DeleteBehavior.Restrict);
     
     }
 }

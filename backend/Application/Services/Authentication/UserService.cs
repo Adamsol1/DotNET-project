@@ -7,6 +7,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace backend.Application.Services.Authentication;
 
+/// <summary>
+/// Handles all account authentication and modification features.
+/// This service does also coordinate our two databases with syncing the Game database user and the auth database user. 
+/// To enforce sync, the service uses explicit transactions.
+/// </summary>
+
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _uow;
@@ -25,16 +31,26 @@ public class UserService : IUserService
     /*
     Decided to split this file in two parts.
 
-    1. Account management methods. used by users / players to manage themself.
+    1. Account management methods:
+    These are used by users/players to manage their account. This includes the following operations:
+    - Registration, Login, Update username and password, and a delete function.
 
-    2. admin methods used in admin controller. used by an admin to manage accounts.
-    these methods are also little more different then the account management methods.
+    2. Admin methods used in admin controller. These methods are used by an admin to manage user accounts. This includes:
+    - Get specific user and get all users. 
 
-    (have yeet to make changes on methods made by Eirik)
+    All these operations, both admin and user, will force ensync the auth user database and the game user database with transactions and rollback. 
+    
+
 
     */
 
     // register account - User
+    /// <summary>
+    /// Method used for register account. 
+    /// Will create both a authuser and a gameuser in one transaction to prevent sync errors. 
+    /// Will rollback if an error occurs.
+    /// </summary>
+    /// <param name="registerUserDto">The dto containing the account credetials</param>
     public async Task<UserDto> RegisterAccount(RegisterUserDto registerUserDto)
     {
         try{
@@ -118,11 +134,18 @@ public class UserService : IUserService
     }
     
     // login - User
+    /// <summary>
+    /// Method for logging in a user
+    /// How this works is that the login attempt will check the credentials towards the Auth user in the Authentication database.
+    /// Then on success, collect the game user that the Auth user is connected with. This is done because the game logic is connected to the game user. 
+    /// This ensure sepeation of duties, where the auth user will handle all authentication logic, and the game user will handle all game logic
+    /// </summary>
+    
     public async Task<UserDto?> Login(LoginUserDto loginUserDto)
     {
         try
         {
-            // First authenticate against AuthDb using UserManager
+            // First authenticate against AuthDb using UserManager and get the authuser. 
             var authUser = await _userManager.FindByNameAsync(loginUserDto.Username);
             
             if (authUser == null)
@@ -135,7 +158,7 @@ public class UserService : IUserService
                 return null;
             }
 
-            // Validate password against AuthDb
+            // Validate password against AuthDb and log the attempt
             if (!await _userManager.CheckPasswordAsync(authUser, loginUserDto.Password))
             {
                 await _entityLogger.LogAsync(
@@ -146,7 +169,7 @@ public class UserService : IUserService
                 return null;
             }
 
-            // Get the game user by AuthUserId
+            // Get the game user by AuthUserId. These two are connected. 
             var user = await _uow.UserRepository.GetByAuthId(authUser.Id);
             
             //Check if game user exists
@@ -164,20 +187,20 @@ public class UserService : IUserService
         }
         catch
         {
+            //On fail propage the error 
             throw;
         }
         
     }
 
-    // update username - User and Admin
-    /* trying overhaul on this method.  
-    the intial method did not update the username in auth db to
-    this resulted to that the user transaction in game was rolled back
-    Auth would then update the name, causing a mismatch.
-
-    // moved UserManager into here instead of in the controller, as previously done.
-    -Ah
-    */
+    
+    /// <summary>
+    /// Updates the username of both the authuser and gameuser
+    /// Both users have to be updated because the authuser username is used in login, and the gameuser username is used for game purposes. If just one is updated, they are not synced
+    /// </summary>
+    /// <param name="authUserId">The id of the authuser we are updating</param>
+    /// <param name="updateUsernameDto">The dto containing the update credentials</param>
+    /// <returns></returns>
     public async Task<UserDto> UpdateUsername( string authUserId, UpdateUsernameDto updateUsernameDto )
     {
 
@@ -204,10 +227,10 @@ public class UserService : IUserService
                 throw new KeyNotFoundException("User was not found.");
             }
 
-            // check if the new username already exists
-            //we cant have to users named the same.
+            // check if the new username already exists, this is not allowed
+           
             var exists = await _uow.UserRepository.GetUserByUsername(updateUsernameDto.Username);
-
+            //If it exists, rollback and return error
             if (exists != null && exists.Id != user.Id) {
                 await _entityLogger.LogAsync(
                     "User with username already exists.",
@@ -249,7 +272,7 @@ public class UserService : IUserService
 
             var result = await _userManager.UpdateAsync(authUser);
 
-            // check if the result succeeded if not we rollback on gameDB to. 
+            // check if the result succeeded if not we rollback on gameDB. 
             if (!result.Succeeded) {
                 await _entityLogger.LogAsync(
                     $"Failed to update username in auth database.",
@@ -278,8 +301,13 @@ public class UserService : IUserService
         }
     }
 
-    //TODO  FOR ALL CRUD : maybe implement one transaction for both auth user and game user. 
-    // Method to update password for the currently authenticated user
+  
+    /// <summary>
+    /// Updates the password connected to the authuser. 
+    /// This is only connected to the authuser, not the gameuser, because of seperation of concerns and security. 
+    /// </summary>
+    /// <param name="authUserId">The id of the auth user</param>
+    /// <param name="updatePasswordDto">DTO with updated credentials</param>
     public async Task<bool> UpdatePassword(string authUserId, UpdatePasswordDto updatePasswordDto)
     {
         try
@@ -301,7 +329,7 @@ public class UserService : IUserService
             // Get the user by AuthUserId
             var user = await _uow.UserRepository.GetByProperty(u => u.AuthUserId, authUserId);
             
-            // Check if user exists
+            // Check if user exists. If not rollback and log
             if (user == null)
             {
                 await _entityLogger.LogAsync(
@@ -356,7 +384,13 @@ public class UserService : IUserService
             throw;
         }
     }
-    // Method to delete the account of the currently authenticated user
+    
+    /// <summary>
+    /// Method for deleting the account of a authorized user
+    /// The method will delete both the game account and the auth account, to ensure sync of the databases
+    /// </summary>
+    /// <param name="authUserId">The id of the auth user</param>
+    /// <returns></returns>
     public async Task<bool> DeleteAccount(string authUserId)
     {
         try
@@ -385,15 +419,12 @@ public class UserService : IUserService
             var authUser = await _userManager.FindByIdAsync(user.AuthUserId);
 
             // check if user exists, if it doesnt we can just rollback
-            // little tricky case, for later - should the user be allowed to delete if
-            // there is no auth user, but there is a game user? as I imagine you would need auth user to 
-            // have an game account.
             if (authUser == null) {
-                
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException("AuthUser not found in authentication system. Cannot delete account.");
             }
 
+            //Delete the user for the Identidy user
             var result = await _userManager.DeleteAsync(authUser);
 
             // check if the result succeeded if not we rollback on gameDB to. 
@@ -420,16 +451,28 @@ public class UserService : IUserService
         }
     }
 
+/*
+Helper methods
+*/
     // return a user dto helper method, move to bottom of the file. 
+    /// <summary>
+    /// Maps a user to a userDTO
+    /// </summary>
+   
     private static UserDto ReturnUserDto(User user) => new UserDto
         {
             Id = user.Id,
             Username = user.Username
         };
 
-    // admin methods. 
+// ADMIN METHODS 
 
-    // get all users - Admin
+
+    /// <summary>
+    /// Admin method for getting all users
+    /// Retrieves all users and return them as DTOs
+    /// </summary>
+
     public async Task<IEnumerable<UserDto>> GetAllUsers() 
     {
         try {
@@ -454,7 +497,11 @@ public class UserService : IUserService
         }
     }
 
-    // get user by id - Admin - user
+    
+    /// <summary>
+    /// Admin method for retrieving specific user by their game user id
+    /// </summary>
+   
     public async Task<UserDto> GetUserById(int id)
     {
         try
@@ -476,6 +523,10 @@ public class UserService : IUserService
         }
     }
 
+    /// <summary>
+    /// Admin method for retrieving an Auth users id based on their game user id
+    /// </summary>
+    
     public async Task<string> GetByAuthId(int userId)
     {
         try
@@ -493,9 +544,6 @@ public class UserService : IUserService
         }
     }
 
-
-    // update username - admin
-    // making it a little different 
 
 }
     

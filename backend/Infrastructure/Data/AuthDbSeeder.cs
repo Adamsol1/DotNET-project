@@ -6,7 +6,7 @@ using backend.Infrastructure.Repositories.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
+using backend.Infrastructure.Logging;
 
 namespace backend.Infrastructure.Data;
 
@@ -19,7 +19,7 @@ public static class AuthDbSeeder
     public static async Task SeedAsync(
         AuthDbContext context,
         IServiceProvider serviceProvider,
-        Serilog.ILogger logger)
+        IEntityFileLogger _logger)
     {
         // Apply migrations
         await context.Database.MigrateAsync();
@@ -41,7 +41,11 @@ public static class AuthDbSeeder
             if (!await roleManager.RoleExistsAsync(role))
             {
                 await roleManager.CreateAsync(new IdentityRole(role));
-                logger.Information("Created role: {Role}", role);
+                await _logger.LogAsync(
+                    $"Created role '{role}' in AuthDb",
+                    new { Role = role,},
+                    LogCategories.System
+                );
             }
         }
 
@@ -59,7 +63,11 @@ public static class AuthDbSeeder
             if (createAdminUser.Succeeded)
             {
                 await userManager.AddToRoleAsync(authUser, "admin");
-                logger.Information("Created admin user in AuthDb");
+                await _logger.LogAsync(
+                    $"Created admin user in AuthDb",
+                    new { User = authUser, Name = "admin" },
+                    LogCategories.System
+                );
                 
                 // Check if admin user already exists in GameDb
                 var existingGameUser = await uow.UserRepository.GetUserByUsername("admin");
@@ -75,17 +83,21 @@ public static class AuthDbSeeder
                     
                     await uow.UserRepository.Create(gameUser);
                     await uow.SaveAsync();
-                    logger.Information("Created admin user in GameDb");
-                }
-                else
-                {
-                    logger.Information("Admin user already exists in GameDb");
+                    await _logger.LogAsync(
+                    "Created admin user in GameDb",
+                    new { User = gameUser, Name = "admin" },
+                    LogCategories.System
+                );
                 }
             }
             else
             {
-                logger.Error("Failed to create the default admin user. Errors: {Errors}", 
-                    string.Join(", ", createAdminUser.Errors.Select(e => e.Description)));
+                await _logger.LogAsync(
+                    "Failed to create the default admin user. Errors: " +
+                    string.Join(", ", createAdminUser.Errors.Select(e => e.Description)),
+                    new { User = authUser, Name = "admin", Time = DateTime.UtcNow },
+                    LogCategories.System
+                );
             }
         }
         else
@@ -104,7 +116,12 @@ public static class AuthDbSeeder
                 
                 await uow.UserRepository.Create(gameUser);
                 await uow.SaveAsync();
-                logger.Information("Synced admin user from AuthDb to GameDb");
+                await _logger.LogAsync(
+                    "Synced admin user from AuthDb to GameDb",
+                    new { Time = DateTime.UtcNow },
+                    LogCategories.System
+                );
+                
             }
         }
     }

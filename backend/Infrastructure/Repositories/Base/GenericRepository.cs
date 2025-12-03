@@ -8,6 +8,8 @@ namespace backend.Infrastructure.Repositories.Base;
 
 /// <summary>
 /// Generic repository implementation for CRUD operations.
+/// Used as a base for more specified repositories to prevent duplication
+/// Uses a generic parameter to represent the entity type. This make it possible to be used for different entities
 /// </summary>
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {   

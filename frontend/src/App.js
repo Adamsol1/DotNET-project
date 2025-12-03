@@ -9,16 +9,16 @@ import { Admin } from './pages/Admin';
 import './App.css';
 import { AuthProvider } from './context/Authentication';
 
-// create an protected admin route by checking the role of the user.
-
+// Main application component that sets up routing and context providers.
+// It includes routes for Home, Game, Account Management, and Admin pages.
+// Any undefined route redirects to the Home page.
+// Context providers for game state, audio settings, and authentication wrap the entire application.
 
 function App() {
-  
   return (
     <AuthProvider>
     <GameProvider>
       <AudioProvider>
-
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />

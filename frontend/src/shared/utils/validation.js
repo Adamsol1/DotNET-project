@@ -28,6 +28,10 @@ export const validationRules = {
     },
 }
 
+
+// validation messages that is displayed to the user, if the
+//backend doesnt return error message, / backend handles it now
+// used before the backend validation was implemented.
 export const validationMessage = {
     username: {
         required: "Username is required",
@@ -48,21 +52,28 @@ export const validationMessage = {
     },
 };
 
-// function to validate the username.
+// function to validate the username
 export const validateUsername = (username) => {
+    // defines an empty errors array, 
+    // that the validation errors get pushed into.
     const errors = [];
 
+    // check if username is provided.
     if (!username || username.trim() === '') {
+        // if not, push required error message and return.
         errors.push(validationMessage.username.required);
         return { isValid: false, errors };
     }
 
+    // trims whitespace from the username.
     const trimmed = username.trim();
 
+    // check length of the username and that it is more than min length.
     if (trimmed.length < validationRules.username.minLength) {
         errors.push(validationMessage.username.minLength);
     }
     
+    // checks if the username exceeds max length.
     if (trimmed.length > validationRules.username.maxLength) {
         errors.push(validationMessage.username.maxLength);
       }
@@ -75,18 +86,25 @@ export const validateUsername = (username) => {
     return { isValid: errors.length === 0, errors, value: trimmed };
 }
 
+// validates the password does the same as username validation.
 export const validatePassword = (password) => {
+    // defines an empty errors array,
     const errors = [];
-  
+
+
+    // checks if password is given
     if (!password || password === '') {
+        //if not errormessgae is added to the array
       errors.push(validationMessage.password.required);
       return { isValid: false, errors };
     }
-  
+
+    // checks if the password is more than minimum length.
     if (password.length < validationRules.password.minLength) {
       errors.push(validationMessage.password.minLength);
     }
-  
+
+    // checks if the password exceeds maximum length.
     if (password.length > validationRules.password.maxLength) {
       errors.push(validationMessage.password.maxLength);
     }
@@ -97,7 +115,7 @@ export const validatePassword = (password) => {
     return { isValid: errors.length === 0, errors };
 };
 
-// validate login form.
+// validate login form. used in login page.
 export const validateLoginForm = (username, password) => {
     const usernameValidation = validateUsername(username);
     const passwordValidation = validatePassword(password);
@@ -114,7 +132,7 @@ export const validateLoginForm = (username, password) => {
     };
 };
 
-// validate register form.
+// validate register form. used in register page.
 export const validateRegisterForm = (username, password) => {
     const usernameValidation = validateUsername(username);
     const passwordValidation = validatePassword(password);
@@ -131,7 +149,7 @@ export const validateRegisterForm = (username, password) => {
     };
 };
 
-// update account form.
+// update account form. used if we have form, but are not used yeet.
 export const validateUpdateAccountForm = (username, password, confirmPassword) => {
     const usernameValidation = validateUsername(username);
     const passwordValidation = validatePassword(password);
@@ -150,6 +168,7 @@ export const validateUpdateAccountForm = (username, password, confirmPassword) =
     };
 };
 
+// validate password confirmation, used in admin and account page. 
 export const validatePasswordConfirmation = (password, confirmPassword) => {
     const errors = [];
   

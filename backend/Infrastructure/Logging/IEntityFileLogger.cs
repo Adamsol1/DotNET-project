@@ -2,7 +2,10 @@ using System.Text.Json;
 
 namespace backend.Infrastructure.Logging;
 
-// Add this class first
+/// <summary>
+/// Logging structure for entity actions, such as creation, update, deletion.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class EntityLog<T>
 {
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
@@ -11,16 +14,23 @@ public class EntityLog<T>
     public T Data { get; set; } = default!;
 }
 
+/// <summary>
+/// Logger interface for logging entity actions to files.
+/// </summary>
 public interface IEntityFileLogger
 {
     Task LogAsync<T>(string action, T entity, string? category = null, string? logName = null);
 }
 
+/// <summary>
+/// File-based logger implementation for entity actions.
+/// </summary>
 public class EntityFileLogger : IEntityFileLogger
 {
     private readonly string _basePath;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
+    //Constructor
     public EntityFileLogger(IWebHostEnvironment env)
     {
         _basePath = Path.Combine(
@@ -33,6 +43,7 @@ public class EntityFileLogger : IEntityFileLogger
 
     
 
+    // Logs an entity action to a file.
     public async Task LogAsync<T>(
         string action, 
         T entity, 
@@ -40,6 +51,7 @@ public class EntityFileLogger : IEntityFileLogger
         string? logName = null
     )
     {
+        // Sanitize log name if provided
         try
         {
             var logEntry = new EntityLog<T>
@@ -48,13 +60,18 @@ public class EntityFileLogger : IEntityFileLogger
             Data = entity
         };
 
+        // Determine file path
         var folderPath = _basePath;
         
+        // If logName is provided, create a subdirectory
         Directory.CreateDirectory(folderPath);
 
+        // Sanitize category for file naming
         var fileName = string.IsNullOrEmpty(category) 
             ? $"Default-{DateTime.UtcNow:yyyyMMdd}.log"
             : $"{category}-{DateTime.UtcNow:yyyyMMdd}.log";
+        
+        
         var filePath = Path.Combine(folderPath, fileName);
 
             var json = JsonSerializer.Serialize(
@@ -79,11 +96,5 @@ public class EntityFileLogger : IEntityFileLogger
             );
         }
     }
-    private static string SanitizeFileName(string fileName)
-{
-    var invalidChars = Path.GetInvalidFileNameChars();
-    return string.Concat(
-        fileName.Select(c => invalidChars.Contains(c) ? '_' : c)
-    );
-}
+    
 }

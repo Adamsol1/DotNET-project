@@ -10,6 +10,10 @@ import TerminalPowerRestore from '../components/GameUI/miniGames/TerminalPower';
 import AlertModal from '../components/Shared/AlertModal';
 import PixelCloseButton from '../shared/assets/icons/pixel-close-button.svg';
 
+
+// game page, renders and uses Playgame component and NewGame component
+// allows users to create new game through the newGame component
+// aswell as see their previous game saves from the PlayGame component.
 export function Game() {
 
   // navigation
@@ -104,9 +108,6 @@ export function Game() {
     }
 
   }
-
-
-
 
   // exit game event and navigate to the home page.
   const exitGame = () => {

@@ -8,6 +8,15 @@ using backend.Infrastructure.Repositories.Base;
 
 namespace backend.Application.Services.Story;
 
+/*
+This file combines handling of business logic from mutliple services.
+so that the controller just can delegate the task to it. 
+
+this includes calling actions that spans from different services
+repositories, and aggregates the data for the controller.
+
+*/
+
 public class StoryControllerService : IStoryControllerService
 {
     private readonly IUnitOfWork _uow;
@@ -29,6 +38,12 @@ public class StoryControllerService : IStoryControllerService
 
     #region Story Navigation Methods
 
+    /// <summary>
+    /// Method to get the current game node that the user is on.
+    /// from the storyService.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<StoryNodeDto> GetCurrentNode(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -39,14 +54,38 @@ public class StoryControllerService : IStoryControllerService
             return await _storyService.GetStoryNodeById(gameSave.CurrentStoryNodeId);
         });
     }
+
+    /// <summary>
+    /// method to navigate to a specific node in a game by calling 
+    /// the node that is is wanted, can be used to jump over nodes 
+    /// that the player has visited
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <param name="targetNodeId"></param>
+    /// <returns></returns>
     public async Task<StoryNodeDto?> NavigateToNode(int saveId, int targetNodeId)
     {
+        // Excecute wraps the async action into a transaction. that manages, the Unit of work.
+        // and handles error, returning the outcom, handling error and returns the result.
+        // was an experimental style to write less code and more effective.
+        // and make the Excecute reusable, 
+        
+        // navigates the a specific node through the NavigateToNodeCore
         return await _genService.Execute(async () =>
         {
             return await NavigateToNodeCore(saveId, targetNodeId);
         });
     }
 
+    /// <summary>
+    /// handles the actual navigation done by NavigateToNode
+    /// validates if the node exists checks the nodes player has visited
+    /// and calculates the next node by checking the previous
+    /// this method was made early in development, when the logic wasnt advanced.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <param name="targetNodeId"></param>
+    /// <returns></returns>
     private async Task<StoryNodeDto?> NavigateToNodeCore(int saveId, int targetNodeId)
     {
             // check if the entity exists.
@@ -83,9 +122,13 @@ public class StoryControllerService : IStoryControllerService
         
     }
 
-    // to find the previous Node we have to keep track of the nodes the player has visited.
-    // and move back two nodes because current node is 1 and previous node is 2.
-
+    /// <summary>
+    /// method to find the previous Node, user has visited to go back
+    /// we have to keep track of the nodes the player has visited.
+    /// and move back two nodes because current node is 1 and previous node is 2.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<StoryNodeDto?> GoBack(int saveId)
     {
         // we use the excecute method from the GenService to handle the transaction.
@@ -122,7 +165,12 @@ public class StoryControllerService : IStoryControllerService
         });
     }
 
-    // go forward works the same as above just in the opposite direction.
+    /// <summary>
+    /// method to move forwards to the next node gets the current node the player is on
+    /// and finds the nextNode based on the choice´s nextNodeId
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<StoryNodeDto?> GoForward(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -158,15 +206,24 @@ public class StoryControllerService : IStoryControllerService
 
     #region Choice Handling Methods
 
-    
+    /// <summary>
+    /// Method player uses to make and apply their choice. 
+    /// validates if the choice is valid and belongs to the story node
+    /// adds health effects such as subtractions if the choice has it.
+    /// and navigates to the next story node
+    /// the method is wrapped in Excecute which ensures transaction and error 
+    /// handling
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <param name="choiceId"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<StoryNodeDto?> MakeChoice(int saveId, int choiceId)
     {
         return await _genService.Execute(async () =>
         {
             var gameSave = await _genService.ValidateEntityExists<GameSave>(saveId);
             var choice   = await _genService.ValidateEntityExists<Choice>(choiceId);
-
-         
             
             // Valider at choice tilhører current node (din eksisterende logikk)
             if (choice.StoryNodeId != gameSave.CurrentStoryNodeId)
@@ -192,6 +249,12 @@ public class StoryControllerService : IStoryControllerService
         });
     }
 
+    /// <summary>
+    /// gets all choices that are available, was meant as an administrative method
+    /// gets all choices that exists in the current story node the player is on
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<ChoiceDto>> GetAvailableChoices(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -207,6 +270,11 @@ public class StoryControllerService : IStoryControllerService
 
     #region Dialogue Management Methods
 
+    /// <summary>
+    /// Method to fetch and get the next dialogue in a story node.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<DialogueDto?> GetNextDialogue(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -232,6 +300,12 @@ public class StoryControllerService : IStoryControllerService
         });
     }
 
+    /// <summary>
+    /// Made as an DEBUGG method, to skip faster through dialogues, 
+    /// function gets all dialogues and jumps to last in the index.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<DialogueDto?> SkipToLastDialogue(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -253,6 +327,12 @@ public class StoryControllerService : IStoryControllerService
         });
     }
 
+    /// <summary>
+    /// method to make sure and check if a dialogue is complete before
+    /// taking action to go to the next node.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<bool> IsDialogueComplete(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -272,8 +352,14 @@ public class StoryControllerService : IStoryControllerService
 
     #region Health Management Methods
 
-    // ah I dont really
-
+    /// <summary>
+    /// Method to modifi the players health
+    /// sets a decided health value and starts the player health as
+    /// 0 to make the chosen value the new health
+    /// </summary>
+    /// <param name="playerCharacterId"></param>
+    /// <param name="healthDelta"></param>
+    /// <returns></returns>
     public async Task<int> ModifyHealthFromChoice(int playerCharacterId, int healthDelta)
     {
         return await _genService.Execute(async () =>
@@ -285,6 +371,12 @@ public class StoryControllerService : IStoryControllerService
         });
     }
 
+    /// <summary>
+    /// Gets the current state of a player´s character based on the playerCharacter Id linked to the user
+    /// such as Id, name and health, which can be used to display in the UI
+    /// </summary>
+    /// <param name="playerCharacterId"></param>
+    /// <returns></returns>
     public async Task<PlayerCharacterDto> GetPlayerState(int playerCharacterId)
     {
         return await _genService.Execute(async () =>
@@ -306,6 +398,13 @@ public class StoryControllerService : IStoryControllerService
 
     #region History Tracking Methods
 
+    /// <summary>
+    /// gets a list of all storynodes that a player has visited
+    /// used to track progress and prevent infinate loops as well
+    /// as can be used to jump over nodes that is visted.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<List<int>> GetVisitedNodes(int saveId)
     {
         return await _genService.Execute(async () =>
@@ -322,6 +421,12 @@ public class StoryControllerService : IStoryControllerService
         });
     }
 
+    /// <summary>
+    /// method to check if a user has visited a specific node.
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <param name="nodeId"></param>
+    /// <returns></returns>
     public async Task<bool> HasVisitedNode(int saveId, int nodeId)
     {
         var visitedNodes = await GetVisitedNodes(saveId);
@@ -332,6 +437,14 @@ public class StoryControllerService : IStoryControllerService
 
     #region Game Save Methods
 
+    /// <summary>
+    /// Method to get complete save information for a game
+    /// including the users Id, playerCharacter, currentnode
+    /// used to load saves, and displaying information, aswell as checking 
+    /// the progress returns a compleete GameSaveDTO
+    /// </summary>
+    /// <param name="saveId"></param>
+    /// <returns></returns>
     public async Task<GameSaveDto> GetGameSaveById(int saveId)
     {
         return await _genService.Execute(async () =>

@@ -1,5 +1,10 @@
 // Global design values, defines colors, spacing, shadows etc and should be used for design concistency and easy changes
 
+
+/**
+ * Global design function that contains, background color, text, and design.
+ * formarly 
+ */
 export const tokens = {
     color: {
         bg:'#0b0f14', //background color behind everything
