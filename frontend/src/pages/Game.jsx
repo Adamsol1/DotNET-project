@@ -19,6 +19,9 @@ export function Game() {
   // authentication
   const { user } = useAuth();
   const authenticated = !!user;
+
+  const isAdmin = user?.role === 'admin';
+
   // states
   const [currentSave, setCurrentSave] = useState(null);
   const [saves, setSaves] = useState([]);
@@ -328,7 +331,7 @@ export function Game() {
               </motion.button>
             </motion.div>
 
-            {!showMiniGame && (
+            {!showMiniGame && isAdmin && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -346,19 +349,6 @@ export function Game() {
                   style={{ boxShadow: '8px 8px 0px rgba(0, 0, 0, 0.8)' }}
                 >
                   TEST ROCK PAPER SCISSORS
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setMiniGameType('terminal');
-                    setShowMiniGame(true);
-                  }}
-                  className="w-full px-8 py-6 bg-green-600 text-white font-bold text-2xl border-4 border-green-400 hover:bg-green-500 transition-colors"
-                  style={{ boxShadow: '8px 8px 0px rgba(0, 0, 0, 0.8)' }}
-                >
-                  TEST TERMINAL POWER RESTORE
                 </motion.button>
               </motion.div>
             )}
