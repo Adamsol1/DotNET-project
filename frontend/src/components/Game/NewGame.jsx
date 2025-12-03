@@ -4,17 +4,35 @@ import { useAudio } from '../../context/AudioContext';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/Authentication';
 
-export function StartGame({ onGameStart, onBack }) {
-    const [formData, setFormData] = useState({
-        saveName: ''
-    });
-    const [errors, setErrors] = useState({});
-    const [saveCount, setSaveCount] = useState(0);
-    const [isLoadingSaveCount, setIsLoadingSaveCount] = useState(true);
 
+/**
+ * Function component is used by players to create a new game save. 
+ * It allows users to name their game save
+ * 
+ * StartGame componenet is used to create a new game save by players.
+ * It allows the users to name their game saves, before starting it, which then, 
+ * navigates them and starts the game save after it is created.
+ * Users are limited to only have 3 active saves at a time.
+ * 
+ */
+
+export function StartGame({ onGameStart, onBack }) {
+    // state to capture form name from the user
+    const [saveName, setSaveName] = useState('');
+    // game api functions from api.js trough gameContext.
     const { startGame, loading, error, clearError, getAllSaves } = useGame();
+    // audio play functions from audioContext
     const { playBackgroundMusic } = useAudio();
+    // current user from Authentication
     const { user } = useAuth();
+
+
+    // state management for handling and displaying errors
+    const [errors, setErrors] = useState({});
+    // state to track how many saves the user has
+    const [saveCount, setSaveCount] = useState(0);
+    // tracks if the save count is loading
+    const [isLoadingSaveCount, setIsLoadingSaveCount] = useState(true);
 
     // Function to count user's saves
   const countUserSaves = useCallback(async () => {
@@ -26,34 +44,42 @@ export function StartGame({ onGameStart, onBack }) {
         const saves = await getAllSaves(userId);
         
         //console.log('[StartGame] User saves:', saves);
-        
+
+        // get the count of the saves and set it to its state
         const count = saves ? saves.length : 0;
         setSaveCount(count);
+        // return the count of the saves
         return count;
     } catch (error) {
+        // if the count fails, return 0
         console.error('Failed to count saves:', error);
         return 0;
     } finally {
+        // set the loading state to false
         setIsLoadingSaveCount(false);
-    }
+    } // dependency to rerun the function saves changes
     }, [getAllSaves]);
 
-    // Count saves when component mounts
+    // Count saves when component mounts and play the background music
     useEffect(() => {
         playBackgroundMusic('/assets/audio/music/menuMusic.mp3');
         countUserSaves();
 
+        // return an empty function on unmount,
         return () => {
             // Don't stop audio here - let it continue to the game
         };
+        // dependency array to rerun if user saves changes or background music changes.
     }, [playBackgroundMusic, countUserSaves]);
 
+    // function to capture the save name from the user
     const handleChange = (e) => {
+        // get the name and value from the event target
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        // set the save name to the value
+        setSaveName(value);
+
+        // if there are errors, add it to the errors object
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
@@ -62,27 +88,34 @@ export function StartGame({ onGameStart, onBack }) {
         }
     };
 
-        const handleSubmit = async (e) => {
+    // function to submit the saveName to the backend.
+    const handleSubmit = async (e) => {
+        // Prevents default / unamed save creation.
         e.preventDefault();
-        console.log("gamecontext user in startgame:", user)
+        //console.log("gamecontext user in startgame:", user)
+
+        // empties the errors object
         setErrors({});
         clearError();
 
+        // create a new errors object
         const newErrors = {};
-        if (!formData.saveName.trim()) {
+        // if the save name is empty, add an error to the errors object
+        if (!saveName.trim()) {
             newErrors.saveName = 'Save name is required';
         }
 
+        // if there are errors, add it to the errors object
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         }
 
-        // Check save limit before starting game
-        console.log('[StartGame] Checking save count...');
+        // gets and checks the save count user has before starting a new game save.
         const currentSaveCount = await countUserSaves();
-        console.log('[StartGame] Current save count:', currentSaveCount);
         
+        // checks if the user has 3 saves. if yes gives an error telling
+        // the user that they cannot create a new save. 
         if (currentSaveCount >= 3) {
             setErrors({
                 saveName: 'Maximum 3 saves reached. Please delete an existing save before creating a new one.'
@@ -90,29 +123,37 @@ export function StartGame({ onGameStart, onBack }) {
             return;
         }
 
+        // try catch statement to create a new game save.
         try {
-            console.log('[StartGame] Creating new save...');
+
+            // create a gameSave for the user based on their Id.
             const gameSave = await startGame({
-                UserId: Number(localStorage.getItem('user_id')),
-                SaveName: formData.saveName
+                UserId: user.id,
+                SaveName: saveName
             });
-            console.log('[StartGame] Save created:', gameSave);
             
-            // Recount after creating save
-            const newCount = await countUserSaves();
-            console.log('[StartGame] New save count:', newCount);
+            //console.log('[StartGame] Save created:', gameSave);
             
+            // recall to count the user's saves after creating a new save.
+            await countUserSaves();
+            
+            // calls the start game event after a new save is created.
             if (onGameStart) {
                 onGameStart(gameSave);
             }
         } catch (error) {
-            console.error('Failed to start game:', error);
+            // get the error message from the error message from the backend.
+            // before displaying it to the user
             const errorMessage = error.response?.data?.message || error.response?.data || error.message || 'Failed to start game';
             setErrors({
                 saveName: typeof errorMessage === 'string' ? errorMessage : 'Failed to start game'
             });
         }
     };
+
+
+    // html and tailwind for design
+    // uses a background image 
 
     return (
         <div
@@ -155,7 +196,7 @@ export function StartGame({ onGameStart, onBack }) {
                                 <input
                                     type="text"
                                     name="saveName"
-                                    value={formData.saveName}
+                                    value={saveName.saveName}
                                     onChange={handleChange}
                                     className="w-full px-4 py-3 bg-gray-200 text-black text-center font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="SAVE NAME"

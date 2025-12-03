@@ -33,17 +33,23 @@ const choiceSVGS = {
 }
 
 
-// design function to display the choices that the user makes.
+// design function to display the chocies that the machine and user has picked
+// Used and defined inside the main rock paper scissors mini game 
+// defined above because it is used in side the main component as an sub component.
 const DisplayChoice = ({ choice, side, winner, rolling }) => {
 
+    // decides which sides the user and machine is on.
     const isPlayer = side === 'left';
+    // tracks who won or lost the game or if its tied.
     const isWinner = winner === (isPlayer ? 'player' : 'computer');
     const isLoser = winner === (isPlayer ? 'computer' : 'player');
     const isTie = winner === 'tied';
 
+    // gives a blue/cyan glow on the user, and red/pink glow on the machine aswell as text color for them
     let glowColor = isPlayer ? 'border-cyan-500/30' : 'border-rose-500/30';
     let textColor = isPlayer ? 'text-cyan-400' : 'text-rose-400';
 
+    // checks if the rolling animations is done, and presents the winner and loser.
     if (!rolling && choice) {
         if (isWinner) {
             glowColor = 'border-emerald-400 shadow-[0_0_30px_rgba(52,211,153,0.4)]';
@@ -57,6 +63,8 @@ const DisplayChoice = ({ choice, side, winner, rolling }) => {
         }
     }
 
+    // HTML design on the display the coice made by the user and machine.
+    // shows the SVg images for the choices that are made. 
     return (
         <div className={`flex flex-col items-center justify-center w-1/3 transition-all duration-500 ${isPlayer ? 'order-1' : 'order-3'}`}>
             {/* HUD Label */}
@@ -157,19 +165,24 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
 
             // check if the player has won the game.
             if (newPlayerScore >= winScore) {
-                // if the score is equal or bigger than winscore
-                // player has won
+                // if the player has won 2 or more rounds (winScore)
+                // end the game and player has won.
                 setGameOver(true);
                 // if onWin is defined, call it. else nothing happens.
                 onWin?.();
                 return;
             }
         } else if (winner === 'computer') {
+            // increment the computer's score.
             const newComputerScore = computerScore + 1;
             setComputerScore(newComputerScore);
 
+            // same check as above only check if its true for the computer.
             if (newComputerScore >= winScore) {
+                // if the computer has won 2 or more rounds (winScore)
+                // end the game and computer has won.
                 setGameOver(true);
+                // if onLose is defined, call it. else nothing happens.
                 onLose?.();
                 return;
             }

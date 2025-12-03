@@ -10,8 +10,18 @@ import TerminalPowerRestore from '../GameUI/miniGames/TerminalPower';
 import AlertModal from '../Shared/AlertModal'
 
 
+/**
+ * This component is the main game componenet that is responsible for
+ * loading and displaying game data, such as story nodes (which nodes the user is on), 
+ * choices, and game characters health.
+ * This component also tracks, the players progressions, through nodes visited.
+ * and additional mini game components that they can play, such as terminal power restore, 
+ * (rock paper scissors, are made, but is not implemented in the story.)
+ * 
+ */
+
 export function PlayGame({ saveId, onBackToMenu }) {
-    
+    // all api methods used in the game, from gameContext.
     const {
         currentNode,
         availableChoices,
@@ -26,19 +36,27 @@ export function PlayGame({ saveId, onBackToMenu }) {
         setGameOver,
     } = useGame();
 
+    // audio methods from the audioContext.
     const {
         playBackgroundMusic,
         playAmbientSound,
         playChoiceAudio
     } = useAudio();
 
-    // dialogue index for multi-line dialogues loaded in currentNode.Dialogues
+    // state to trach which dialogue the user is o so we can load display it correctly.
     const [dialogueIndex, setDialogueIndex] = useState(0);
+    // shows which choices that is available for the user to make.
     const [showChoices, setShowChoices] = useState(false);
+
+    // shows the mini game terminal power restore.
     const [showTerminal, setShowTerminal] = useState(false);
+
+    // state management to show the close / exit game modal.
     const [showExitModal, setShowExitModal] = useState(false);
+
     // addig state management for loading, 
     const [isLoading, setLoading] = useState(false);
+    // reference to the loading state.
     const isLoadingRef = useRef(false);
     const lastLoadedSaveIdRef = useRef(null);
     const getCurrentNodeRef = useRef(getCurrentNode);

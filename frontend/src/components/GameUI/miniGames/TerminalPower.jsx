@@ -193,6 +193,7 @@ const TerminalPowerRestore = ({ onComplete, onWin, onLose }) => {
   };
 
   // function to complete the game
+  // shows,
   const completeGame = won => {
     setTerminalLines(prev => [
       ...prev,
