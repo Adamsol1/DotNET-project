@@ -6,9 +6,9 @@ import { validateLoginForm, validateRegisterForm } from '../shared/utils/validat
 // component imports . gameContext has api calls and game state management.
 //import { useGame } from '../context/GameContext';
 // planet, spacehsip, stars components. are for the background animation.
-import Planet from '../components/Home/Planet';
-import Spaceship from '../components/Home/Spaceship';
-import Stars from '../components/Home/Stars';
+import Planet from '../components/home/Planet';
+import Spaceship from '../components/home/Spaceship';
+import Stars from '../components/home/Stars';
 
 import {useAuth} from "../context/Authentication";
 import * as authservice from "../shared/services/AuthenticationService";
