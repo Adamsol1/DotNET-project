@@ -1,8 +1,8 @@
 import React from 'react';
 import { tokens } from '../../shared/constants/design/tokens';
-import {Card} from '../shared/Card'
-import {Text} from '../shared/Text'
-import {Button} from '../shared/Button'
+import {Card} from '../Shared/Card'
+import {Text} from '../Shared/Text'
+import {Button} from '../Shared/Button'
 
 //Shows dialogue area with avatar, text and buttons
 export function DialoguePanel({ avatarUrl, text, choices  = [], onSelect }){

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 const Spaceship = () => {
   return (
     <motion.div
-      className="absolute top-10 right-16 w-[450px] h-[450px] z-20"
+      className="absolute top-10 right-16 w-[450px] h-[450px] z-0 pointer-events-none"
       initial={{ x: 100, opacity: 0 }}
       animate={{ 
         x: 0,

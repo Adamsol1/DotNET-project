@@ -13,7 +13,7 @@ import Stars from '../components/Home/Stars';
 import {useAuth} from "../context/Authentication";
 import * as authservice from "../shared/services/AuthenticationService";
 // alert modal for unsaved changes.
-import AlertModal from '../components/shared/AlertModal';
+import AlertModal from '../components/Shared/AlertModal';
 import { useAudio } from '../context/AudioContext';
 export function Home() {
   const { user, logout, login, register } = useAuth();

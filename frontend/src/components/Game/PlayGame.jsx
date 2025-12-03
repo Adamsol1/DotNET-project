@@ -3,13 +3,13 @@ import { useGame } from '../../context/GameContext';
 import { SceneLayout } from '../GameUI/scene/SceneLayout';
 import { DialoguePanel } from '../GameUI/DialoguePanel';
 import { HUD } from '../GameUI/Hudv2';
-import { Button } from '../shared/Button';
-import { Card } from '../shared/Card';
-import { Text } from '../shared/Text';
+import { Button } from '../Shared/Button';
+import { Card } from '../Shared/Card';
+import { Text } from '../Shared/Text';
 import { tokens } from '../../shared/constants/design/tokens';
 import {useAudio} from "../../context/AudioContext";
 import TerminalPowerRestore from '../GameUI/miniGames/TerminalPower';
-import AlertModal from '../shared/AlertModal'
+import AlertModal from '../Shared/AlertModal'
 export function PlayGame({ saveId, onBackToMenu }) {
     const {
         currentNode,

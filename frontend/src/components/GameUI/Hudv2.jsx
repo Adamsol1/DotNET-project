@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text} from '../shared/Text'
-import { Button } from '../shared/Button'
+import {Text} from '../Shared/Text'
+import { Button } from '../Shared/Button'
 import { tokens } from '../../shared/constants/design/tokens'
 
 function PixelHPBar({ hp = 0, maxHp = 100 }) {

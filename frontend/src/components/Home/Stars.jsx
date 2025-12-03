@@ -107,15 +107,7 @@ const ShootingStar = React.memo(({ delay }) => {
         ease: "easeIn", 
       }}
       onAnimationComplete={handleAnimationComplete} // Generate new path when animation finishes
-    >
-      {/* Shooting star tail */}
-      <div 
-        className="absolute top-0 left-0 w-16 h-0.5 bg-gradient-to-r from-white to-transparent"
-        style={{
-          transform: "translateX(-100%)",
-        }}
-      />
-    </motion.div>
+    />
   );
 });
 

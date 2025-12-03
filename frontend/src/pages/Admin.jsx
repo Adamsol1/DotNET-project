@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/Authentication';
 import { useNavigate } from 'react-router-dom';
 import { admin } from '../shared/services/api';
-import AlertModal from '../components/shared/AlertModal';
+import AlertModal from '../components/Shared/AlertModal';
 import { tokens } from '../shared/constants/design/tokens';
+import { validatePassword } from '../shared/utils/validation';
 
 
 export function Admin() {
@@ -176,30 +177,6 @@ export function Admin() {
             setError('Failed to delete user.');
         }
 
-    }
-
-
-    // delete user account.
-    const deleteUser = async () => {
-
-        if (!selectedUser) return;
-
-        setLoading(true);
-        setError(null);
-
-        try {
-            // call the delete user endpoint
-            await admin.deleteUser(selectedUser.id);
-
-            // refresh the user data
-            await loadUsers();
-            setSelectedUser(null);
-
-            setLoading(false);
-
-        } catch (err) {
-            setError('Failed to delete user.');
-        }
     }
 
     // Go back to homescreen

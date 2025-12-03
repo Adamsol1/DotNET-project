@@ -7,7 +7,7 @@ import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
 import RockPaperScissors from '../components/GameUI/miniGames/RockPaperScissors';
 import TerminalPowerRestore from '../components/GameUI/miniGames/TerminalPower'; 
-import AlertModal from '../components/shared/AlertModal';
+import AlertModal from '../components/Shared/AlertModal';
 import PixelCloseButton from '../shared/assets/icons/pixel-close-button.svg';
 
 export function Game() {

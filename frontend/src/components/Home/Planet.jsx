@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 const Planet = () => {
   return (
     <motion.div
-      className="absolute top-1/2 left-[5%] w-[400px] h-[400px] z-20"
+      className="absolute top-1/2 left-[5%] w-[400px] h-[400px] z-0 pointer-events-none"
       style={{ transform: "translateY(-50%)" }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ 
