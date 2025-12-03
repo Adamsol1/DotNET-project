@@ -212,7 +212,7 @@ public class AdminController : ControllerBase
                     UserId = id,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.Administration.UserModification,
+                LogCategories.Admin,
                 "UserUpdateErrorLog");
             //Return the error message to the client.
             return BadRequest(new { message = e.Message });

@@ -74,7 +74,7 @@ public class AccountController : ControllerBase
                     Error = e.Message,
                     Timestamp = DateTime.UtcNow
                 },
-                LogCategories.AccountManagement.Username
+                LogCategories.Account
             );
             return BadRequest(new { message = e.Message });
         }
