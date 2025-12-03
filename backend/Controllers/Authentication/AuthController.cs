@@ -4,6 +4,7 @@ using System.Text;
 using backend.Application.Dtos.Authentication;
 using backend.Application.Interfaces;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,20 +18,20 @@ namespace backend.Controllers.Authentication;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly ILogger<AuthController> _logger;
+    private readonly IEntityFileLogger _entityLogger;
     private readonly UserManager<AuthUser> _userManager;
     private readonly SignInManager<AuthUser> _signInManager;
     private readonly IConfiguration _configuration;
 
     public AuthController(
         IUserService userService, 
-        ILogger<AuthController> logger,
+        IEntityFileLogger entityFileLogger,
         UserManager<AuthUser> userManager,
         SignInManager<AuthUser> signInManager,
         IConfiguration configuration)
     {
         _userService = userService;
-        _logger = logger;
+        _entityLogger = entityFileLogger;
         _configuration = configuration;
         _userManager = userManager;
         _signInManager = signInManager;
@@ -47,11 +48,9 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register([FromBody] RegisterUserDto request)
     {
-        // Log and validate incoming request
-        _logger.LogInformation("[AuthController] Register called for username: {Username}", request?.Username);
+        // Validate the incoming request
         if (!ModelState.IsValid)
         {
-            _logger.LogWarning("[AuthController] Invalid ModelState for register: {@ModelState}", ModelState);
             return BadRequest(ModelState);
         }
 
@@ -64,18 +63,41 @@ public class AuthController : ControllerBase
             // UserService now handles all UserManager operations and transaction management
             var gameUserDto = await _userService.RegisterAccount(request);
             
-            _logger.LogInformation("[AuthController] Succesfully created account for {Username}", request.Username);
+            // Log the successful registration
+            await _entityLogger.LogAsync(
+                "register account successful",
+                gameUserDto,
+                LogCategories.Authentication.Registration
+            );
             
             return Ok(new {message = "Account created successfully", gameUserId = gameUserDto.Id});
         }
         catch (InvalidOperationException e)
         {
-            _logger.LogWarning("[AuthController] Registration failed: {Message}", e.Message);
+            // Log the registration failure
+            await _entityLogger.LogAsync(
+                "register account error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.Authentication.Registration
+            );
             return BadRequest(new { message = e.Message });
         }
         catch(Exception )
         {
-
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "register account error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.Authentication.Registration
+            );
             // return the error
             return BadRequest(new { message = "Unexpected error occured while creating account." });
         }
@@ -93,10 +115,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<LoginUserDto>> Login([FromBody] LoginUserDto request)
     {
-        _logger.LogInformation("[AuthController] Login called for username: {Username}", request?.Username);
+        // Validate the incoming request
         if (!ModelState.IsValid)
         {
-            _logger.LogWarning("[AuthController] Invalid ModelState for login: {@ModelState}", ModelState);
             return BadRequest(ModelState);
         }
         // Try to use user service for login
@@ -110,7 +131,15 @@ public class AuthController : ControllerBase
             
             if (user == null)
             {
-                _logger.LogWarning("[AuthController] Login attempt failed for user : {@LoginUserDto}", request);
+                // Log failed login attempt
+                await _entityLogger.LogAsync(
+                    "login error invalid credentials",
+                    new
+                    {
+                        Timestamp = DateTime.UtcNow
+                    },
+                    LogCategories.Authentication.Login
+                );
                 return Unauthorized(new { message = "Incorrect username or password. Please try again."});
             }
 
@@ -118,20 +147,46 @@ public class AuthController : ControllerBase
             var authUser = await _userManager.FindByNameAsync(request.Username);
             if (authUser == null)
             {
-                _logger.LogWarning("[AuthController] AuthUser not found after successful login");
+                // Log authentication error
+                await _entityLogger.LogAsync(
+                    "login error auth user not found",
+                    new
+                    {
+                        Timestamp = DateTime.UtcNow
+                    },
+                    LogCategories.Authentication.Login
+                );
                 return Unauthorized(new { message = "Authentication error. Please try again."});
             }
 
-            _logger.LogInformation("[AuthController] Login attempt authorized for user : {@LoginUserDto}", request);
             var token = await GenerateJwtToken(authUser);
-            _logger.LogInformation("[AuthController] GameUser found - Id: {UserId}, Username: {Username}", user.Id, user.Username);
+            
+            // Log successful login
+            await _entityLogger.LogAsync(
+                "login successful",
+                new
+                {
+                    UserId = user.Id,
+                    Username = user.Username,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.Authentication.Login
+            );
 
             return Ok(new { token = token, userId = user.Id, username = user.Username });
         }
         catch (Exception e)
         {
-            // log the error
-            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to login.");
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "login error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.Authentication.Login
+            );
             // return the error
             return BadRequest(new { message = "Unexpected error occured while trying to login." });
         }
@@ -147,9 +202,18 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        
         await _signInManager.SignOutAsync();
-        _logger.LogInformation("[AuthController] Logged out.");
+        
+        // Log successful logout
+        await _entityLogger.LogAsync(
+            "logout successful",
+            new
+            {
+                Timestamp = DateTime.UtcNow
+            },
+            LogCategories.Authentication.Logout
+        );
+        
         return Ok("Logged out successfully");
     }
     
@@ -160,8 +224,7 @@ public class AuthController : ControllerBase
         var JWTKey = _configuration["Jwt:Key"];
         if (string.IsNullOrEmpty(JWTKey))
         {
-            _logger.LogWarning($"JWT Key not set. Key: {JWTKey}");
-            throw new InvalidOperationException("JWT Key not set. Key: {JWTKey}");
+            throw new InvalidOperationException("JWT Key not set.");
         }
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -185,7 +248,6 @@ public class AuthController : ControllerBase
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: credentials
         );
-        _logger.LogInformation("[AuthController] Generated JWT token for user @{UserName}.", user.UserName);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

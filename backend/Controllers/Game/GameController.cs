@@ -1,5 +1,6 @@
 using backend.Application.Dtos.Game;
 using backend.Application.Interfaces;
+using backend.Infrastructure.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +12,13 @@ namespace backend.Controllers.Game;
 [Authorize]
 public class GameController : ControllerBase
 {
-    private readonly IGameService _gameService; 
+    private readonly IGameService _gameService;
+    private readonly IEntityFileLogger _entityLogger;
 
-    public GameController(IGameService gameService)
+    public GameController(IGameService gameService, IEntityFileLogger entityFileLogger)
     {
         _gameService = gameService;
+        _entityLogger = entityFileLogger;
     }
 
     // start a new game from scratch.
@@ -28,15 +31,41 @@ public class GameController : ControllerBase
             var gameSave = await _gameService.CreateGame(request.UserId, request.SaveName ?? string.Empty);
 
             if (gameSave == null) {
-                
+                // Log failure to create game
+                await _entityLogger.LogAsync(
+                    "start game error",
+                    new
+                    {
+                        UserId = request.UserId,
+                        SaveName = request.SaveName,
+                        Timestamp = DateTime.UtcNow
+                    },
+                    LogCategories.GamePlay.Creation
+                );
                 return BadRequest("Failed to create game save");
             }
             
+            // Log successful game creation
+            await _entityLogger.LogAsync(
+                "start game successful",
+                gameSave,
+                LogCategories.GamePlay.Creation
+            );
 
             // return the game save.
             return Ok(gameSave);
         } catch (Exception ex) {
-            return BadRequest(ex.Message);
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "start game error",
+                new
+                {
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Creation
+            );
+            return BadRequest($"Failed to start game");
         }
     }
 
@@ -47,8 +76,40 @@ public class GameController : ControllerBase
         try {
             // load the game save.
             var gameSave = await _gameService.GetGameSave(saveId);
+            
+            // Log successful load
+            await _entityLogger.LogAsync(
+                "load game successful",
+                gameSave,
+                LogCategories.GamePlay.Load
+            );
+            
             return Ok(gameSave);
-        } catch (Exception) {
+        } catch (KeyNotFoundException ex) {
+            // Log game save not found
+            await _entityLogger.LogAsync(
+                "load game error not found",
+                new
+                {
+                    SaveId = saveId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Load
+            );
+            return NotFound($"Failed to load game");
+        } catch (Exception ex) {
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "load game error",
+                new
+                {
+                    SaveId = saveId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Load
+            );
             return BadRequest($"Failed to load game");
         }
     }
@@ -62,8 +123,45 @@ public class GameController : ControllerBase
         try {
             // get the user's saved games.
             var gameSaves = await _gameService.GetUserGameSaves(userId);
+            
+            // Log successful retrieval
+            await _entityLogger.LogAsync(
+                "get user saves successful",
+                new
+                {
+                    UserId = userId,
+                    SaveCount = gameSaves.Count(),
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Saves
+            );
+            
             return Ok(gameSaves);
+        } catch (KeyNotFoundException ex) {
+            // Log user not found
+            await _entityLogger.LogAsync(
+                "get user saves error not found",
+                new
+                {
+                    UserId = userId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Saves
+            );
+            return NotFound($"Failed to get user's saved games: {ex.Message}");
         } catch (Exception ex) {
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "get user saves error",
+                new
+                {
+                    UserId = userId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Saves
+            );
             return BadRequest($"Failed to get user's saved games: {ex.Message}");
         }
     }
@@ -77,12 +175,57 @@ public class GameController : ControllerBase
             var result = await _gameService.DeleteGameSave(saveId);
 
             if(!result) {
+                // Log deletion failure
+                await _entityLogger.LogAsync(
+                    "delete game save error",
+                    new
+                    {
+                        SaveId = saveId,
+                        Timestamp = DateTime.UtcNow
+                    },
+                    LogCategories.GamePlay.Delete
+                );
                 return NotFound("Failed to delete game save");
             }
 
+            // Log successful deletion
+            await _entityLogger.LogAsync(
+                "delete game save successful",
+                new
+                {
+                    SaveId = saveId,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Delete
+            );
+
             return Ok(new { message = "Save deleted successfully" });
 
-        } catch (Exception) {
+        } catch (KeyNotFoundException ex) {
+            // Log save not found
+            await _entityLogger.LogAsync(
+                "delete game save error not found",
+                new
+                {
+                    SaveId = saveId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Delete
+            );
+            return NotFound("Failed to delete game save");
+        } catch (Exception ex) {
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "delete game save error",
+                new
+                {
+                    SaveId = saveId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Delete
+            );
             return BadRequest($"Failed to delete game save");
         }
     }
@@ -96,8 +239,40 @@ public class GameController : ControllerBase
         try {
             // update the game save.
             var gameSave = await _gameService.UpdateGameSave(saveId, request);
+            
+            // Log successful update
+            await _entityLogger.LogAsync(
+                "update game save successful",
+                gameSave,
+                LogCategories.GamePlay.Update
+            );
+            
             return Ok(gameSave);
+        } catch (KeyNotFoundException ex) {
+            // Log save not found
+            await _entityLogger.LogAsync(
+                "update game save error not found",
+                new
+                {
+                    SaveId = saveId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Update
+            );
+            return NotFound($"Failed to update game save: {ex.Message}");
         } catch (Exception ex) {
+            // Log unexpected error
+            await _entityLogger.LogAsync(
+                "update game save error",
+                new
+                {
+                    SaveId = saveId,
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.GamePlay.Update
+            );
             return BadRequest($"Failed to update game save: {ex.Message}");
         }
     }

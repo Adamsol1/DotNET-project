@@ -1,37 +1,44 @@
 using System.Security.Claims;
 using backend.Application.Dtos.Authentication;
 using backend.Application.Interfaces;
+using backend.Infrastructure.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers.AccountManagement.User;
 
+/// <summary>
+/// Controller for account management for a given user. It allows for updating username, password and deleting the specific account.
+/// This requires authentication with a valid JWT token to be able to perform these operations.
+/// </summary>
+
 [ApiController]
-[Route("api/account")]
-[Authorize]
+[Route("api/account")] // Default route for account management
+[Authorize] // Check for a valid jwt token
 public class AccountController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly ILogger<AccountController> _logger;
+    private readonly IEntityFileLogger _entityLogger;
 
     public AccountController(
-        IUserService userService, 
-        ILogger<AccountController> logger)
+        IUserService userService,
+        IEntityFileLogger entityLogger)
     {
         _userService = userService;
-        _logger = logger;
+        _entityLogger = entityLogger;
     }
 
-    // Update the username for the currently authenticated user
+    /// <summary>
+    /// Method used to update the username for the current user. 
+    /// </summary>
+    /// <param name="request">Updated username</param>
+    /// <returns>The updated user information</returns>
     [HttpPut("username")]
     public async Task<ActionResult<UserDto>> UpdateUsername([FromBody] UpdateUsernameDto request)
     {
-        _logger.LogInformation("[AccountController] UpdateUsername called");
-        
         // Validate the incoming request
         if (!ModelState.IsValid)
         {
-            _logger.LogWarning("[AccountController] Invalid ModelState for UpdateUsername: {@ModelState}", ModelState);
             return BadRequest(ModelState);
         }
 
@@ -39,41 +46,53 @@ public class AccountController : ControllerBase
         {
             // Get the authenticated user's ID from the JWT token
             var authUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _logger.LogInformation("[AccountController] Extracted authUserId from token: {AuthUserId}", authUserId);
-            
+
             // Check if authUserId is null or empty
             if (string.IsNullOrEmpty(authUserId))
             {
-                _logger.LogWarning("[AccountController] Unable to get authenticated user ID");
                 return Unauthorized("User not authenticated");
             }
 
-            // Update username in the game database
-            _logger.LogInformation("[AccountController] Attempting to update username for authUserId: {AuthUserId} to new username: {NewUsername}", authUserId, request.Username);
             var updatedUser = await _userService.UpdateUsername(authUserId, request);
 
-            // no need to call UserManager as the UserService handles it now. -Ah
+            // Log the successful HTTP response
+            await _entityLogger.LogAsync(
+                "update username successful",
+                updatedUser,
+                LogCategories.AccountManagement.Username
+            );
 
-            _logger.LogInformation("[AccountController] Successfully updated username for user {UserId}", updatedUser.Id);
             return Ok(updatedUser);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "[AccountController] Error updating username");
+            // Log the error
+            await _entityLogger.LogAsync(
+                "update username error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.AccountManagement.Username
+            );
             return StatusCode(500, new { message = "An error occurred while updating username" });
         }
     }
 
     // Update the password for the currently authenticated user
+    /// <summary>
+    /// Method used to update the password for the current user.
+    /// It takes in a new password, and attempts to update it. If successful, it returns a success message.
+    /// </summary>
+    /// <param name="request">The request with the new password</param>
+    /// <returns>The success status</returns>
     [HttpPut("password")]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto request)
     {
-        _logger.LogInformation("[AccountController] UpdatePassword called");
-        
         // Validate the incoming request
         if (!ModelState.IsValid)
         {
-            _logger.LogWarning("[AccountController] Invalid ModelState for UpdatePassword: {@ModelState}", ModelState);
             return BadRequest(ModelState);
         }
 
@@ -81,22 +100,37 @@ public class AccountController : ControllerBase
         {
             // Get the authenticated user's ID from the JWT token
             var authUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             // Check if authUserId is null or empty
             if (string.IsNullOrEmpty(authUserId))
             {
-                _logger.LogWarning("[AccountController] Unable to get authenticated user ID");
                 return Unauthorized("User not authenticated");
             }
 
             // Updates password in both databases
             await _userService.UpdatePassword(authUserId, request);
 
-            _logger.LogInformation("[AccountController] Successfully updated password in both databases");
+            // Log the successful HTTP response
+            await _entityLogger.LogAsync(
+                "update password successful",
+                new { Timestamp = DateTime.UtcNow },
+                LogCategories.AccountManagement.Password
+            );
+
             return Ok(new { message = "Password updated successfully" });
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "[AccountController] Error updating password");
+            // Log the error
+            await _entityLogger.LogAsync(
+                "update password error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.AccountManagement.Password
+            );
             return StatusCode(500, new { message = "An error occurred while updating password" });
         }
     }
@@ -105,37 +139,55 @@ public class AccountController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> DeleteAccount()
     {
-        _logger.LogInformation("[AccountController] DeleteAccount called");
-
         try
         {
             // Get the authenticated user's ID from the JWT token
             var authUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             // Check if authUserId is null or empty
             if (string.IsNullOrEmpty(authUserId))
             {
-                _logger.LogWarning("[AccountController] Unable to get authenticated user ID for account deletion");
                 return Unauthorized("User not authenticated");
             }
 
-            _logger.LogInformation("[AccountController] Attempting to delete account for authUserId: {AuthUserId}", authUserId);
-
-            // Delete from game database
+            // Delete from game database and auth database (handled by UserService)
             await _userService.DeleteAccount(authUserId);
 
-            // same case here, Auth database user is also handled by the UserService now
+            // Log the successful HTTP response
+            await _entityLogger.LogAsync(
+                "delete account successful",
+                new { Timestamp = DateTime.UtcNow },
+                LogCategories.AccountManagement.Deletion
+            );
 
-            _logger.LogInformation("[AccountController] Successfully deleted account for authUserId: {AuthUserId}", authUserId);
             return Ok(new { message = "Account deleted successfully" });
         }
         catch (KeyNotFoundException e)
         {
-            _logger.LogWarning(e, "[AccountController] User not found");
+            // Log the error and return a 404 Not Found response
+            await _entityLogger.LogAsync(
+                "delete account error not found",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.AccountManagement.Deletion
+            );
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "[AccountController] Error deleting account");
+            // Log the error and return a 500 Internal Server Error response
+            await _entityLogger.LogAsync(
+                "delete account error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.AccountManagement.Deletion
+            );
             return StatusCode(500, new { message = "An error occurred while deleting account" });
         }
     }

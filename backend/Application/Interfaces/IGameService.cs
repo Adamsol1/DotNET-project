@@ -4,12 +4,11 @@ using backend.Domain.Models;
 
 namespace backend.Application.Interfaces;
 
-/*
-The idea is to have a single service that handles the game logic.
-it will be used to orchestrate the game,
-get the choices, check the progress, and get the story.
-
-*/
+/// <summary> 
+/// The idea is to have a single service that handles the game logic.
+/// it will be used to orchestrate the game,
+/// get the choices, check the progress, and get the story.
+/// </summary>
 
 public interface IGameService
 {

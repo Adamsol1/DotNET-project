@@ -1,6 +1,10 @@
 namespace backend.Application.Dtos.Story;
 
-public sealed class ChoiceDto 
+/// <summary>
+/// DTO for a choice on a story node in the story.
+/// This does also include possible audio cues and health effects.
+/// </summary>
+public sealed class ChoiceDto
 {
     public int Id { get; set; }
     public int StoryNodeId { get; set; }
@@ -10,6 +14,9 @@ public sealed class ChoiceDto
     public int? HealthEffect { get; set; }
 }
 
+/// <summary>
+/// DTO used for creating a new choice with all attributes. 
+/// </summary>
 public sealed class CreateChoiceDto
 {
     public int StoryNodeId { get; set; }
@@ -19,6 +26,9 @@ public sealed class CreateChoiceDto
     public int? HealthEffect { get; set; }
 }
 
+/// <summary>
+/// DTO used for updating an existing choice with all attributes
+/// </summary>
 public sealed class UpdateChoiceDto
 {
     public int Id { get; set; }

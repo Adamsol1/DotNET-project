@@ -90,37 +90,7 @@ builder.Services.AddAuthentication(options =>
                     builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key not configured")
                 ))
             };
-            // NOTE  : the following code is for debuging given by Baifan. Remove on finished program
-            options.Events = new JwtBearerEvents()
-            {
-                OnMessageReceived = context =>
-                {
-                    var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").LastOrDefault();
-                    Console.WriteLine($"OnMessageReceived - Token: {token}");
-                    return Task.CompletedTask;
-                },
-                OnTokenValidated = context =>
-                {
-                    Console.WriteLine("OnTokenValidated: SUCCESS");
-                    return Task.CompletedTask;
-                },
-                OnAuthenticationFailed = context =>
-                {
-                    Console.WriteLine($"OnAuthenticationFailed: {context.Exception.Message}");
-                    Console.WriteLine($"Exception Type: {context.Exception.GetType().Name}");
-                    if (context.Exception.InnerException != null)
-                    {
-                        Console.WriteLine($"Inner Exception: {context.Exception.InnerException.Message}");
-                    }
-
-                    return Task.CompletedTask;
-                },
-                OnChallenge = context =>
-                {
-                    Console.WriteLine($"OnChallenge: {context.Error} - {context.ErrorDescription}");
-                    return Task.CompletedTask;
-                }
-            };
+        
         });
 
 
@@ -267,37 +237,7 @@ app.Use(async (context, next) =>
 });
 app.UseCors("CorsPolicy");
 
-// NOTE THIS IS FOR DEBUG PURPOSE. It will be removed when authentication feature works. 
-app.Use(async (context, next) =>
- {
-     if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
-     {
-         var headerValue = authHeader.FirstOrDefault();
-         if (headerValue?.StartsWith("Bearer ") == true)
-         {
-             var token = headerValue.Substring("Bearer ".Length).Trim();
 
-             try
-             {
-                 // Decode the token to see its contents (without verification)
-                 var handler = new JwtSecurityTokenHandler();
-                 var jsonToken = handler.ReadJwtToken(token);
-
-                 Console.WriteLine($"--> Token Issuer: {jsonToken.Issuer}");
-                 Console.WriteLine($"--> Token Audience: {jsonToken.Audiences.FirstOrDefault()}");
-                 Console.WriteLine($"--> Token Expiry: {jsonToken.ValidTo}");
-                 Console.WriteLine($"--> Current Time: {DateTime.UtcNow}");
-                 Console.WriteLine($"--> Config Issuer: {builder.Configuration["Jwt:Issuer"]}");
-                 Console.WriteLine($"--> Config Audience: {builder.Configuration["Jwt:Audience"]}");
-             }
-             catch (Exception ex)
-             {
-                 Console.WriteLine($"--> Error decoding token: {ex.Message}");
-             }
-         }
-     }
-     await next.Invoke();
- });
 
 //Authentication and authorization pipeline
 app.UseAuthentication();
@@ -311,19 +251,8 @@ app.UseAuthorization();
     * backend hosted on localhost:5169
     */
 
-//NOTE : This is commented out for testing with core made in the authorization. If sucesscfull this will be removed. 
-/*
-app.UseCors(cors => cors.WithOrigins("http://localhost:3000")
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    );
-*/
-/*
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Auth}/{action=Login}/{id?}"
-);
-*/
+
+
 
 app.MapControllers();
 

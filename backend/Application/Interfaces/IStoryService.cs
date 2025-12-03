@@ -4,16 +4,19 @@ using backend.Application.Dtos.Story;
 
 namespace backend.Application.Interfaces;
 
+
+/// <summary>
+/// Interface for managing:
+/// - Story Nodes
+/// - Dialogues
+/// - Choices
+/// - Characters
+/// Used by GameService to handle story related commands. 
+/// This has been created to handle all story related operations in a single service that will be used in GameService.
+/// </summary>
+
 public interface IStoryService
 {
-    /*
-    Since we would need a story composed of StoryNodes, Dialogues, Choices and characters,
-    I though that it was best to combine all those stuff into a single service.
-    that will be used in GameService.
-
-    Ahmed
-    
-    */
 
     //-- Story Node Methods --
     // get Story Its node Id
@@ -74,8 +77,5 @@ public interface IStoryService
 
     // update a Character
     Task<CharacterDto> UpdateCharacter(UpdateCharacterDto request);
-    
-    // delete a Character
-    //Task<bool> DeleteCharacter(int id);
 
 }

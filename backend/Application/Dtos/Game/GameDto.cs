@@ -2,20 +2,15 @@ using backend.Application.Dtos.Story;
 
 namespace backend.Application.Dtos.Game;
 
-/*
-Instead of creating a new file for each dto, we just group them in 
-a file., where I think it makes sense add them in.
 
-// makes it easier to expect where they might be and also reduces the
-amount of dto files, as each dto often isnt longer than 10 lines. 
--Ah
-*/
 
-// Game session Management, 
-// the idea is that if the user creates a new game or fetches a game from the db
-// we create or return an object that already have the attributes needed for that task.
+/// <summary>
+/// DTOs related to game state, progression and actions. 
+/// This is created to group all game related DTOs in a single file, to reduce the number of DTO files.
+/// The idea is that when the user creates a new game or fetches an existing game, we return an object that already have the attributes needed for that task. 
+/// </summary>
 
-public class GameSessionDto 
+public class GameSessionDto
 {
     // player character they create or have created.
     public int PlayerCharacterId { get; set; }
@@ -37,6 +32,7 @@ public class MiniGameStateDto
     public int Health { get; set; }
 }
 
+// The default player character dto used in the game with attributes. 
 public class PlayerCharacterDto
 {
     public int Id { get; set; }
@@ -46,6 +42,7 @@ public class PlayerCharacterDto
     public int CurrentStoryNodeId { get; set; }
 }
 
+// Game state dto to return current state of game and its attributes.
 public class GameStateDto
 {
     public int SaveId { get; set; }
@@ -55,26 +52,29 @@ public class GameStateDto
     public bool IsGameOver { get; set; }
 }
 
-// start game request dto.
+
+//DTO used for starting a new game. 
 public class StartGameRequestDto
 {
     public int UserId { get; set; }
     public string? SaveName { get; set; }
 }
-
+// DTO used for modifying health based on choice made. 
 public class ModifyHealthRequestDto
 {
     public int choiceId { get; set; }
     public int healthValue { get; set; }
 }
 
-// make choice request dto.
+
+// DTO used for making a choice. 
 public class MakeChoiceRequestDto
 {
     public int SaveId { get; set; }
     public int ChoiceId { get; set; }
 }
 
+// Dto used to save current game save. 
 public class GameSaveDto
 {
     public int Id { get; set; }

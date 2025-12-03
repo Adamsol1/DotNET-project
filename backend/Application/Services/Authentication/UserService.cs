@@ -1,6 +1,7 @@
 using backend.Application.Dtos.Authentication;
 using backend.Application.Interfaces;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
 using backend.Infrastructure.Repositories.Base;
 using Microsoft.AspNetCore.Identity;
 
@@ -9,13 +10,13 @@ namespace backend.Application.Services.Authentication;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _uow;
-    private readonly ILogger<UserService> _logger;
+    private readonly IEntityFileLogger _entityLogger;
     private readonly UserManager<AuthUser> _userManager;
 
 
-    public UserService(IUnitOfWork uow, ILogger<UserService> logger, UserManager<AuthUser> userManager)
+    public UserService(IUnitOfWork uow, IEntityFileLogger entityFileLogger, UserManager<AuthUser> userManager)
     {
-        _logger = logger;
+        _entityLogger = entityFileLogger;
         _uow = uow;
         _userManager = userManager;
 
@@ -46,7 +47,11 @@ public class UserService : IUserService
 
             if(existingUser != null)
             {
-                _logger.LogWarning("[Userservice] User with username already exists");
+                await _entityLogger.LogAsync(
+                    "User with username already exists.",
+                    new { Username = registerUserDto.Username, Timestamp = DateTime.UtcNow },
+                    LogCategories.Authentication.Registration
+                );
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException($"User with username already exists.");
             }
@@ -61,7 +66,11 @@ public class UserService : IUserService
 
             // check if it has succeeded 
             if (!result.Succeeded) {
-                _logger.LogWarning("[Userservice] Unable to create account with {@Username}. Errors: {@Errors}", registerUserDto.Username, result.Errors);
+                await _entityLogger.LogAsync(
+                    "register account error user creation failed",
+                    new { Username = registerUserDto.Username, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
+                    LogCategories.Authentication.Registration
+                );
                 // rollback the transaction.
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException($"Unable to create account with username {registerUserDto.Username}. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
@@ -74,12 +83,15 @@ public class UserService : IUserService
             var roleResult = await _userManager.AddToRoleAsync(authUser, "player");
             if (!roleResult.Succeeded)
             {
-                _logger.LogWarning("[Userservice] Failed to assign role to user {Username}. Errors: {@Errors}", registerUserDto.Username, roleResult.Errors);
+                await _entityLogger.LogAsync(
+                    "register account error role assignment failed",
+                    new { Username = registerUserDto.Username, Errors = roleResult.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
+                    LogCategories.Authentication.Registration
+                );
                 await _uow.RollBackAsync();
                 await _userManager.DeleteAsync(authUser);
                 throw new InvalidOperationException($"Failed to assign role to user. Errors: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
             }
-            _logger.LogInformation("[Userservice] Assigned player role to user {Username}", registerUserDto.Username);
 
             // create game user with the auth user id
             var user = new User
@@ -96,11 +108,10 @@ public class UserService : IUserService
 
             return ReturnUserDto(user);
         }
-        catch ( Exception e)
+        catch
         {
             // throw error and rollback transaction which disposes of it
             await _uow.RollBackAsync();
-            _logger.LogError(e, "[Userservice] Error registering account");
             throw;
         }
         
@@ -116,14 +127,22 @@ public class UserService : IUserService
             
             if (authUser == null)
             {
-                _logger.LogWarning("[Userservice] AuthUser with username {Username} doesn't exist", loginUserDto.Username);
+                await _entityLogger.LogAsync(
+                    "AuthUser with username does not exist.",
+                    new { Username = loginUserDto.Username, Timestamp = DateTime.UtcNow },
+                    LogCategories.Authentication.Login
+                );
                 return null;
             }
 
             // Validate password against AuthDb
             if (!await _userManager.CheckPasswordAsync(authUser, loginUserDto.Password))
             {
-                _logger.LogWarning("[Userservice] Invalid password for user {Username}", loginUserDto.Username);
+                await _entityLogger.LogAsync(
+                    "Invalid password for user.",
+                    new { Username = loginUserDto.Username, Timestamp = DateTime.UtcNow },
+                    LogCategories.Authentication.Login
+                );
                 return null;
             }
 
@@ -133,15 +152,18 @@ public class UserService : IUserService
             //Check if game user exists
             if(user == null)
             {
-                _logger.LogWarning("[Userservice] GameUser with AuthUserId {AuthUserId} doesn't exist", authUser.Id);
+                await _entityLogger.LogAsync(
+                    "GameUser with AuthUserId does not exist.",
+                    new { AuthUserId = authUser.Id, Timestamp = DateTime.UtcNow },
+                    LogCategories.Authentication.Login
+                );
                 return null;
             }
 
             return ReturnUserDto(user);
         }
-        catch (Exception e)
+        catch
         {
-            _logger.LogError(e, "[Userservice] Error during login for username {Username}", loginUserDto.Username);
             throw;
         }
         
@@ -163,17 +185,17 @@ public class UserService : IUserService
 
             // start a transaction
             await _uow.BeginAsync();
-            _logger.LogInformation("[Userservice] UpdateUsername called for AuthUserId: {authUserId}", authUserId);
 
             // get the user by auth user id
             var user = await _uow.UserRepository.GetByAuthId(authUserId);
 
-            // log the result
-            _logger.LogInformation("[Userservice] User lookup result: {UserFound}", user != null ? $"Found user ID {user.Id}" : "Not found");
-
             // check if the user exists
             if (user == null) {
-                _logger.LogWarning("[Userservice] User not found.");
+                await _entityLogger.LogAsync(
+                    "User was not found.",
+                    new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Username
+                );
                 
                 // if user doesnt exists we dont need the transaction as we dont make changes
                 await _uow.RollBackAsync();
@@ -187,7 +209,11 @@ public class UserService : IUserService
             var exists = await _uow.UserRepository.GetUserByUsername(updateUsernameDto.Username);
 
             if (exists != null && exists.Id != user.Id) {
-                _logger.LogWarning("Username already exists.");
+                await _entityLogger.LogAsync(
+                    "Username already exists.",
+                    new { Username = updateUsernameDto.Username, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Username
+                );
                 // throw the transaction back
                 await _uow.RollBackAsync();
                 // throw an error
@@ -206,7 +232,11 @@ public class UserService : IUserService
             // check if the auth user exists
             if (authUser == null)
             {
-                _logger.LogWarning("[Userservice] AuthUser with AuthUserId {AuthUserId} not found in Identity", user.AuthUserId);
+                await _entityLogger.LogAsync(
+                    "AuthUser not found in authentication system. Cannot update username.",
+                    new { AuthUserId = user.AuthUserId, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Username
+                );
                 
                 // Rollback game database since we can't update AuthUser, as it doesnt exist.
                 await _uow.RollBackAsync();
@@ -221,7 +251,11 @@ public class UserService : IUserService
 
             // check if the result succeeded if not we rollback on gameDB to. 
             if (!result.Succeeded) {
-                _logger.LogWarning("Failed to update AuthUser username");
+                await _entityLogger.LogAsync(
+                    $"Failed to update username in auth database.",
+                    new { AuthUserId = user.AuthUserId, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Username
+                );
 
                 // rollback the transaction on everything / gamedb as auth database as failed.
                 await _uow.RollBackAsync();
@@ -231,17 +265,15 @@ public class UserService : IUserService
             // save the changes to database and commit the transaction.
             await _uow.SaveAsync();
             await _uow.CommitAsync();
-            
-            _logger.LogInformation("[Userservice] Successfully updated username in both databases for AuthUserId {AuthUserId}", authUserId);
 
             // return a user dto.
             return ReturnUserDto(user);
 
-        } catch (Exception e) 
+        }
+        catch
         {
             // rollback the transaction
             await _uow.RollBackAsync();
-            _logger.LogError(e, "[Userservice] Error updating username in both databases");
             throw;
         }
     }
@@ -255,7 +287,11 @@ public class UserService : IUserService
             // Validate that passwords match
             if (updatePasswordDto.NewPassword != updatePasswordDto.ConfirmPassword)
             {
-                _logger.LogWarning("[Userservice] Password confirmation doesn't match for AuthUserId {AuthUserId}", authUserId);
+                await _entityLogger.LogAsync(
+                    "Passwords do not match.",
+                    new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Password
+                );
                 throw new InvalidOperationException("Passwords do not match.");
             }
 
@@ -268,7 +304,11 @@ public class UserService : IUserService
             // Check if user exists
             if (user == null)
             {
-                _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
+                await _entityLogger.LogAsync(
+                    "User not found. Please log out and log back in, or re-register your account.",
+                    new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Password
+                );
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException($"User not found. Please log out and log back in, or re-register your account.");
             }
@@ -278,7 +318,11 @@ public class UserService : IUserService
 
             if (authUser == null)
             {
-                _logger.LogWarning("[Userservice] AuthUser with AuthUserId {AuthUserId} not found in Identity", user.AuthUserId);
+                await _entityLogger.LogAsync(
+                    "AuthUser not found in authentication system. Cannot update password.",
+                    new { AuthUserId = user.AuthUserId, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Password
+                );
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException("AuthUser not found in authentication system. Cannot update password.");
             }
@@ -291,7 +335,11 @@ public class UserService : IUserService
             // check if the result succeeded if not we rollback on gameDB to. 
 
             if (!result.Succeeded) {
-                _logger.LogWarning("Failed to update AuthUser password");
+                await _entityLogger.LogAsync(
+                    "Failed to update password in auth database.",
+                    new { AuthUserId = user.AuthUserId, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Password
+                );
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException("Failed to update password in auth database.");
 
@@ -300,14 +348,11 @@ public class UserService : IUserService
             // Password is only stored in AuthDb, so we just commit the transaction
             await _uow.CommitAsync();
 
-            _logger.LogInformation("[Userservice] Successfully updated password in AuthDb for AuthUserId {AuthUserId}", authUserId);
-
             return true;
         }
-        catch (Exception e)
+        catch
         {
             await _uow.RollBackAsync();
-            _logger.LogError(e, "[Userservice] Error updating password for AuthUserId {AuthUserId}", authUserId);
             throw;
         }
     }
@@ -316,7 +361,6 @@ public class UserService : IUserService
     {
         try
         {
-            _logger.LogInformation("[Userservice] DeleteAccount called for AuthUserId: {AuthUserId}", authUserId);
             await _uow.BeginAsync();
 
             // Get the user by AuthUserId
@@ -325,12 +369,14 @@ public class UserService : IUserService
             // Check if user exists
             if (user == null)
             {
-                _logger.LogWarning("[Userservice] User with AuthUserId {AuthUserId} not found", authUserId);
+                await _entityLogger.LogAsync(
+                    "User not found.",
+                    new { AuthUserId = authUserId, Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Deletion
+                );
                 await _uow.RollBackAsync();
                 throw new KeyNotFoundException($"User not found.");
             }
-
-            _logger.LogInformation("[Userservice] Deleting user: Id={UserId}, Username={Username}", user.Id, user.Username);
             
             // Delete the user from the game database
             await _uow.UserRepository.Delete(user.Id);
@@ -352,7 +398,11 @@ public class UserService : IUserService
 
             // check if the result succeeded if not we rollback on gameDB to. 
             if (!result.Succeeded) {
-                _logger.LogWarning("Failed to delete AuthUser");
+                await _entityLogger.LogAsync(
+                    "Failed to delete AuthUser in authentication system. Cannot delete account.",
+                    new { AuthUserId = user.AuthUserId, Errors = result.Errors.Select(e => e.Description), Timestamp = DateTime.UtcNow },
+                    LogCategories.AccountManagement.Deletion
+                );
                 await _uow.RollBackAsync();
                 throw new InvalidOperationException("Failed to delete AuthUser in authentication system. Cannot delete account.");
             }
@@ -361,13 +411,11 @@ public class UserService : IUserService
             await _uow.SaveAsync();
             await _uow.CommitAsync();
 
-            _logger.LogInformation("[Userservice] Successfully deleted user with AuthUserId {AuthUserId}", authUserId);
             return true;
         }
-        catch (Exception e)
+        catch
         {
             await _uow.RollBackAsync();
-            _logger.LogError(e, "[Userservice] Error deleting account for AuthUserId {AuthUserId}", authUserId);
             throw;
         }
     }
@@ -393,17 +441,15 @@ public class UserService : IUserService
 
             // if no users are found, throw an error.
             if (users == null) {
-                _logger.LogWarning("[Userservice] No users found");
                 throw new KeyNotFoundException("No users found.");
             }
             
             // return to an dto list.
             return users.Select(ReturnUserDto);
         }
-        catch (Exception e)
+        catch
         {
             await _uow.RollBackAsync();
-            _logger.LogError(e, "[Userservice] Error fetching all users");
             throw;
         }
     }
@@ -419,15 +465,13 @@ public class UserService : IUserService
             {
 
                 // key not found is thrown here so we dont need a catch for it.
-                _logger.LogWarning("[Userservice] User with id {id} not found", id);
                 throw new KeyNotFoundException($"User with ID {id} not found.");
             }
 
             return ReturnUserDto(user);
         }
-        catch (Exception e)
+        catch
         {
-            _logger.LogError(e, "[Userservice] Error fetching user with id {id}", id);
             throw;
         }
     }
@@ -439,14 +483,12 @@ public class UserService : IUserService
             var user = await _uow.UserRepository.GetById(userId);
             if (user == null)
             {
-                _logger.LogWarning("[Userservice] User with id {userId} not found", userId);
                 throw new KeyNotFoundException($"User with ID {userId} not found.");
             }
             return user.AuthUserId;
         }
-        catch (Exception e)
+        catch
         {
-            _logger.LogError(e, "[Userservice] Error fetching AuthUserId for userId {userId}", userId);
             throw;
         }
     }

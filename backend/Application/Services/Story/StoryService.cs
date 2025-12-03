@@ -1,6 +1,7 @@
 using backend.Application.Dtos.Story;
 using backend.Application.Interfaces;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
 using backend.Infrastructure.Repositories.Base;
 
 namespace backend.Application.Services.Story;
@@ -9,12 +10,12 @@ public class StoryService : IStoryService
 {
     private readonly IUnitOfWork _uow;
     private readonly IGenService _genService;
-    private readonly ILogger<StoryService> _logger;
+    private readonly IEntityFileLogger _entityLogger;
 
     // constructor
-    public StoryService(IUnitOfWork uow, IGenService genService, ILogger<StoryService> logger)
+    public StoryService(IUnitOfWork uow, IGenService genService, IEntityFileLogger entityLogger)
     {
-        _logger = logger;
+        _entityLogger = entityLogger;
         _uow = uow;
         _genService = genService;
     }
@@ -33,9 +34,8 @@ public class StoryService : IStoryService
 
             return _genService.MapStoryNode(storyNode, dialogues, choices);
         }
-        catch (Exception ex)
+        catch
         {
-            _logger.LogError(ex, "Failed to get story node by id: {Id}", id);
             throw;
         }
     }
@@ -52,7 +52,6 @@ public class StoryService : IStoryService
             var storyNodes = await _uow.StoryNodeRepository.GetAll();
 
             if (storyNodes == null) {
-                _logger.LogWarning("[Storyservice] StoryNode not found");
                 throw new Exception("Story nodes not found");
             }
 
@@ -70,14 +69,12 @@ public class StoryService : IStoryService
             // since result array contains a return object for each storyNode, 
             // we just return that array
             return result;
-        } catch (Exception ex) {
+        } catch {
             // rollback, & error handling.
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error retrieving all StoryNodes");
             throw;
         }
     }
-
     // create a story node
     public async Task<StoryNodeDto> CreateStoryNode(CreateStoryNodeDto request) {
         try {
@@ -100,10 +97,9 @@ public class StoryService : IStoryService
             // return the story? or should we return a string? for know i just return the storyNode.
             return _genService.MapStoryNode(storyNode, new List<Dialogue>(), new List<Choice>());
 
-        } catch (Exception ex) {
+        } catch {
             // rollback, & error handling.
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error creating StoryNode");
             throw;
         }
     }
@@ -117,7 +113,6 @@ public class StoryService : IStoryService
             var storyNode = await _uow.StoryNodeRepository.GetById(request.Id);
 
             if (storyNode == null) {
-                _logger.LogWarning("[Storyservice] StoryNode with id {StoryNodeId} not found", request.Id);
                 throw new Exception("Story node not found");
             }
 
@@ -137,10 +132,9 @@ public class StoryService : IStoryService
 
             // return the storyNode
             return _genService.MapStoryNode(storyNode, dialogues, choices);
-        } catch (Exception ex) {
+        } catch {
             // rollback, & error handling.
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error updating StoryNode with id {StoryNodeId}", request.Id);
             throw;
         }
     }
@@ -153,7 +147,6 @@ public class StoryService : IStoryService
             // search in the db for the story node
             var storyNode = await _uow.StoryNodeRepository.GetById(id);
             if (storyNode == null) {
-                _logger.LogWarning("[Storyservice] StoryNode with id {StoryNodeId} not found", id);
                 throw new Exception("Story node not found");
             }
 
@@ -164,9 +157,8 @@ public class StoryService : IStoryService
             await _uow.CommitAsync();
 
             return true;
-        } catch (Exception ex) {
+        } catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error deleting StoryNode with id {StoryNodeId}", id);
             throw;
         }
     }
@@ -194,9 +186,8 @@ public class StoryService : IStoryService
         
             return _genService.MapDialogue(dialogueWithCharacter!);
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error creating Dialogue");
             throw;
         }
     }
@@ -208,7 +199,6 @@ public class StoryService : IStoryService
 
             var dialogue = await _uow.DialogueRepository.GetById(request.Id);
             if (dialogue == null) {
-                _logger.LogWarning("[Storyservice] Dialogue with id {DialogueId} not found", request.Id);
                 throw new Exception("Dialogue not found");
             }
 
@@ -227,9 +217,8 @@ public class StoryService : IStoryService
 
             return _genService.MapDialogue(dialogueWithCharacter!);
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error updating dialogue with id {DialogueId}", request.Id);
             throw;
         }
     }
@@ -245,8 +234,7 @@ public class StoryService : IStoryService
                 .GetAllByStoryNodeWithCharacter(storyNodeId);
         
             return dialogues.Select(_genService.MapDialogue);
-        } catch (Exception ex) {
-            _logger.LogError(ex, "[Storyservice] Error retrieving dialogues from StoryNode with id {StoryNodeId}", storyNodeId);
+        } catch {
             throw;
         }
     }
@@ -261,9 +249,8 @@ public class StoryService : IStoryService
             await _uow.CommitAsync();
             return true;
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error deleting dialogue with id {DialogueId}", id);
             throw;
         }
     }
@@ -291,9 +278,8 @@ public class StoryService : IStoryService
             return _genService.MapChoice(choice);
 
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error creating choice");
             throw;
         }
     }
@@ -308,7 +294,6 @@ public class StoryService : IStoryService
             var choice = await _uow.ChoiceRepository.GetById(request.Id);
             if (choice == null)
             {
-                _logger.LogWarning("[Storyservice] Choice with id {ChoiceId} not found", request.Id);
                 throw new Exception("Choice not found");
             }
 
@@ -326,9 +311,8 @@ public class StoryService : IStoryService
             // return the choice
             return _genService.MapChoice(choice);
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error updating choice with id {ChoiceId}", request.Id);
             throw;
         }
     }
@@ -343,15 +327,13 @@ public class StoryService : IStoryService
             var choices = await _uow.StoryNodeRepository.GetAllChoicesOfStoryNode(storyNodeId);
             if (choices == null)
             {
-                _logger.LogWarning("[Storyservice] Choices with StoryNodeId {StoryNodeId} not found", storyNodeId);
                 throw new Exception("Choices not found");
             }
             // return the choices to DTO object
             return choices.Select(_genService.MapChoice);
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error retrieving choices with StoryNodeId {StoryNodeId}", storyNodeId);
             throw;
         }
     }
@@ -366,9 +348,8 @@ public class StoryService : IStoryService
             await _uow.CommitAsync();
             return true;
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error deleting choice with id {ChoiceId}", id);
             throw;
         }
     }
@@ -386,7 +367,6 @@ public class StoryService : IStoryService
 
             if (character == null)
             {
-                _logger.LogWarning("[Storyservice] Character with id {CharacterId} not found", id);
                 throw new Exception("Character not found");
             }
 
@@ -394,16 +374,14 @@ public class StoryService : IStoryService
             var dialogues = await _uow.CharacterRepository.GetAllDialoguesOfCharacter(id);
             if (dialogues == null)
             {
-                _logger.LogWarning("[Storyservice] Dialogues with id {DialogueId} not found", id);
                 throw new Exception("Dialogues not found");
             }
 
             // return the character
             return _genService.MapCharacter(character, dialogues);
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error retrieving character with id {CharacterId}", id);
             throw;
         }
     }
@@ -417,7 +395,6 @@ public class StoryService : IStoryService
             var characters = await _uow.CharacterRepository.GetAll();
             if (characters == null)
             {
-                _logger.LogWarning("[Storyservice] Characters not found");
                 throw new Exception("Characters not found");
             }
 
@@ -429,7 +406,6 @@ public class StoryService : IStoryService
                 var dialogues = await _uow.CharacterRepository.GetAllDialoguesOfCharacter(character.Id);
                 if (dialogues == null)
                 {
-                    _logger.LogWarning("[Storyservice] Dialogue for character with id {CharacterId} not found", character.Id);
                     throw new Exception("Dialogues not found");
                 } 
 
@@ -439,9 +415,8 @@ public class StoryService : IStoryService
             // return the result
             return result;
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error retrieving characters");
             throw;
         }
     }
@@ -456,7 +431,6 @@ public class StoryService : IStoryService
             var characters = await _uow.StoryNodeRepository.GetAllCharactersOfStoryNode(storyNodeId);
             if (characters == null)
             {
-                _logger.LogWarning("[Storyservice] Characters from StoryNode with id {StoryNodeId} not found", storyNodeId);
                 throw new Exception("Characters not found");
             }
 
@@ -467,7 +441,6 @@ public class StoryService : IStoryService
                 var dialogues = await _uow.CharacterRepository.GetAllDialoguesOfCharacter(character.Id);
                 if (dialogues == null)
                 {
-                    _logger.LogWarning("[Storyservice] Dialogues from character with id {CharacterId} not found", character.Id);
                     throw new Exception("Dialogues not found");
                 }
                 
@@ -477,9 +450,8 @@ public class StoryService : IStoryService
             // return the result
             return result;
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error retrieving characters from StoryNode with id {StoryNodeId}", storyNodeId);
             throw;
         }
     }
@@ -505,9 +477,8 @@ public class StoryService : IStoryService
             // return the character
             return _genService.MapCharacter(character, new List<Dialogue>());
         }
-        catch (Exception ex) {
+        catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error creating character");
             throw;
         }
     }
@@ -520,7 +491,6 @@ public class StoryService : IStoryService
 
             var character = await _uow.CharacterRepository.GetById(request.Id);
             if (character == null) {
-                _logger.LogWarning("[Storyservice] Character with id {CharacterId} not found", request.Id);
                 throw new Exception("Character not found");
             }
 
@@ -534,9 +504,8 @@ public class StoryService : IStoryService
 
             var dialogues = await _uow.CharacterRepository.GetAllDialoguesOfCharacter(character.Id);
             return _genService.MapCharacter(character, dialogues);
-        } catch (Exception ex) {
+        } catch {
             await _uow.RollBackAsync();
-            _logger.LogError(ex, "[Storyservice] Error updating character with id {CharacterId}", request.Id);
             throw;
         }
     }

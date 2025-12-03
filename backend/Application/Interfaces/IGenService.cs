@@ -2,18 +2,17 @@ using backend.Application.Dtos.Game;
 using backend.Application.Dtos.Story;
 using backend.Domain.Models;
 
-// since couple of the functions we use live within system.threading we import that.
 
-/* 
-GenService Interface - Infrastructure layer for common functionality
-Focuses on transaction handling, entity validation, and DTO mapping
-to eliminate duplication across all services.
 
--Ah 20.11
-*/
+/// <summary>
+/// GenService Interface - Infrastructure layer for common functionality
+/// Focuses on transaction handling, entity validation, and DTO mapping
+/// to eliminate duplication across all services.
+/// </summary>
+
 namespace backend.Application.Interfaces;
 
-public interface IGenService 
+public interface IGenService
 {
     #region Transaction Wrappers
     // Transaction wrapper methods - eliminates 90% of duplication
@@ -35,7 +34,7 @@ public interface IGenService
     DialogueDto MapDialogue(Dialogue dialogue);
     CharacterDto MapCharacter(Character character, IEnumerable<Dialogue> dialogues);
     GameSaveDto MapGameSave(GameSave gameSave);
-    
+
     #endregion
 }
 

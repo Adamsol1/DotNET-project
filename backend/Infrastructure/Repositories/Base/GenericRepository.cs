@@ -9,9 +9,9 @@ namespace backend.Infrastructure.Repositories.Base;
 /// <summary>
 /// Generic repository implementation for CRUD operations.
 /// </summary>
-
 public class GenericRepository<T> : IGenericRepository<T> where T : class
-{
+{   
+    // 
     private readonly AppDbContext _dbContext;
     private readonly DbSet<T> _dbSet;
     private readonly IEntityFileLogger _entityLogger;
@@ -24,12 +24,18 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _entityLogger = entityLogger;
 	}
     
+    /// <summary>
+    /// Generic GetById method used by instances
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<T> GetById(int id)
     {
         try
         {
             var entity = await _dbSet.FindAsync(id);
-
+            
             if (entity == null)
             {
                 await _entityLogger.LogAsync(
@@ -66,7 +72,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             throw;
         }
     }
-
+    
+    // GetAll
     public async Task<IEnumerable<T>> GetAll()
     {
         try {

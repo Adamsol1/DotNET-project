@@ -59,6 +59,7 @@ public static class LogCategories
         public const string Load = "Game/Load";
         public const string Delete = "Game/Delete";
         public const string Update = "Game/Update";
+        public const string StoryHandling = "Game/StoryHandling";
     }
 
 

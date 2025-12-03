@@ -3,6 +3,7 @@ using backend.Application.Dtos.Game;
 using backend.Application.Dtos.Story;
 using backend.Application.Interfaces;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
 using backend.Infrastructure.Repositories.Base;
 
 namespace backend.Application.Services.Story;
@@ -12,31 +13,29 @@ public class StoryControllerService : IStoryControllerService
     private readonly IUnitOfWork _uow;
     private readonly IGenService _genService;
     private readonly IStoryService _storyService;
-    private readonly ILogger<StoryControllerService> _logger;
+    private readonly IEntityFileLogger _entityLogger;
 
     public StoryControllerService(
         IUnitOfWork uow, 
         IGenService genService, 
         IStoryService storyService,
-        ILogger<StoryControllerService> logger)
+        IEntityFileLogger entityLogger)
     {
         _uow = uow;
         _genService = genService;
         _storyService = storyService;
-        _logger = logger;
+        _entityLogger = entityLogger;
     }
 
     #region Story Navigation Methods
 
     public async Task<StoryNodeDto> GetCurrentNode(int saveId)
     {
-        _logger.LogInformation("Getting current node for saveId: {SaveId}", saveId);
         return await _genService.Execute(async () =>
         {
             // we take in the saveId to know where the user is in the story.
             // and use it to get the current story node id from the game save.    
             var gameSave = await _genService.ValidateEntityExists<GameSave>(saveId);
-            _logger.LogInformation("Found gameSave with CurrentStoryNodeId: {NodeId}", gameSave.CurrentStoryNodeId);
             return await _storyService.GetStoryNodeById(gameSave.CurrentStoryNodeId);
         });
     }
