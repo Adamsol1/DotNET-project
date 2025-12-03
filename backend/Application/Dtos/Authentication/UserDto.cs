@@ -44,8 +44,8 @@ public sealed class RegisterUserDto
     }
  
     [Required(ErrorMessage = "Password is required.")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{{}}|<>])", 
+    [StringLength(50, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 50 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=.,:?])[A-Za-z0-9!@#$%^&*()_\-+=.,:?]{8,50}$", 
         ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
     public string Password { get; set; } = string.Empty;
     
@@ -81,8 +81,8 @@ public sealed class LoginUserDto
     }
  
     [Required(ErrorMessage = "Password is required.")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{{}}|<>])", 
+    [StringLength(50, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 50 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=.,:?])[A-Za-z0-9!@#$%^&*()_\-+=.,:?]{8,50}$", 
         ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
     public string Password { get; set; } = string.Empty;
     
@@ -106,15 +106,15 @@ public sealed class LoginUserDto
 public sealed class UpdatePasswordDto
 {
     [Required(ErrorMessage = "Password is required.")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{{}}|<>])", 
-        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)")]
+    [StringLength(50, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 50 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=.,:?])[A-Za-z0-9!@#$%^&*()_\-+=.,:?]{8,50}$", 
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
     public string NewPassword { get; set; } = string.Empty;
  
     [Required(ErrorMessage = "Confirm password is required.")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{{}}|<>])", 
-        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)")]
+    [StringLength(50, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 50 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=.,:?])[A-Za-z0-9!@#$%^&*()_\-+=.,:?]{8,50}$", 
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
 
