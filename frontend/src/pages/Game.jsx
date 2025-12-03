@@ -41,7 +41,7 @@ export function Game() {
       //console.log('[Game] loadSaves called, user object:', user);
       //console.log('[Game] user.id (userId):', user?.id);
       //console.log('[Game] localStorage user_id:', localStorage.getItem('user_id'));
-      
+
       const userSaves = await getAllSaves(user.id);
       setSaves(userSaves);
     } catch (error) {
@@ -145,9 +145,11 @@ export function Game() {
   return (
 
     <div 
-      className="min-h-screen text-white font-mono relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      className="min-h-screen text-white font-mono relative overflow-y-auto bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url('/assets/backgrounds/afterLogin.png')`,
+        height: '100vh',
+        overflowY: 'auto',
       }}
     >
       {/* Mini-game overlay */}
