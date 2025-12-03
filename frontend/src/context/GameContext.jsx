@@ -384,7 +384,8 @@ export function GameProvider({ children }) {
     // get all saves and return the result.
     const getAllSaves = useCallback( async (userId) => {
         try {
-            console.log('[GameContext] getAllSaves called with userId:', userId);
+            //console.log('[GameContext] getAllSaves called with userId:', userId);
+            
             dispatch({ type: ActionTypes.GET_ALL_SAVES });
             const saves = await game.getAllSaves(userId);
             dispatch({ type: ActionTypes.GAME_SUCCESS, payload: saves });

@@ -25,7 +25,7 @@ export function StartGame({ onGameStart, onBack }) {
         // Use the existing getAllSaves function from GameContext
         const saves = await getAllSaves(userId);
         
-        console.log('[StartGame] User saves:', saves);
+        //console.log('[StartGame] User saves:', saves);
         
         const count = saves ? saves.length : 0;
         setSaveCount(count);
@@ -40,7 +40,7 @@ export function StartGame({ onGameStart, onBack }) {
 
     // Count saves when component mounts
     useEffect(() => {
-        playBackgroundMusic('/assets/audio/menu-music.mp3');
+        playBackgroundMusic('/assets/audio/music/menuMusic.mp3');
         countUserSaves();
 
         return () => {

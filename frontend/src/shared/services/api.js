@@ -173,7 +173,7 @@ export const game = {
 
     // get all saves that belong to the user.
     getAllSaves: async (userId) => {
-        console.log('[API] getAllSaves called with userId:', userId, 'Type:', typeof userId);
+        //console.log('[API] getAllSaves called with userId:', userId, 'Type:', typeof userId);
         const response = await api.get(`/game/saves/${userId}`);
         return response.data;
     },
