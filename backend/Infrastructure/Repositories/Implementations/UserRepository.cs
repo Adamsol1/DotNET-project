@@ -75,25 +75,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     /// Get hashed password associated with given user ID
     /// </summary>
 
-    public async Task<string?> GetPasswordById(int id)
-    {
-        try {
-
-            return await GetPropertyValue(id, u => u.Password);
-            
-        } catch (Exception ex) {
-            await _entityLogger.LogAsync(
-                "GetPasswordByIdError", 
-                new { 
-                    Id = id,
-                    Reason = ex.Message,
-                    Timestamp = DateTime.UtcNow
-                    }, 
-                LogCategories.SystemLevel.Database);
-            throw;
-        }
-    }
-
     /// <summary>
     /// Get the role of the user associated with given user ID
     /// The method expects either one or zero results because only one role is given to each user

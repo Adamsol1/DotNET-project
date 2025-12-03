@@ -85,7 +85,6 @@ public class UserService : IUserService
             var user = new User
             {
                 Username = registerUserDto.Username,
-                Password = registerUserDto.Password,
                 AuthUserId = authUserId
             };
 
@@ -274,12 +273,7 @@ public class UserService : IUserService
                 throw new KeyNotFoundException($"User not found. Please log out and log back in, or re-register your account.");
             }
 
-            // Update the password (Note: In production, this should be hashed)
-            user.Password = updatePasswordDto.NewPassword;
-            await _uow.UserRepository.Update(user);
-
-            // wait to save the changes to database before updating the auth database.
-
+            // Password is stored only in AuthDb (Identity), not in game.db
             var authUser = await _userManager.FindByIdAsync(user.AuthUserId);
 
             if (authUser == null)
@@ -303,11 +297,10 @@ public class UserService : IUserService
 
             }
             
-            // save the changes to database and commit the transaction.
-            await _uow.SaveAsync();
+            // Password is only stored in AuthDb, so we just commit the transaction
             await _uow.CommitAsync();
 
-            _logger.LogInformation("[Userservice] Successfully updated password in both databases for AuthUserId {AuthUserId}", authUserId);
+            _logger.LogInformation("[Userservice] Successfully updated password in AuthDb for AuthUserId {AuthUserId}", authUserId);
 
             return true;
         }
