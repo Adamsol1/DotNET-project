@@ -1,61 +1,151 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace backend.Application.Dtos.Authentication;
+namespace Application.Dtos.Authentication;
 
-public sealed class UserDto
+public class UserDto
 {
     public int Id { get; set; }
-    private string _username = string.Empty;
-    public string Username
+ 
+    [Required(ErrorMessage = "Username is required.")]
+    [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters.")]   
+    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
+    [CustomValidation(typeof(UserDto), nameof(ValidateUsernameStart))]
+    public string Username { get; set; } = string.Empty;
+    
+    // Custom validation method for username starting with underscore
+    public static ValidationResult? ValidateUsernameStart(string username, ValidationContext context)
     {
-        get => _username;
-        set => _username = value?.ToLowerInvariant() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return ValidationResult.Success; // Required attribute handles this
+        }
+        
+        if (username.StartsWith("_"))
+        {
+            return new ValidationResult("Username cannot start with an underscore.");
+        }
+        
+        return ValidationResult.Success;
     }
-    // if we want player and admin role add it here Adam
 }
 
 public sealed class RegisterUserDto
 {
-    [Required]
     private string _username = string.Empty;
+    
+    [Required(ErrorMessage = "Username is required.")]
+    [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters.")]
+    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
+    [CustomValidation(typeof(RegisterUserDto), nameof(ValidateUsernameStart))]
     public string Username
     {
         get => _username;
         set => _username = value?.ToLowerInvariant() ?? string.Empty;
     }
+ 
+    [Required(ErrorMessage = "Password is required.")]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{}|<>])", 
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)")]
     public string Password { get; set; } = string.Empty;
-    // TODO : Should maybe implement a email that is required?
+    
+    // Custom validation method for username starting with underscore
+    public static ValidationResult? ValidateUsernameStart(string username, ValidationContext context)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return ValidationResult.Success;
+        }
+        
+        if (username.StartsWith("_"))
+        {
+            return new ValidationResult("Username cannot start with an underscore.");
+        }
+        
+        return ValidationResult.Success;
+    }
 }
 
 public sealed class LoginUserDto
 {
-    [Required]
     private string _username = string.Empty;
+    
+    [Required(ErrorMessage = "Username is required.")]
+    [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters.")]
+    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
+    [CustomValidation(typeof(LoginUserDto), nameof(ValidateUsernameStart))]
     public string Username
     {
         get => _username;
         set => _username = value?.ToLowerInvariant() ?? string.Empty;
     }
+ 
+    [Required(ErrorMessage = "Password is required.")]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{}|<>])", 
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)")]
     public string Password { get; set; } = string.Empty;
-}
-
-public sealed class UpdateUsernameDto
-{
-    [Required]
-    private string _username = string.Empty;
-    public string Username
+    
+    // Custom validation method for username starting with underscore
+    public static ValidationResult? ValidateUsernameStart(string username, ValidationContext context)
     {
-        get => _username;
-        set => _username = value?.ToLowerInvariant() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return ValidationResult.Success;
+        }
+        
+        if (username.StartsWith("_"))
+        {
+            return new ValidationResult("Username cannot start with an underscore.");
+        }
+        
+        return ValidationResult.Success;
     }
 }
 
 public sealed class UpdatePasswordDto
 {
-    [Required]
+    [Required(ErrorMessage = "Password is required.")]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{}|<>])", 
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)")]
     public string NewPassword { get; set; } = string.Empty;
-    [Required]
+ 
+    [Required(ErrorMessage = "Confirm password is required.")]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\"":{}|<>])", 
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)")]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
 
+public sealed class UpdateUsernameDto
+{
+    private string _username = string.Empty;
+    
+    [Required(ErrorMessage = "Username is required.")]
+    [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters.")]
+    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
+    [CustomValidation(typeof(UpdateUsernameDto), nameof(ValidateUsernameStart))]
+    public string Username
+    {
+        get => _username;
+        set => _username = value?.ToLowerInvariant() ?? string.Empty;
+    }
+    
+    // Custom validation method for username starting with underscore
+    public static ValidationResult? ValidateUsernameStart(string username, ValidationContext context)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return ValidationResult.Success;
+        }
+        
+        if (username.StartsWith("_"))
+        {
+            return new ValidationResult("Username cannot start with an underscore.");
+        }
+        
+        return ValidationResult.Success;
+    }
+}
 

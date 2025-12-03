@@ -15,11 +15,6 @@ public class User
     public string Username { get; set; } = string.Empty;
 
     /// <summary>
-    /// The hashed password of the user.
-    /// </summary>
-    public string Password { get; set; } = string.Empty;
-
-    /// <summary>
     /// The role of the user (e.g., Admin, Player).
     /// </summary>
     public UserRole Role { get; set; } = UserRole.player;

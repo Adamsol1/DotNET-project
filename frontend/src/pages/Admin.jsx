@@ -1,43 +1,62 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/Authentication';
 import { useNavigate } from 'react-router-dom';
 import { admin } from '../shared/services/api';
 import AlertModal from '../components/Shared/AlertModal';
 import { tokens } from '../shared/constants/design/tokens';
-import { validatePassword } from '../shared/utils/validation';
+import { validatePassword, validateUsername } from '../shared/utils/validation';
+import Planet from '../components/Home/Planet';
+import Spaceship from '../components/Home/Spaceship';
+import Stars from '../components/Home/Stars';
 
+
+/**
+ *  Used chatGpt 5.1 to generate the HTML and CSS for the admin, page based on the logic. 
+ * as well as debugging the code logic for errors.
+ */
 
 export function Admin() {
+    // get the user from the auth context
     const { user } = useAuth();
+
+    // navigation method from the react router dom
     const navigate = useNavigate();
 
+    // check if the user is an admin
     const isAdmin = user?.role === 'admin';
 
+    // use effect to check if the user is an admin
     useEffect(() => {
         if (!isAdmin) {
             navigate('/');
         }
     }, [isAdmin, navigate]);
 
+    // state to store the users
     const [users, setUsers] = useState([]);
+    // state to store the selected user
     const [selectedUser, setSelectedUser] = useState(null);
+    // state management to set the loading state
     const [loading, setLoading] = useState(true);
+    // state management to show errors.
     const [error, setError] = useState(null);
-    const [editData, setEditData] = useState({
-        username: '',
-        email: '',
-    });
-
-    const [newPassword, setNewPassword] = useState('');
+    // state management to store the username
+    const [editUsername, setEditUsername] = useState('');
+    // state management to store the password
+    const [editPassword, setEditPassword] = useState('');
+    // state management to show the delete modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userDelete, setUserDelete] = useState(null);
 
+    // function / method to load all users.
     const loadUsers = useCallback(async () => {
         setLoading(true);
         setError(null);
 
         try {
             const response = await admin.getAllUsers();
+
+            // set the users state to the response.users or response or an empty array.
             setUsers(response.users || response || []);
 
             setLoading(false);
@@ -48,6 +67,7 @@ export function Admin() {
         }
     }, []);
 
+    // use effect to load users only if the user is an admin.
     useEffect(() => {
         if (isAdmin) {
             loadUsers();
@@ -55,129 +75,156 @@ export function Admin() {
     }, [isAdmin, loadUsers]);
 
     // Select a user from the list
+    // function / method to select a user from the list.
     const selectUser = async (userId) => {
+        // set the loading state to true
         setLoading(true);
+        // set the error state to null
         setError(null);
 
         try {
+            // get the user by id from the admin service.
             const response = await admin.getUserbyId(userId);
 
-            // Set the selected user in state
-            const user = response.user || response || null;
+            // return the data as reponse or response user or null.
+            const userData = response.user || response || null;
 
-            if (!user) {
+            // if the user data is not found, set the error state to 'User not found.'
+            if (!userData) {
+                // set the error state to 'User not found.'
                 setError('User not found.');
+                // set the loading state to false.
                 setLoading(false);
+
+                // return from the function.
                 return;
             }
 
-            setSelectedUser(user);
+            setSelectedUser(userData);
+            // set the username state to the user's username.
+            setEditUsername(userData.username);
 
-            setEditData({
-                username: user.username,
-            });
-
+            // set the password state to an empty string.
+            // as we dont want to fetch the users password from the database.
+            // and display it in the form.
+            setEditPassword('');
+            // set the loading state to false.
             setLoading(false);
 
         } catch (err) {
+            // set the error state to 'Failed to load user.'
             setError('Failed to load user.');
             console.error(err);
-            setLoading(false); // Ensure loading is set to false on error
+            setLoading(false);
         }
     };
 
-    // Update the username method
+    // Update username
     const updateUsername = async () => {
+        // check if the selected user is not null.
         if (!selectedUser) return;
 
-        /*
-        const usernameValidation = validateUsername(editData.username);
-        if (!usernameValidation.isValid) {
-            setError(usernameValidation.errors.username?.[0] || 'Invalid username');
+        // check if the username is valid
+        const validation = validateUsername(editUsername);
+        // check if the username is valid by checking the validation object.
+        if (!validation.isValid) {
+            setError(validation.errors.username?.[0] || 'Invalid username');
             return;
         }
-        */
-
+        
+        // set the loading state to true
         setLoading(true);
+        // set the error state to null if the username is valid.
         setError(null);
 
         try {
-            await admin.updateUsername(selectedUser.id, { username: editData.username });
-
-            // Refresh the user data
+            // update the username by id through the API
+            await admin.updateUsername(selectedUser.id, { username: editUsername });
+            // reload the users
             await loadUsers();
-            setSelectedUser(null);
+            // clear the selected user and and form fields.
+            clearSelection();
         } catch (err) {
             setError('Failed to update username.');
             console.error(err);
-        } finally {
-            setLoading(false); // Ensure loading is set to false after operation
+            setLoading(false);
         }
     };
 
-    // Update password method
+    // Update password
     const updatePassword = async () => {
-        if (!selectedUser || !newPassword) {
+
+        // check if the selected user is not null and the password is not empty.
+        if (!selectedUser || !editPassword) {
             setError("Cannot update to empty password.");
             return;
         }
 
-        // validate the password
-        const passwordValidation = validatePassword(newPassword);
-        // check if password is valid
-        if (!passwordValidation.isValid) {
-            // if not set error to state so that it shows in UI
-            setError(passwordValidation.errors.password?.[0] || 'Invalid password');
+        // check if the password is valid 
+        const validation = validatePassword(editPassword);
+        // if not valid, set error state
+        if (!validation.isValid) {
+            setError(validation.errors.password?.[0] || 'Invalid password');
             return;
         }
 
+        // set loading state to true
         setLoading(true);
+        // set error state to null if the password is valid.
         setError(null);
 
-        try {
-            await admin.updatePassword(selectedUser.id, { password: newPassword });
 
-            // Refresh the user data
+        try {
+
+            // call the update password /API
+            await admin.updatePassword(selectedUser.id, { password: editPassword });
+            // reload the users for constistancy, if something is changed.
             await loadUsers();
-            setSelectedUser(null);
+            // clear the selected user and and form fields.
+            clearSelection();
         } catch (err) {
             setError('Failed to update password.');
             console.error(err);
-        } finally {
-            setLoading(false); // Ensure loading is set to false after operation
+            setLoading(false);
         }
     };
 
-    const handleDeleteUser = async () => {
-
-        setUserDelete(selectedUser);
-        setShowDeleteModal(true);
-
+    // Helper to clear selection and reset form
+    const clearSelection = () => {
+        setSelectedUser(null);
+        setEditUsername('');
+        setEditPassword('');
+        setLoading(false);
     };
 
+    // Show delete confirmation modal
+    const handleDeleteUser = () => {
+        // set the show delete modal state to true
+        setShowDeleteModal(true);
+    };
+
+    // Confirm and execute delete
     const confirmDelete = async () => {
+        // check if the selected user is not null.
+        if (!selectedUser) return;
 
-        if (!userDelete) return;
-
+        // set loading state to true
         setLoading(true);
+        // reset the error state to null
         setError(null);
 
         try {
-
-            await admin.deleteUser(userDelete.id);
-
+            // call the delete user /API
+            await admin.deleteUser(selectedUser.id);
+            // reload the users for constistancy, if something is changed.
             await loadUsers();
-
-            setSelectedUser(null);
-            setUserDelete(null);
+            clearSelection();
             setShowDeleteModal(false);
-
-
         } catch (err) {
             setError('Failed to delete user.');
+            setLoading(false);
         }
-
-    }
+    };
 
     // Go back to homescreen
     const goBack = () => {
@@ -190,134 +237,199 @@ export function Admin() {
 
     return (
         <div 
-            className="min-h-screen text-white font-mono relative"
-            style={{
-                background: tokens.color.bg,
-            }}
+            className="relative min-h-screen text-white font-mono"
         >
+            <Stars />
+            <Planet />
+            <Spaceship />
             <div className="relative z-10 min-h-screen flex flex-col px-6 py-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 
-                        className="text-4xl font-bold tracking-wider"
+                <div className="flex items-center justify-between mb-8">
+                    <motion.h1 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="flex-1 text-center text-4xl md:text-5xl font-bold tracking-wider pixel-text"
                         style={{ textShadow: '3px 3px 0px rgba(0, 0, 0, 0.8)' }}
                     >
-                        ADMIN OVERVIEW
-                    </h1>
+                        ADMIN TERMINAL
+                    </motion.h1>
 
-                    <button 
+                    <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={goBack} 
                         className="px-4 py-2 bg-gray-200 text-black font-bold border-2 border-black hover:bg-white transition-colors"
                     >
                         HOME
-                    </button>
+                    </motion.button>
                 </div>
 
                 {error && (
-                    <div className="mb-4 px-4 py-3 bg-red-600 text-white font-bold border-2 border-red-800 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-4 px-4 py-3 bg-red-600 text-white font-bold border-2 border-red-800 text-center"
+                    >
                         {error}
-                    </div>
+                    </motion.div>
                 )}
 
                 {loading && (
-                    <div className="text-center text-xl"> 
+                    <div className="flex-1 flex items-center justify-center text-xl"> 
                         <p>Loading...</p>
                     </div>
                 )}
 
                 {!loading && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div 
-                            className="p-6"
-                            style={{
-                                background: tokens.color.surface,
-                                border: `2px solid ${tokens.color.surfaceBorder}`,
-                                borderRadius: tokens.radius.lg
-                            }}
+                    <main className="flex-1 flex items-center justify-center">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.4 }}
+                            className={`w-full max-w-6xl flex flex-col lg:flex-row gap-6 ${selectedUser ? 'lg:justify-between' : 'lg:justify-center'}`}
                         >
-                            <h2 className="text-2xl font-bold mb-4 tracking-wide">ALL USERS</h2>
-
-                            <div 
-                                className="space-y-2"
+                            {/* User list table - centered by default, semi-collapsed when a user is selected */}
+                            <motion.div
+                                animate={{
+                                    flexBasis: selectedUser ? '40%' : '70%',
+                                    x: selectedUser ? 0 : 0,
+                                }}
+                                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                className={selectedUser ? 'mx-auto lg:mx-0 bg-transparent' : 'mx-auto bg-transparent'}
                                 style={{
-                                    maxHeight: '500px',
-                                    overflowY: 'auto'
+                                    border: `2px solid ${tokens.color.surfaceBorder}`,
+                                    borderRadius: tokens.radius.lg,
+                                    boxShadow: '0 0 30px rgba(0,0,0,0.6)',
                                 }}
                             >
-                                {users.length === 0 ? (
-                                    <p className="text-gray-400">No users found.</p>
-                                ) : (
-                                    users.map((u) => (
-                                        <button 
-                                            key={u.id}
-                                            onClick={() => selectUser(u.id)}
-                                            className="w-full p-3 text-left font-bold border-2 transition-colors"
-                                            style={{
-                                                backgroundColor: selectedUser?.id === u.id ? tokens.color.primary : 'transparent',
-                                                borderColor: selectedUser?.id === u.id ? tokens.color.primary : tokens.color.surfaceBorder,
-                                                color: selectedUser?.id === u.id ? 'black' : tokens.color.text
-                                            }}
+                                <div className="p-4 border-b border-gray-700/60 flex items-center justify-between">
+                                    <h2 className="text-xl md:text-2xl font-bold tracking-wide">
+                                        USERS
+                                    </h2>
+                                    <span className="text-xs md:text-sm text-gray-300">
+                                        {users.length} total
+                                    </span>
+                                </div>
+
+                                <div
+                                    className="overflow-y-auto"
+                                    style={{
+                                        maxHeight: '500px',
+                                    }}
+                                >
+                                    {users.length === 0 ? (
+                                        <div className="p-4 text-gray-400 text-center">
+                                            No users found.
+                                        </div>
+                                    ) : (
+                                        <table className="w-full text-left border-collapse text-sm md:text-base bg-transparent">
+                                            <thead className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm">
+                                                <tr>
+                                                    <th className="px-4 py-2 border-b border-gray-700/60">ID</th>
+                                                    <th className="px-4 py-2 border-b border-gray-700/60">USERNAME</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {users.map((u) => {
+                                                    const isSelected = selectedUser?.id === u.id;
+                                                    return (
+                                                        <motion.tr
+                                                            key={u.id}
+                                                            onClick={() => selectUser(u.id)}
+                                                            whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.06)' }}
+                                                            className="cursor-pointer"
+                                                            style={{
+                                                                backgroundColor: isSelected ? tokens.color.primary : 'transparent',
+                                                                color: isSelected ? 'black' : tokens.color.text,
+                                                                borderBottom: `1px solid ${tokens.color.surfaceBorder}`,
+                                                            }}
+                                                        >
+                                                            <td className="px-4 py-2 align-middle font-mono text-xs md:text-sm">
+                                                                {u.id}
+                                                            </td>
+                                                            <td className="px-4 py-2 align-middle font-bold">
+                                                                {u.username}
+                                                            </td>
+                                                        </motion.tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    )}
+                                </div>
+                            </motion.div>
+
+                            {/* Detail panel - slides in on the right when a user is selected */}
+                            {selectedUser && (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: 40 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 40 }}
+                                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                                    className="lg:flex-1"
+                                    style={{
+                                        background: tokens.color.surface,
+                                        border: `2px solid ${tokens.color.primary}`,
+                                        borderRadius: tokens.radius.lg,
+                                        boxShadow: '0 0 35px rgba(0,0,0,0.7)',
+                                    }}
+                                >
+                                    <div className="p-6 space-y-5">
+                                        <h2 className="text-xl md:text-2xl font-bold mb-2 tracking-wide text-center">
+                                            USER DETAIL
+                                        </h2>
+
+                                        <div className="pt-2">
+                                            <label className="block text-sm font-bold mb-2">Edit username</label>
+                                            <input 
+                                                type="text" 
+                                                value={editUsername}
+                                                onChange={(e) => setEditUsername(e.target.value)}
+                                                className="w-full p-2 bg-gray-200 text-black font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        <motion.button 
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={updateUsername}
+                                            className="w-full px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white font-bold border-2 border-blue-800 transition-colors"
                                         >
-                                            <div>{u.username}</div>
-                                        </button>
-                                    ))
-                                )}
-                            </div>
-                        </div>
+                                            UPDATE USERNAME
+                                        </motion.button>
 
-                        {selectedUser && (
-                            <div 
-                                className="p-6 space-y-4"
-                                style={{
-                                    background: tokens.color.surface,
-                                    border: `2px solid ${tokens.color.primary}`,
-                                    borderRadius: tokens.radius.lg
-                                }}
-                            >
-                                <h2 className="text-2xl font-bold mb-4 tracking-wide">EDIT USER</h2>
+                                        <div className="pt-2">
+                                            <label className="block text-sm font-bold mb-2">Set new password</label>
+                                            <input 
+                                                type="password" 
+                                                value={editPassword}
+                                                onChange={(e) => setEditPassword(e.target.value)}
+                                                className="w-full p-2 bg-gray-200 text-black font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        
+                                        <motion.button 
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={updatePassword}
+                                            className="w-full px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white font-bold border-2 border-blue-800 transition-colors"
+                                        >
+                                            UPDATE PASSWORD
+                                        </motion.button>
 
-                                <div>
-                                    <label className="block text-sm font-bold mb-2">Username</label>
-                                    <input 
-                                        type="text" 
-                                        value={editData.username}
-                                        onChange={(e) => setEditData({ ...editData, username: e.target.value })}
-                                        className="w-full p-2 bg-gray-200 text-black font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                <button 
-                                    onClick={updateUsername}
-                                    className="w-full px-4 py-2 bg-green-600 rounded hover:bg-green-700 text-white font-bold border-2 border-green-800 transition-colors"
-                                >
-                                    UPDATE USERNAME
-                                </button>
-
-                                <div>
-                                    <label className="block text-sm font-bold mb-2">New Password</label>
-                                    <input 
-                                        type="password" 
-                                        value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
-                                        className="w-full p-2 bg-gray-200 text-black font-bold border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                
-                                <button 
-                                    onClick={updatePassword}
-                                    className="w-full px-4 py-2 bg-yellow-600 rounded hover:bg-yellow-700 text-white font-bold border-2 border-yellow-800 transition-colors"
-                                >
-                                    UPDATE PASSWORD
-                                </button>
-
-                                <button 
-                                    onClick={handleDeleteUser}
-                                    className="w-full px-4 py-2 bg-red-600 rounded hover:bg-red-700 text-white font-bold border-2 border-red-800 transition-colors"
-                                >
-                                    DELETE USER
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                                        <motion.button 
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={handleDeleteUser}
+                                            className="w-full px-4 py-2 bg-red-600 rounded hover:bg-red-700 text-white font-bold border-2 border-red-800 transition-colors"
+                                        >
+                                            DELETE USER
+                                        </motion.button>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    </main>
                 )} 
             </div>
             {showDeleteModal && (

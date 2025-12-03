@@ -24,7 +24,6 @@ const Stars = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/assets/bg/background.png')",
           filter: "brightness(0.9)",
         }}
       />
