@@ -201,6 +201,22 @@ public class AdminController : ControllerBase
             //Return the not found response to the client with the error message.
             return NotFound(new { message = e.Message });
         }
+        catch (InvalidOperationException e)
+        {
+            //Logs if the username already exists.
+            await _entityLogger.LogAsync(
+                "update username error",
+                new
+                {
+                    Reason = e.Message,
+                    UserId = id,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.Administration.UserModification,
+                "UserUpdateErrorLog");
+            //Return the error message to the client.
+            return BadRequest(new { message = e.Message });
+        }
         catch (Exception e)
         {
             //Logs any unexpected error occurring.
@@ -215,7 +231,7 @@ public class AdminController : ControllerBase
                 LogCategories.Administration.UserModification,
                 "UserUpdateErrorLog");
             //returns a general error message informing about the internal server error.
-            return StatusCode(500, "Internal server error");
+            return StatusCode(500, new { message = "Internal server error" });
         }
     }
 

@@ -9,6 +9,7 @@ import Spaceship from '../components/Home/Spaceship';
 import { useGame } from '../context/GameContext'; // Context for API calls and game state
 import { useAuth } from '../context/Authentication'; // Context for user authentication
 import AlertModal from '../components/Shared/AlertModal'; // Modal to warn about unsaved changes
+import { validateUsername, validatePassword, validatePasswordConfirmation } from '../shared/utils/validation';
 
 
 
@@ -37,30 +38,13 @@ export function AccountManagement() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Validates username rules
-  const validateUsername = (value) => {
-    if (!value) return "Username is required";
-    if (value.length < 3) return "Username must be at least 3 characters long";
-    if (value.length > 20) return "Username must be less than 20 characters long";
-    if (!/^[A-Za-z0-9_]+$/.test(value)) return "Username can only contain letters, numbers, and underscores";
-    return '';
-  };
-
-  // Validates password rules
-  const validatePassword = (value) => {
-    if (!value) return "Password is required";
-    if (value.length < 8) return "Password must be at least 8 characters long";
-    if (value.length > 50) return "Password must be less than 50 characters long";
-    if (!/^[A-Za-z0-9!@#$%^&*()_+=-]+$/.test(value)) return "Password can only contain letters, numbers, and special characters";
-    return '';
-  };
-  
   // Handles username update
   const handleUpdateUsername = async (e) => {
     e.preventDefault(); // Prevent page reload
-    const error = validateUsername(username); // Validate input
+    const validation = validateUsername(username); // Validate input
+    const error = validation.isValid ? '' : validation.errors[0] || 'Invalid username';
     setUsernameError(error);
-    if (error) return; // Stop submit if there is an error
+    if (!validation.isValid) return; // Stop submit if there is an error
 
     try {
       await updateUsernameGame({ username });
@@ -70,6 +54,8 @@ export function AccountManagement() {
       setSuccessMessage('Username updated successfully!');
       setShowSuccessModal(true);
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to update username. Please try again.';
+      setUsernameError(errorMessage);
       console.error('Update failed:', error);
     }
   };
@@ -77,13 +63,15 @@ export function AccountManagement() {
   // Handles password update
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    const passwordErr = validatePassword(newPassword);
+    const passwordValidation = validatePassword(newPassword);
+    const passwordErr = passwordValidation.isValid ? '' : passwordValidation.errors[0] || 'Invalid password';
     setPasswordError(passwordErr);
 
-    const confirmErr = newPassword !== confirmPassword ? "Passwords do not match" : '';
+    const confirmValidation = validatePasswordConfirmation(newPassword, confirmPassword);
+    const confirmErr = confirmValidation.isValid ? '' : confirmValidation.errors[0] || 'Passwords do not match';
     setConfirmPasswordError(confirmErr);
 
-    if (passwordErr || confirmErr) return; // Stop submit if there are errors
+    if (!passwordValidation.isValid || !confirmValidation.isValid) return; // Stop submit if there are errors
 
     try {
       await updatePassword({ newPassword, confirmPassword });

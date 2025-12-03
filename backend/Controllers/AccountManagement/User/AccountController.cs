@@ -64,6 +64,20 @@ public class AccountController : ControllerBase
 
             return Ok(updatedUser);
         }
+        catch (InvalidOperationException e)
+        {
+            // Log the error
+            await _entityLogger.LogAsync(
+                "update username error",
+                new
+                {
+                    Error = e.Message,
+                    Timestamp = DateTime.UtcNow
+                },
+                LogCategories.AccountManagement.Username
+            );
+            return BadRequest(new { message = e.Message });
+        }
         catch (Exception e)
         {
             // Log the error
