@@ -48,7 +48,7 @@ api.interceptors.response.use(
     (error) => {
         //Auth error handling. 
         
-        if(error.response.status === 401) {
+        if(error.response?.status === 401) {
             //Checks if the token exissts in the local storage. This is to check if the user was logged in, our failed to loign
             const tokenCheck = localStorage.getItem('token');
             localStorage.removeItem('token');
@@ -98,12 +98,6 @@ export const auth = {
     // to logout the user, we send post to logout endpoint which deletes the session.
     logout: async () => {
         const response = await api.post('/auth/logout');
-        return response.data;
-    },
-
-    // get currentUser, to know who is logged in.
-    getCurrentUser: async () => {
-        const response = await api.get('/auth/user');
         return response.data;
     },
 };

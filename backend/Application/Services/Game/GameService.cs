@@ -108,6 +108,13 @@ public class GameService : IGameService
             var user = await _uow.UserRepository.GetById(userId);
             if (user == null) throw new Exception("gameservice: user not found, Check that you are not passing the auth ID!");
 
+            var existingSaves = await _uow.GameRepository.GetAllByUserId(userId);
+            var saveCount = existingSaves.Count();
+            if (saveCount >= 3)
+            {
+                throw new Exception("Maximum 3 saves reached. Please delete an existing save before creating a new one.");
+            }
+
             var playerCharacter = await _uow.PlayerCharacterRepository.GetById(1);
 
             // create the game save object.

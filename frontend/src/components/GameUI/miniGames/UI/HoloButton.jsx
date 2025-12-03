@@ -1,6 +1,4 @@
-﻿
-
-export const HoloButton = ({onClick, disabled, children, active, color = "blue"}) => {
+﻿export const HoloButton = ({onClick, disabled, children, active, color = "blue"}) => {
 
     const baseStyles = "relative group overflow-hidden font-mono uppercase tracking-widest transition-all duration-200 ease-out border-2";
     

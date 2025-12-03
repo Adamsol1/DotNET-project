@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import { motion } from 'framer-motion';
 import { validateLoginForm, validateRegisterForm } from '../shared/utils/validation';
  import { useNavigate } from 'react-router-dom'; 
@@ -14,11 +14,11 @@ import {useAuth} from "../context/Authentication";
 import * as authservice from "../shared/services/AuthenticationService";
 // alert modal for unsaved changes.
 import AlertModal from '../components/Shared/AlertModal';
-import { useAudio } from '../context/AudioContext';
+
+
 export function Home() {
-  const { user, logout, login, register } = useAuth();
-  const { playBackgroundMusic } = useAudio();
-  const hasStartedMusicRef = useRef(false);
+  const { user, logout, login } = useAuth();
+
   //CHAT
   const  authenticated= !!user;
 

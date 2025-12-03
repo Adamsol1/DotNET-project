@@ -42,7 +42,7 @@ export function AudioProvider({ children }) {
             window.removeEventListener('keydown', handler);
             window.removeEventListener('touchstart', handler);
         };
-    }, []);
+    });
 
     const startBackgroundMusic = (url) => {
         // Stop existing background music
@@ -158,14 +158,6 @@ export function AudioProvider({ children }) {
         }
 
         choiceAudioRef.current = audio;
-    };
-
-    const stopAmbientSound = () => {
-        if (ambientSoundRef.current) {
-            ambientSoundRef.current.pause();
-            ambientSoundRef.current = null;
-        }
-        setCurrentAmbientUrl(null);
     };
     
 

@@ -1,5 +1,5 @@
 // react imports
-import React, { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 // api imports
 import { game, story, account } from '../shared/services/api';
 
@@ -18,70 +18,6 @@ const STORAGE_KEY = {
     GAME_STATE: 'game_state',
 }
 
-// this function loads the state from the browser storage, if something is saved.
-const loadStateFromStorage = () => {
-    try {
-        const user = localStorage.getItem(STORAGE_KEY.USER);
-        const authenticated = localStorage.getItem(STORAGE_KEY.AUTHENTICATED);
-        const currentSaveId = localStorage.getItem(STORAGE_KEY.CURRENT_SAVE_ID);
-        const gameState = localStorage.getItem(STORAGE_KEY.GAME_STATE);
-
-        let parsedUser = null;
-        if (user) {
-            try {
-                parsedUser = JSON.parse(user);
-            } catch (parseError) {
-                parsedUser = null;
-            }
-        }
-
-        // return the state object.
-        return {
-            // we check if the user is logged in, if not we set the user to null.
-            user: parsedUser,
-            authenticated: authenticated === 'true',
-            currentSaveId: currentSaveId ? parseInt(currentSaveId) : null,
-        }
-    } catch (error) {
-        console.error('Error loading state from storage:', error);
-        return {
-            user: null,
-            authenticated: false,
-            currentSaveId: null
-        }
-    }
-}
-
-// function to save the user state to the browser storage.
-const saveUserStateToStorage = (user, authenticated) => {
-    try {
-        if (user && authenticated) {
-            localStorage.setItem(STORAGE_KEY.USER, JSON.stringify(user));
-            localStorage.setItem(STORAGE_KEY.AUTHENTICATED, 'true');
-        } else {
-            localStorage.removeItem(STORAGE_KEY.USER);
-            localStorage.setItem(STORAGE_KEY.AUTHENTICATED, 'false');
-        }
-    } catch (err) {
-        console.error('Error saving user state to storage:', err);
-    }
-}
-
-// save the current save id, as this changes a lot.
-const saveCurrentSaveIdToStorage = (saveId) => {
-    try {
-        // if there is a save id. update it.
-        // if not remove, the previous save id.
-        if (saveId) {
-            localStorage.setItem(STORAGE_KEY.CURRENT_SAVE_ID, saveId.toString());
-        } else {
-            localStorage.removeItem(STORAGE_KEY.CURRENT_SAVE_ID);
-        }
-    } catch (err) {
-        console.error('Error saving current save id to storage:', err);
-    }
-}
-
 // Clear all game state from localStorage
 const clearGameStateFromStorage = () => {
     try {
@@ -93,9 +29,6 @@ const clearGameStateFromStorage = () => {
         console.error('Error clearing game state from storage:', err);
     }
 };
-
-// Load initial state from localStorage
-const savedState = loadStateFromStorage();
 
 // this is the start / initial state, of the game before the user even has
 // visited the application. 
@@ -112,14 +45,6 @@ const startState = {
     dialogueIndex: 0,
     gameOver: false,
     allSaves: [], // store all previous saves
-};
-
-// Initial state to merge saved state with start state for initialization
-const initialState = {
-    ...startState,
-    user: savedState.user,
-    authenticated: savedState.authenticated,
-    currentSaveId: savedState.currentSaveId,
 };
 
 /**
@@ -362,68 +287,6 @@ export function GameProvider({ children }) {
             });
         }
     }, []);
-
-    // handles the login process.
-    /*
-    const login = async (credentials) => {
-        // try to send the credentials to the backend.
-        try {
-            dispatch({ type: ActionTypes.LOGIN_START });
-
-            // get the response from the API.
-            const user = await auth.login(credentials);
-            console.log(user.id);
-
-            // if the login is successful, we dispatch the success action.
-            // to update the state.
-            dispatch({ type: ActionTypes.LOGIN_SUCCESS, payload: user });
-            
-            // save the token to the local storage.
-            localStorage.setItem('token', user.token);
-            saveUserStateToStorage(user, true);
-            // return the user.
-            return user;
-        } catch (error) {
-            dispatch({ type: ActionTypes.LOGIN_ERROR, payload: error.message || 'Login failed' });
-            throw error;
-        }
-    };
-    */
-     
-    /*
-
-    // register user and return the result.
-    const register = async (userData) => {
-        // try to register the user,
-        try {
-            dispatch({ type: ActionTypes.REGISTER_START });
-            const user = await auth.register(userData);
-
-            dispatch({ type: ActionTypes.REGISTER_SUCCESS, payload: user });
-            // return the user.
-            return user;
-        } catch (error) {
-            dispatch({ type: ActionTypes.REGISTER_ERROR, payload: error.message || 'Registration failed' });
-            throw error;
-        }
-    };
-    
-    */
-     /*
-
-    // logout user and return the result.
-    const logout = async () => {
-        // try to logout the user,
-        try {
-            await auth.logout();
-        } catch (error) {
-            console.error('Logout error:', error);
-        } finally {
-            dispatch({ type: ActionTypes.LOGOUT });
-        }
-        return true;
-    };
-    */
 
     // update username
     const updateUsername = async (usernameData) => {

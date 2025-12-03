@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useGame } from '../../context/GameContext';
-import { SceneLayout } from '../GameUI/scene/SceneLayout';
-import { DialoguePanel } from '../GameUI/DialoguePanel';
-import { HUD } from '../GameUI/Hudv2';
+import { HUD } from '../GameUI/Hud';
 import { Button } from '../Shared/Button';
 import { Card } from '../Shared/Card';
 import { Text } from '../Shared/Text';
@@ -20,13 +18,8 @@ export function PlayGame({ saveId, onBackToMenu }) {
         playerState,
         loading,
         error,
-        loadGame,
         getCurrentNode,
-        getNextDialogue,
         makeChoice,
-        goBack,
-        nextNode,
-        getPlayerState,
         clearError,
         gameOver,
         currentSave,
@@ -46,7 +39,15 @@ export function PlayGame({ saveId, onBackToMenu }) {
     const [showExitModal, setShowExitModal] = useState(false);
     // addig state management for loading, 
     const [isLoading, setLoading] = useState(false);
+    const isLoadingRef = useRef(false);
+    const lastLoadedSaveIdRef = useRef(null);
+    const getCurrentNodeRef = useRef(getCurrentNode);
+    const clearErrorRef = useRef(clearError);
 
+    useEffect(() => {
+        getCurrentNodeRef.current = getCurrentNode;
+        clearErrorRef.current = clearError;
+    }, [getCurrentNode, clearError]);
 
     let isRevisit = false;
     if (currentSave && currentNode?.id) {
@@ -69,12 +70,34 @@ export function PlayGame({ saveId, onBackToMenu }) {
         }
     }
 
-    // Load node when saveId changes
-    useEffect(() => {
-        if (saveId) {
-            loadGameData();
+    // load current node from backend
+    const loadGameData = useCallback(async () => {
+        if (isLoadingRef.current) {
+            return;
+        }
+        try {
+            isLoadingRef.current = true;
+            clearErrorRef.current();
+            await getCurrentNodeRef.current(saveId);
+            setShowChoices(false);
+            setDialogueIndex(0);
+            lastLoadedSaveIdRef.current = saveId;
+        } catch (err) {
+            console.error('Failed to load game data:', err);
+            lastLoadedSaveIdRef.current = null;
+        } finally {
+            isLoadingRef.current = false;
         }
     }, [saveId]);
+
+    // Load node when saveId changes
+    useEffect(() => {
+        if (!saveId || lastLoadedSaveIdRef.current === saveId) {
+            return;
+        }
+        loadGameData();
+        console.log('[PlayGame] saveId changed:', saveId);
+    }, [saveId, loadGameData]);
     
     //TODO: there might be a case were we use the backgroundsMusicUrl for ambient sounds for a node, so will see if there is
     // a need to change the nesting of the if statements under
@@ -122,7 +145,7 @@ export function PlayGame({ saveId, onBackToMenu }) {
         const hasDialogues =
             currentNode.dialogues && currentNode.dialogues.length > 0;
         setShowChoices(!hasDialogues);
-    }, [currentNode?.id, currentSave?.visitedNodeIds]);
+    }, [currentNode, currentSave?.visitedNodeIds, playAmbientSound, playBackgroundMusic]);
 
     useEffect(() => {
         const hp = playerState?.health ?? playerState?.hp ?? 100;
@@ -132,18 +155,6 @@ export function PlayGame({ saveId, onBackToMenu }) {
             setGameOver(true);
         }
     }, [playerState, gameOver, setGameOver]);
-
-    // load current node from backend
-    const loadGameData = async () => {
-        try {
-            clearError();
-            await getCurrentNode(saveId);
-            setShowChoices(false);
-            setDialogueIndex(0);
-        } catch (err) {
-            console.error('Failed to load game data:', err);
-        }
-    };
 
     // Resolve the current dialogue using currentNode.dialogues and dialogueIndex
     const dialogues = currentNode?.dialogues || [];

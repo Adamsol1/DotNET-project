@@ -46,7 +46,7 @@ export function Game() {
     } catch (error) {
       console.error('Failed to load saves:', error);
     }
-  }, [authenticated, user]);
+  }, [authenticated, user, getAllSaves]);
 
   // Load saves when component mounts
   useEffect(() => {
@@ -393,15 +393,24 @@ export function Game() {
                                 {new Date(save.lastUpdate).toLocaleDateString()}
                             </div>
                             
-                            <button
+                            <div
                             onClick={(e) => {
                               e.stopPropagation(); // Prevent triggering the load save function
                               handleDeleteSave(save);
                             }}
-                            className="p-4 rounded-full hover:bg-red-100 text-red-600"
+                            className="p-4 rounded-full hover:bg-red-100 text-red-600 cursor-pointer"
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleDeleteSave(save);
+                              }
+                            }}
                             >
                                 <img src="/assets/icons/trash-alt-svgrepo-com.svg" alt="Delete Save" className="w-5 h-5" />
-                            </button>
+                            </div>
                             
                         </div>  
                       </motion.button>

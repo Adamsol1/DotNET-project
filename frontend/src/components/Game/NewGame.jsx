@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useGame } from '../../context/GameContext';
 import { useAudio } from '../../context/AudioContext';
 import { motion } from 'framer-motion';
@@ -13,11 +13,11 @@ export function StartGame({ onGameStart, onBack }) {
     const [isLoadingSaveCount, setIsLoadingSaveCount] = useState(true);
 
     const { startGame, loading, error, clearError, getAllSaves } = useGame();
-    const { playBackgroundMusic, stopAllAudio } = useAudio();
+    const { playBackgroundMusic } = useAudio();
     const { user } = useAuth();
 
     // Function to count user's saves
-  const countUserSaves = async () => {
+  const countUserSaves = useCallback(async () => {
     try {
         setIsLoadingSaveCount(true);
         const userId = Number(localStorage.getItem('user_id'));
@@ -36,7 +36,7 @@ export function StartGame({ onGameStart, onBack }) {
     } finally {
         setIsLoadingSaveCount(false);
     }
-    };
+    }, [getAllSaves]);
 
     // Count saves when component mounts
     useEffect(() => {
@@ -46,7 +46,7 @@ export function StartGame({ onGameStart, onBack }) {
         return () => {
             // Don't stop audio here - let it continue to the game
         };
-    }, []);
+    }, [playBackgroundMusic, countUserSaves]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -107,6 +107,10 @@ export function StartGame({ onGameStart, onBack }) {
             }
         } catch (error) {
             console.error('Failed to start game:', error);
+            const errorMessage = error.response?.data?.message || error.response?.data || error.message || 'Failed to start game';
+            setErrors({
+                saveName: typeof errorMessage === 'string' ? errorMessage : 'Failed to start game'
+            });
         }
     };
 

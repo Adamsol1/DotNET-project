@@ -1,11 +1,8 @@
-import React, {useState, useEffect, createContext, useContext, ReactNode} from 'react';
+import React, {useState, useEffect, createContext, useContext} from 'react';
 import { jwtDecode } from "jwt-decode";
 /** @typedef {import('..types/Auth').LoginUserDto} LoginUserDto */
 /** @typedef {import('..types/Auth').RegistrerUserDto} RegistrerUserDto */
 import * as authservice from "../shared/services/AuthenticationService";
-
-import {pem as jwt} from "node-forge";
-
 
 //This is based on the demo JWTAuthentication - Frontend
 

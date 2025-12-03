@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState} from "react";
 import {HoloButton} from "./UI/HoloButton";
 
 
@@ -111,10 +111,10 @@ const RockPaperScissors = ({ onComplete, onWin, onLose }) => {
     const [computerScore, setComputerScore] = useState(0);
 
     // tracks how many rounds the user has played.
-    const [rounds, setRounds] = useState(0);
+    const [setRounds] = useState(0);
 
     // tracks the last result.
-    const [lastResult, setLastResult] = useState(null);
+    const [setLastResult] = useState(null);
 
     // and if the game is over. starting as false.
     const [gameOver, setGameOver] = useState(false);

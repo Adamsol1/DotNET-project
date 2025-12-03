@@ -35,8 +35,8 @@ public class GameController : ControllerBase
 
             // return the game save.
             return Ok(gameSave);
-        } catch (Exception) {
-            return BadRequest($"Failed to start game");
+        } catch (Exception ex) {
+            return BadRequest(ex.Message);
         }
     }
 
