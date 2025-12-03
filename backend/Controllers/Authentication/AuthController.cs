@@ -58,6 +58,9 @@ public class AuthController : ControllerBase
         // Attempt to contact service layer about the account registration
         try
         {
+            if (request == null)
+                return BadRequest(new { message = "Request cannot be null" });
+
             // UserService now handles all UserManager operations and transaction management
             var gameUserDto = await _userService.RegisterAccount(request);
             
@@ -70,10 +73,9 @@ public class AuthController : ControllerBase
             _logger.LogWarning("[AuthController] Registration failed: {Message}", e.Message);
             return BadRequest(new { message = e.Message });
         }
-        catch(Exception e)
+        catch(Exception )
         {
-            // log the error
-            _logger.LogError(e, "[AuthController] Unexpected error occured while trying to create account for {Username}", request.Username);
+
             // return the error
             return BadRequest(new { message = "Unexpected error occured while creating account." });
         }
@@ -100,6 +102,9 @@ public class AuthController : ControllerBase
         // Try to use user service for login
         try
         {
+            if (request == null)
+                return BadRequest(new { message = "Request cannot be null" });
+
             // UserService now handles authentication against AuthDb
             var user = await _userService.Login(request);
             
@@ -146,25 +151,8 @@ public class AuthController : ControllerBase
         await _signInManager.SignOutAsync();
         _logger.LogInformation("[AuthController] Logged out.");
         return Ok("Logged out successfully");
-
     }
     
-    /// <summary>
-    /// Get method for getting current user info
-    /// </summary>
-    /// <returns>Current user information</returns>
-    [HttpGet("user")]
-    [Authorize]
-    public async Task<ActionResult<UserDto>> GetCurrentUser()
-    {
-        // For now, return the admin user since we're using admin credentials
-        // In JWT implementation, this would extract user from token
-        return Ok(new UserDto 
-        { 
-            Id = 1, 
-            Username = "admin", 
-        });
-    }
 
 
     private async Task<string> GenerateJwtToken(AuthUser user)

@@ -109,16 +109,16 @@ public class GenService : IGenService
     // map dialogue to a DialogueDto.
     public DialogueDto MapDialogue(Dialogue dialogue)
     {
-		return new DialogueDto
-    	{
-        	Id = dialogue.Id,
-        	Text = dialogue.Text,
-        	CharacterId = dialogue.CharacterId,
-        	StoryNodeId = dialogue.StoryNodeId,
-        	Order = dialogue.Order,
-        	CharacterName = dialogue.Character?.Name,       
-        	CharacterImageUrl = dialogue.Character?.ImageUrl
-    	};
+        return new DialogueDto
+        {
+            Id = dialogue.Id,
+            Text = dialogue.Text,
+            CharacterId = dialogue.CharacterId,
+            StoryNodeId = dialogue.StoryNodeId,
+            Order = dialogue.Order,
+            CharacterName = dialogue.Character?.Name ?? string.Empty,
+            CharacterImageUrl = dialogue.Character?.ImageUrl ?? string.Empty
+        };
     }
 
     // map character to a CharacterDto.
@@ -128,8 +128,8 @@ public class GenService : IGenService
         {
             Id = character.Id,
             Name = character.Name,
-            Description = character.Description,
-            ImageUrl = character.ImageUrl,
+            Description = character.Description ?? string.Empty,
+            ImageUrl = character.ImageUrl ?? string.Empty,
             Dialogues = dialogues.Select(MapDialogue).ToList()
         };
     }
@@ -167,7 +167,7 @@ public class GenService : IGenService
         else
         {
             var entityName = typeof(T).Name;
-            _logger.LogWarning("GenService: {EntityName} with id {Id} not found");
+            _logger.LogWarning("GenService: {EntityName} with id {Id} not found", entityName, id);
             throw new KeyNotFoundException($"{entityName} with id {id} not found");
         }
        
@@ -188,7 +188,7 @@ public class GenService : IGenService
         var storyNode = await _uow.StoryNodeRepository.GetById(nodeId);
 
         if (storyNode == null) {
-            _logger.LogWarning("GenService: StoryNode with id {NodeId} not found");
+            _logger.LogWarning("GenService: StoryNode with id {NodeId} not found", nodeId);
             return false;
         }
 

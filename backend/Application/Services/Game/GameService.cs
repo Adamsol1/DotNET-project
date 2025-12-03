@@ -60,7 +60,7 @@ public class GameService : IGameService
         catch (Exception ex)
         {
             // if the try fails, we rollback the transaction.
-            _logger.LogError(ex, "GameService - GetStoryNodeById, StoryNode exists, but could not get it", id);
+        
             throw new Exception("gameservice l42: StoryNode exists, but could not get it: " + ex.Message);
         }
     }

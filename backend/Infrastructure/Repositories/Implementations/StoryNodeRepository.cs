@@ -241,7 +241,7 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
             }
             
             var characters = await _db.Dialogues
-                    .Where(d => d.StoryNodeId == id && d.CharacterId != null)
+                    .Where(d => d.StoryNodeId == id)
                     .Select(d => d.Character)
                     .Where(c => c != null)
                     .Select(c => c!)
