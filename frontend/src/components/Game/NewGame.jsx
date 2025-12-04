@@ -62,7 +62,7 @@ export function StartGame({ onGameStart, onBack }) {
 
     // Count saves when component mounts and play the background music
     useEffect(() => {
-        playBackgroundMusic('/assets/audio/music/menuMusic.mp3');
+        //playBackgroundMusic('/assets/audio/music/menuMusic.mp3');
         countUserSaves();
 
         // return an empty function on unmount,

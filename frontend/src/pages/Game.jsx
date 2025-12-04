@@ -5,6 +5,7 @@ import { useAuth } from '../context/Authentication';
 import { StartGame } from '../components/Game/NewGame';
 import { PlayGame } from '../components/Game/PlayGame';
 import { motion } from 'framer-motion';
+import { useAudio } from '../context/AudioContext';
 import RockPaperScissors from '../components/GameUI/miniGames/RockPaperScissors';
 import TerminalPowerRestore from '../components/GameUI/miniGames/TerminalPower'; 
 import AlertModal from '../components/Shared/AlertModal';
@@ -22,6 +23,8 @@ export function Game() {
   const { getAllSaves, deleteSave } = useGame();
   // authentication
   const { user } = useAuth();
+  // audio controls
+  const { stopAllAudio } = useAudio();
   const authenticated = !!user;
 
   const isAdmin = user?.role === 'admin';
@@ -77,6 +80,8 @@ export function Game() {
 
   // handle the load save event and set the current save state to the selected save.
   const handleLoadSave = (save) => {
+    // ensure menu music is stopped when jumping into gameplay
+    stopAllAudio();
     setCurrentSave(save);
   };
 

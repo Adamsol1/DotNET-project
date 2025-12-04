@@ -840,6 +840,12 @@
     "Text": "As the pod launches, the bridge recedes behind you—a lone, wounded ship broadcasting its story into the void, while you arc away toward an uncertain, but living, future."
   },
   {
+    "StoryNodeId": 119,
+    "CharacterId": 2,
+    "Order": 1,
+    "Text": "The end"
+  },
+  {
     "StoryNodeId": 120,
     "CharacterId": 2,
     "Order": 1,
