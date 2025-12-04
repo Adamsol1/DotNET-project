@@ -12,7 +12,7 @@ import Stars from '../components/Home/Stars';
 
 
 /**
- *  Used chatGpt 5.1 to generate the HTML and CSS for the admin, page based on the logic. 
+ *  Used chatGpt 5.1 to get help with the HTML and CSS for the admin, page based on the logic. 
  * as well as debugging the code logic for errors.
  */
 
@@ -201,7 +201,9 @@ export function Admin() {
             // clear the selected user and and form fields.
             clearSelection();
         } catch (err) {
-            setError('Failed to update password.');
+            const errorMessage = err.response?.data?.message || 'Failed to update password. Please try again.';
+            setError(errorMessage);
+
             console.error(err);
             setLoading(false);
         }

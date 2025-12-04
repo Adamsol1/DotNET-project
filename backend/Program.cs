@@ -136,18 +136,6 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IEntityFileLogger, EntityFileLogger>();
 
 
-// Configure Serilog TODO: REMOVE
-var loggerConfiguration = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
-
-loggerConfiguration.Filter.ByExcluding(e => e.Properties.TryGetValue("SourceContext", out var value) &&
-                            e.Level == LogEventLevel.Information &&
-                            e.MessageTemplate.Text.Contains("Executed DbCommand"));
-
-var logger = loggerConfiguration.CreateLogger();
-builder.Logging.AddSerilog(logger);
-builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
 
 
 var app = builder.Build();
@@ -233,7 +221,7 @@ app.UseRouting();
 // Debug middleware: log Origin, Method, Path and small request body for auth endpoints
 app.Use(async (context, next) =>
 {
-    var entityLogger = app.Services.GetRequiredService<IEntityFileLogger>();
+    var entityLogger = context.RequestServices.GetRequiredService<IEntityFileLogger>();
     var origin = context.Request.Headers["Origin"].FirstOrDefault() ?? "<no-origin>";
     await entityLogger.LogAsync(
         "Incoming request",

@@ -83,7 +83,8 @@ export function AccountManagement() {
       setSuccessMessage('Password updated successfully!');
       setShowSuccessModal(true);
     } catch (error) {
-      console.error('Password update failed:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update password. Please try again.';
+      setPasswordError(errorMessage);
     }
   };
 
