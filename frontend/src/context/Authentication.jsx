@@ -47,8 +47,6 @@ export function AuthProvider({ children }) {
 
     const login = async ({ username, password }) => {
         const user = await authservice.login(username, password);
-        console.log('[Auth] Login response from backend:', user);
-        console.log('[Auth] userId from response:', user.userId);
         
         localStorage.setItem('token', user.token);
         localStorage.setItem('user', user.username);
@@ -64,8 +62,6 @@ export function AuthProvider({ children }) {
             role : role,
             decodedUser
         });
-        
-        console.log('[Auth] Set user state with id:', user.userId);
         setToken(user.token);
     }
 
