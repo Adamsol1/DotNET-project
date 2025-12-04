@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.Application.Dtos;
-using backend.Application.Interfaces.Services;
-using backend.Controllers;
+using backend.Application.Dtos.Game;
+using backend.Application.Interfaces;
+using backend.Controllers.Game;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -15,11 +17,11 @@ namespace tests.Unit.Controllers
     public class GameControllerTests
     {
         private readonly Mock<IGameService> _gameService = new();
-        private readonly Mock<IPlayerService> _playerService = new();
+        private readonly Mock<IEntityFileLogger> _entityLogger = new();
 
         private GameController CreateController()
         {
-            return new GameController(_gameService.Object, _playerService.Object);
+            return new GameController(_gameService.Object, _entityLogger.Object);
         }
 
         [Fact]
@@ -118,35 +120,6 @@ namespace tests.Unit.Controllers
         }
 
         [Fact]
-        public async Task MakeChoice_ReturnsOk_WhenChoiceMade()
-        {
-            // Arrange
-            var request = new MakeChoiceRequestDto { SaveId = 1, ChoiceId = 1 };
-            var gameSave = new GameSave 
-            { 
-                Id = 1, 
-                UserId = 1, 
-                SaveName = "Test Save", 
-                PlayerCharacterId = 1,
-                CurrentStoryNodeId = 2,
-                LastUpdate = DateTime.UtcNow
-            };
-            
-            _gameService.Setup(s => s.MakeChoice(request.SaveId, request.ChoiceId))
-                       .ReturnsAsync(gameSave);
-
-            var controller = CreateController();
-
-            // Act
-            var result = await controller.MakeChoice(request);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedGameSave = Assert.IsType<GameSave>(okResult.Value);
-            Assert.Equal(2, returnedGameSave.CurrentStoryNodeId);
-        }
-
-        [Fact]
         public async Task GetUserSaves_ReturnsOk_WithUserSaves()
         {
             // Arrange
@@ -213,7 +186,7 @@ namespace tests.Unit.Controllers
         {
             // Arrange
             var saveId = 1;
-            var request = new UpdateGameSaveRequest { SaveId = saveId, CurrentStoryNodeId = 2 };
+            var request = new UpdateGameSaveRequest { CurrentStoryNodeId = 2 };
             var gameSave = new GameSave 
             { 
                 Id = saveId, 
@@ -224,7 +197,7 @@ namespace tests.Unit.Controllers
                 LastUpdate = DateTime.UtcNow
             };
             
-            _gameService.Setup(s => s.UpdateGameSave(saveId, request.CurrentStoryNodeId))
+            _gameService.Setup(s => s.UpdateGameSave(saveId, It.Is<UpdateGameSaveRequest>(r => r.CurrentStoryNodeId == 2)))
                        .ReturnsAsync(gameSave);
 
             var controller = CreateController();

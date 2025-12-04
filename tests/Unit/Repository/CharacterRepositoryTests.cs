@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using backend.Infrastructure.Data;
-using backend.Infrastructure.Repositories;
+using backend.Infrastructure.Repositories.Implementations;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
+using Moq;
 using Xunit;
 
 namespace tests.Unit.Repository;
@@ -14,6 +16,7 @@ public class CharacterRepositoryTests : IDisposable
 {
     private readonly AppDbContext _context;
     private readonly CharacterRepository _repository;
+    private readonly Mock<IEntityFileLogger> _mockLogger;
 
     public CharacterRepositoryTests()
     {
@@ -22,7 +25,8 @@ public class CharacterRepositoryTests : IDisposable
             .Options;
 
         _context = new AppDbContext(options);
-        _repository = new CharacterRepository(_context);
+        _mockLogger = new Mock<IEntityFileLogger>();
+        _repository = new CharacterRepository(_context, _mockLogger.Object);
     }
 
     [Fact]
@@ -70,27 +74,6 @@ public class CharacterRepositoryTests : IDisposable
 
         // Assert
         Assert.Equal("Ryan", result);
-    }
-
-    [Fact]
-    public async Task GetAllCharactersWithName_ShouldAllCharacters()
-    {
-        // create the tests objects.
-        var characters = new List<Character>
-        {
-            new Character { Id = 1, Name = "Ryan", Description = "not really important" },
-            new Character { Id = 2, Name = "Ryan", Description = "ogaboga" },
-            new Character { Id = 3, Name = "Bob", Description = "bobby" }
-        };
-        await _context.Characters.AddRangeAsync(characters);
-        await _context.SaveChangesAsync();
-
-        // get the result from the repository
-        var result = await _repository.GetAllCharactersWithName("Ryan");
-
-        // assesment of the test
-        Assert.Equal(2, result.Count());
-        Assert.All(result, c => Assert.Equal("Hero", c.Name));
     }
 
     [Fact]

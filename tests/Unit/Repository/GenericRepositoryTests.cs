@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using backend.Infrastructure.Data;
-using backend.Infrastructure.Repositories;
+using backend.Infrastructure.Repositories.Base;
 using backend.Domain.Models;
+using backend.Infrastructure.Logging;
+using Moq;
 using Xunit;
 
 namespace tests.Unit.Repository;
@@ -14,6 +16,7 @@ public class GenericRepositoryTests : IDisposable
 {
     private readonly AppDbContext _context;
     private readonly GenericRepository<User> _repository;
+    private readonly Mock<IEntityFileLogger> _mockLogger;
 
     // set up the db connection
     public GenericRepositoryTests()
@@ -23,14 +26,15 @@ public class GenericRepositoryTests : IDisposable
             .Options;
 
         _context = new AppDbContext(options);
-        _repository = new GenericRepository<User>(_context);
+        _mockLogger = new Mock<IEntityFileLogger>();
+        _repository = new GenericRepository<User>(_context, _mockLogger.Object);
     }
 
     [Fact]
     public async Task GetById_ShouldReturnUser()
     {
         // Arrange
-        var user = new User { Id = 1, Username = "SpaceMan123", Password = "password123" };
+        var user = new User { Id = 1, Username = "SpaceMan123", AuthUserId = "auth-123" };
         await _context.User.AddAsync(user);
         await _context.SaveChangesAsync();
 
@@ -40,7 +44,7 @@ public class GenericRepositoryTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal("SpaceMan123", result.Username);
-        Assert.Equal("password123", result.Password);
+        Assert.Equal("auth-123", result.AuthUserId);
     }
 
     [Fact]
@@ -57,8 +61,8 @@ public class GenericRepositoryTests : IDisposable
         // create the objects
         var users = new List<User>
         {
-            new User { Id = 1, Username = "Litagoo", Password = "pass1" },
-            new User { Id = 2, Username = "Bees", Password = "pass2" }
+            new User { Id = 1, Username = "Litagoo", AuthUserId = "auth-1" },
+            new User { Id = 2, Username = "Bees", AuthUserId = "auth-2" }
         };
         await _context.User.AddRangeAsync(users);
         await _context.SaveChangesAsync();
@@ -74,7 +78,7 @@ public class GenericRepositoryTests : IDisposable
     public async Task Create_ShouldAddUserToDatabase()
     {
         // create the user object
-        var user = new User { Username = "teees", Password = "passwordpassword" };
+        var user = new User { Username = "teees", AuthUserId = "auth-teees" };
 
         // save to the database
         var result = await _repository.Create(user);
@@ -94,30 +98,31 @@ public class GenericRepositoryTests : IDisposable
     public async Task Update_ShouldUpdateUser()
     {
         // create the user object
-        var user = new User { Id = 1, Username = "StartName", Password = "Password" };
+        var user = new User { Id = 1, Username = "StartName", AuthUserId = "auth-start" };
         await _context.User.AddAsync(user);
         await _context.SaveChangesAsync();
 
         user.Username = "UpdatedName";
-        user.Password = "SomePassword";
+        user.AuthUserId = "auth-updated";
 
         // save to the db through the repository
         var result = await _repository.Update(user);
 
         // check if the values are updated
         Assert.Equal("UpdatedName", result.Username);
-        Assert.Equal("SomePassword", result.Password);
+        Assert.Equal("auth-updated", result.AuthUserId);
 
         // check if the user is updated in the database
         var updatedUser = await _context.User.FindAsync(1);
-        Assert.Equal("UpdatedName", updatedUser.Username);
+        Assert.NotNull(updatedUser);
+        Assert.Equal("UpdatedName", updatedUser!.Username);
     }
 
     [Fact]
     public async Task Delete_ShouldDeleteUser()
     {
         // create the user object
-        var user = new User { Id = 1, Username = "DeleteMe", Password = "Passworrrrd" };
+        var user = new User { Id = 1, Username = "DeleteMe", AuthUserId = "auth-delete" };
         
         await _context.User.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -144,7 +149,7 @@ public class GenericRepositoryTests : IDisposable
     public async Task GetByProperty_ShouldReturnUser()
     {
         // Arrange
-        var user = new User { Id = 1, Username = "UserUser", Password = "password" };
+        var user = new User { Id = 1, Username = "UserUser", AuthUserId = "auth-user" };
         await _context.User.AddAsync(user);
         await _context.SaveChangesAsync();
 
@@ -160,7 +165,7 @@ public class GenericRepositoryTests : IDisposable
     public async Task GetByProperty_ShouldReturnNull_WhenPropertyDoesNotMatch()
     {
         // Arrange
-        var user = new User { Id = 1, Username = "testuser", Password = "password123" };
+        var user = new User { Id = 1, Username = "testuser", AuthUserId = "auth-test" };
         await _context.User.AddAsync(user);
         await _context.SaveChangesAsync();
 
@@ -177,9 +182,9 @@ public class GenericRepositoryTests : IDisposable
         // create the object
         var users = new List<User>
         {
-            new User { Id = 1, Username = "admin", Password = "passmann", Role = UserRole.admin },
-            new User { Id = 2, Username = "user", Password = "passwoman", Role = UserRole.player },
-            new User { Id = 3, Username = "ryan", Password = "passpass", Role = UserRole.admin }
+            new User { Id = 1, Username = "admin", AuthUserId = "auth-admin", Role = UserRole.admin },
+            new User { Id = 2, Username = "user", AuthUserId = "auth-user", Role = UserRole.player },
+            new User { Id = 3, Username = "ryan", AuthUserId = "auth-ryan", Role = UserRole.admin }
         };
         await _context.User.AddRangeAsync(users);
         await _context.SaveChangesAsync();
@@ -196,17 +201,17 @@ public class GenericRepositoryTests : IDisposable
     public async Task GetPropertyValue_WhenUserExists()
     {
         // create the user object
-        var user = new User { Id = 1, Username = "MeeMann", Password = "shhsoqso" };
+        var user = new User { Id = 1, Username = "MeeMann", AuthUserId = "auth-meemann" };
         await _context.User.AddAsync(user);
         await _context.SaveChangesAsync();
 
         // get the object value from the repository
         var username = await _repository.GetPropertyValue(1, u => u.Username);
-        var password = await _repository.GetPropertyValue(1, u => u.Password);
+        var authUserId = await _repository.GetPropertyValue(1, u => u.AuthUserId);
 
         // check if the value is what we expect
         Assert.Equal("MeeMann", username);
-        Assert.Equal("shhsoqso", password);
+        Assert.Equal("auth-meemann", authUserId);
     }
 
     [Fact]

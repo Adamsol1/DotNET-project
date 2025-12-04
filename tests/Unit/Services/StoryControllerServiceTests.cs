@@ -1,13 +1,15 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using backend.Application;
-using backend.Application.Interfaces.Repositories;
-using backend.Application.Interfaces.Services;
+using backend.Application.Interfaces;
+using backend.Application.Services.Story;
 using backend.Application.Dtos;
+using backend.Application.Dtos.Story;
 using backend.Domain.Models;
+using backend.Infrastructure.Repositories.Base;
+using backend.Infrastructure.Logging;
 
 namespace tests;
 
@@ -16,7 +18,7 @@ public class StoryControllerServiceTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IGenService> _mockGenService;
     private readonly Mock<IStoryService> _mockStoryService;
-    private readonly Mock<ILogger<StoryControllerService>> _mockLogger;
+    private readonly Mock<IEntityFileLogger> _mockLogger;
     private readonly StoryControllerService _service;
 
     public StoryControllerServiceTests()
@@ -24,7 +26,7 @@ public class StoryControllerServiceTests
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockGenService = new Mock<IGenService>();
         _mockStoryService = new Mock<IStoryService>();
-        _mockLogger = new Mock<ILogger<StoryControllerService>>();
+        _mockLogger = new Mock<IEntityFileLogger>();
         
         _service = new StoryControllerService(
             _mockUnitOfWork.Object,

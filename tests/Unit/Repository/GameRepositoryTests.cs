@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using backend.Domain.Models;
 using backend.Infrastructure.Data;
-using backend.Infrastructure.Repositories;
+using backend.Infrastructure.Repositories.Implementations;
+using backend.Infrastructure.Logging;
+using Moq;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -27,7 +29,8 @@ public class GameRepositoryTests
     {
         // set up the game context
         var context = InMemoryContext(Guid.NewGuid().ToString());
-        var repo = new GameRepository(context);
+        var mockLogger = new Mock<IEntityFileLogger>();
+        var repo = new GameRepository(context, mockLogger.Object);
 		var gameSave = new GameSave { 
             Id = 1,
             UserId = 1, 
@@ -52,7 +55,8 @@ public class GameRepositoryTests
 	{
     		// set up the game context
 		var context = InMemoryContext(Guid.NewGuid().ToString());
-		var repo = new GameRepository(context);
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
 
 		// get a game save that does not exist.
 		await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetById(999));
@@ -68,7 +72,8 @@ public class GameRepositoryTests
 		);
 		await context.SaveChangesAsync();
 
-		var repo = new GameRepository(context);
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
 
 		var all = await repo.GetAll();
 
@@ -90,7 +95,8 @@ public class GameRepositoryTests
 		context.GameSaves.Add(gameSave);
 		await context.SaveChangesAsync();
 
-		var repo = new GameRepository(context);
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
 
 		gameSave.SaveName = "New Save";
 		await repo.Update(gameSave);
@@ -114,7 +120,8 @@ public class GameRepositoryTests
 		context.GameSaves.Add(gameSave);
 		await context.SaveChangesAsync();
 
-		var repo = new GameRepository(context);
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
 		await repo.Delete(gameSave.Id);
 
 		var exists = await context.GameSaves.AnyAsync(gs => gs.Id == gameSave.Id);
@@ -125,7 +132,8 @@ public class GameRepositoryTests
 	public async Task GetAllByUserId_ShouldReturnUserGameSaves()
 	{
 		var context = InMemoryContext(Guid.NewGuid().ToString());
-		var repo = new GameRepository(context);
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
 
 		// Add game saves for different users
 		context.GameSaves.AddRange(
