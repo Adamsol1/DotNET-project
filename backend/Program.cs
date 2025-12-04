@@ -37,7 +37,8 @@ builder.Services.AddIdentity<AuthUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
-//Hentet fra pensum : https://github.com/Baifan-Zhou/ITPE3200-25H/blob/main/6-React-Intro/Demo-react-9-authentication-backend/api/Program.cs
+
+//This code is based from the implementation in our course with coursecode. The connected github repository can be found here: ITPE3200, https://github.com/Baifan-Zhou/ITPE3200-25H/blob/main/6-React-Intro/Demo-react-9-authentication-backend/api/Program.cs
 builder.Services.AddCors(options =>
     {
         options.AddPolicy("CorsPolicy", builder =>
@@ -49,26 +50,7 @@ builder.Services.AddCors(options =>
             });
 });
 
-// Hentet fra pensum for debug. kan fjerne etterhvert. 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My Shop API", Version = "v1" }); // Basic info for the API
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme // Define the Bearer auth scheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement // Require Bearer token for accessing the API
-    {{ new OpenApiSecurityScheme // Reference the defined scheme
-        { Reference = new OpenApiReference
-        { Type = ReferenceType.SecurityScheme,
-            Id = "Bearer"}},
-        new string[] {}
-    }});
-});
+//This code is based from the implementation in our course with coursecode. The connected github repository can be found here: ITPE3200, https://github.com/Baifan-Zhou/ITPE3200-25H/blob/main/6-React-Intro/Demo-react-9-authentication-backend/api/Program.cs
 
 // JWT Authentication configuration
 builder.Services.AddAuthorization();
@@ -95,13 +77,10 @@ builder.Services.AddAuthentication(options =>
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                     builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key not configured")
                 )),
-                ClockSkew = TimeSpan.Zero  // ◄─── Remove default 5-minute grace period
+                ClockSkew = TimeSpan.Zero  // This will remove the "grace" period of the JWT token. 
             };
         
         });
-
-
-
 
 
 // Add services to the container.
@@ -111,7 +90,7 @@ builder.Services.AddHttpClient();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 // DI registrations
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -134,8 +113,6 @@ builder.Services.AddScoped<IGameService, GameService>();
 
 // Logging service
 builder.Services.AddScoped<IEntityFileLogger, EntityFileLogger>();
-
-
 
 
 var app = builder.Build();
@@ -203,12 +180,6 @@ using (var scope = app.Services.CreateScope())
 
 
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 /// In production, use the standard exception handler and HSTS
 app.UseExceptionHandler("/Home/Error");
@@ -218,33 +189,7 @@ app.UseHttpsRedirection();
 
 
 app.UseRouting();
-// Debug middleware: log Origin, Method, Path and small request body for auth endpoints
-app.Use(async (context, next) =>
-{
-    var entityLogger = context.RequestServices.GetRequiredService<IEntityFileLogger>();
-    var origin = context.Request.Headers["Origin"].FirstOrDefault() ?? "<no-origin>";
-    await entityLogger.LogAsync(
-        "Incoming request",
-        new { Method = context.Request.Method, Path = context.Request.Path.Value, Origin = origin, ContentType = context.Request.ContentType },
-        LogCategories.System);
 
-    // If this is an auth POST, read and log the small JSON body (enable buffering)
-    if (context.Request.Path.StartsWithSegments("/api/auth") && context.Request.Method == HttpMethods.Post)
-    {
-        context.Request.EnableBuffering();
-        using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
-        var body = await reader.ReadToEndAsync();
-        context.Request.Body.Position = 0;
-        await entityLogger.LogAsync("Auth request body", new { Body = body }, LogCategories.System);
-    }
-
-    await next();
-
-    await entityLogger.LogAsync(
-        "Response sent",
-        new { Path = context.Request.Path.Value, StatusCode = context.Response.StatusCode },
-        LogCategories.System);
-});
 app.UseCors("CorsPolicy");
 
 
