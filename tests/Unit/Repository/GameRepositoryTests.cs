@@ -24,6 +24,7 @@ public class GameRepositoryTests
 		return new AppDbContext(options);
     }
 
+    // CREATE Tests
     [Fact]
     public async Task CreateGameSave_ShouldCreateGameSave()
     {
@@ -51,6 +52,17 @@ public class GameRepositoryTests
     }
 
 	[Fact]
+	public async Task CreateGameSave_ShouldThrowException_WhenGameSaveIsNull()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		await Assert.ThrowsAsync<ArgumentNullException>(() => repo.Create(null!));
+	}
+
+	// READ Tests
+	[Fact]
 	public async Task GetById_ShouldThrowException_WhenNotFound()
 	{
     		// set up the game context
@@ -60,6 +72,17 @@ public class GameRepositoryTests
 
 		// get a game save that does not exist.
 		await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetById(999));
+	}
+
+	[Fact]
+	public async Task GetById_ShouldThrowException_WhenIdIsInvalid()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		// Try to get a game save with a non-existent ID
+		await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetById(0));
 	}
 
 	[Fact]
@@ -80,6 +103,58 @@ public class GameRepositoryTests
 		Assert.Equal(2, all.Count());
 	}
 
+	[Fact]
+	public async Task GetAll_ShouldReturnEmptyList_WhenNoGameSavesExist()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		var all = await repo.GetAll();
+
+		Assert.Empty(all);
+	}
+
+	[Fact]
+	public async Task GetAllByUserId_ShouldReturnUserGameSaves()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		// Add game saves for different users
+		context.GameSaves.AddRange(
+			new GameSave { Id = 1, UserId = 1, SaveName = "User1 Save1", PlayerCharacterId = 1, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow },
+			new GameSave { Id = 2, UserId = 1, SaveName = "User1 Save2", PlayerCharacterId = 1, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow },
+			new GameSave { Id = 3, UserId = 2, SaveName = "User2 Save1", PlayerCharacterId = 2, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow }
+		);
+		await context.SaveChangesAsync();
+
+		var user1Saves = await repo.GetAllByUserId(1);
+
+		Assert.Equal(2, user1Saves.Count());
+		Assert.All(user1Saves, save => Assert.Equal(1, save.UserId));
+	}
+
+	[Fact]
+	public async Task GetAllByUserId_ShouldReturnEmptyList_WhenUserHasNoGameSaves()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		// Add game saves for a different user
+		context.GameSaves.Add(
+			new GameSave { Id = 1, UserId = 2, SaveName = "User2 Save", PlayerCharacterId = 1, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow }
+		);
+		await context.SaveChangesAsync();
+
+		var user1Saves = await repo.GetAllByUserId(1);
+
+		Assert.Empty(user1Saves);
+	}
+
+	// UPDATE Tests
 	[Fact]
 	public async Task Update_ShouldModifyEntity()
 	{
@@ -106,6 +181,37 @@ public class GameRepositoryTests
 	}
 
 	[Fact]
+	public async Task Update_ShouldThrowException_WhenGameSaveNotFound()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		var gameSave = new GameSave 
+		{ 
+			Id = 999, 
+			UserId = 1, 
+			SaveName = "Non-existent Save", 
+			PlayerCharacterId = 1, 
+			CurrentStoryNodeId = 1, 
+			LastUpdate = DateTime.UtcNow 
+		};
+
+		await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.Update(gameSave));
+	}
+
+	[Fact]
+	public async Task Update_ShouldThrowException_WhenGameSaveIsNull()
+	{
+		var context = InMemoryContext(Guid.NewGuid().ToString());
+		var mockLogger = new Mock<IEntityFileLogger>();
+		var repo = new GameRepository(context, mockLogger.Object);
+
+		await Assert.ThrowsAsync<ArgumentNullException>(() => repo.Update(null!));
+	}
+
+	// DELETE Tests
+	[Fact]
 	public async Task Delete_ShouldRemoveEntity()
 	{
 		var context = InMemoryContext(Guid.NewGuid().ToString());
@@ -129,23 +235,12 @@ public class GameRepositoryTests
 	}
 
 	[Fact]
-	public async Task GetAllByUserId_ShouldReturnUserGameSaves()
+	public async Task Delete_ShouldThrowException_WhenGameSaveNotFound()
 	{
 		var context = InMemoryContext(Guid.NewGuid().ToString());
 		var mockLogger = new Mock<IEntityFileLogger>();
 		var repo = new GameRepository(context, mockLogger.Object);
 
-		// Add game saves for different users
-		context.GameSaves.AddRange(
-			new GameSave { Id = 1, UserId = 1, SaveName = "User1 Save1", PlayerCharacterId = 1, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow },
-			new GameSave { Id = 2, UserId = 1, SaveName = "User1 Save2", PlayerCharacterId = 1, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow },
-			new GameSave { Id = 3, UserId = 2, SaveName = "User2 Save1", PlayerCharacterId = 2, CurrentStoryNodeId = 1, LastUpdate = DateTime.UtcNow }
-		);
-		await context.SaveChangesAsync();
-
-		var user1Saves = await repo.GetAllByUserId(1);
-
-		Assert.Equal(2, user1Saves.Count());
-		Assert.All(user1Saves, save => Assert.Equal(1, save.UserId));
+		await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.Delete(999));
 	}
 }
