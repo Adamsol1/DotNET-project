@@ -272,7 +272,6 @@ const GameContext = createContext();
 export function GameProvider({ children }) {
     // use the reducer to manage the state.
     const [state, dispatch] = useReducer(gameReducer, startState);
-    //TODO : CHATS ATTEMPT TO FIX ALL THIS DEBUG HELL
     useEffect(() => {
         const idStr = localStorage.getItem('user_id');
         const username = localStorage.getItem('user');

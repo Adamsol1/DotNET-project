@@ -21,7 +21,6 @@ public class User
     
     public string AuthUserId { get; set; } = string.Empty;
     
-    //TODO: Uncomment this when GameSave (save progresstions) are to be implemented
     
     // public ICollection<GameSave> GameSaves { get; set; } = new List<GameSave>();
     

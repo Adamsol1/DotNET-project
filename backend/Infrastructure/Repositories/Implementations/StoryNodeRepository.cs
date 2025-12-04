@@ -223,7 +223,6 @@ public class StoryNodeRepository : GenericRepository<StoryNode>, IStoryNodeRepos
     }
 
     
-    //TODO: Can be removed?
     // Ahmed, 11.10 Added GetAllCharactersOfStoryNode method
     public async Task<IEnumerable<Character>> GetAllCharactersOfStoryNode(int id)
     {

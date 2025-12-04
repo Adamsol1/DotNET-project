@@ -1,11 +1,10 @@
 import axios from 'axios';
 
 /**
- * The purpose and plan for this file is to create a single channel? / place where
+ * The purpose and plan for this file is to create a single channel / place where
  * all api requests are made or tunneled through to the backend. 
  * if your ever are missing something, check the backend controller.
  *and add the api call your missing here. 
- -Ah
  */
 
  /* this is an instace that holds the base configuration for the api requests.
@@ -22,11 +21,7 @@ const api = axios.create({
     },
 });
 
-// should we enforce usage of JWT token for the api requests?
-// for know il not include it.
 
-//TODO: Fiks kilde
-//Based on : https://medium.com/@krishnanand654/jwt-token-refresh-using-axios-interceptors-03ad9fa74d77
 api.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token');
@@ -211,7 +206,6 @@ export const story = {
         return response.data;
     },
 
-    //TODO: Can be removed?
     // go back to the previous story node for a given save id.
     goBack: async (saveId) => {
         const response = await api.post(`/story/back/${saveId}`);
