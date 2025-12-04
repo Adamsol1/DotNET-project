@@ -228,7 +228,6 @@ export const story = {
     // Use the Story controller choice endpoint (StoryController handles choice flow)
     makeChoice: async (saveId, choiceId) => {
         const response = await api.post(`/story/choice`, { saveId, choiceId });
-        console.log("I got this from story-api: ", response);
         return response.data;
     },
 

@@ -61,9 +61,6 @@ public class UnitOfWork : IUnitOfWork {
     // save changes;
     public async Task SaveAsync() {
 
-        // when saving consolelog to see if it is working
-        Console.WriteLine("UnitOfWork Started");
-
         // when the db context is created we save the data.
         await _context.SaveChangesAsync();
     }

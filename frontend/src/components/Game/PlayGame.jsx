@@ -267,13 +267,11 @@ export function PlayGame({ saveId, onBackToMenu }) {
 
     // Terminal mini-game handlers
     const handleTerminalWin = () => {
-        console.log('Terminal mini-game won');
         setShowTerminal(false);
         setShowChoices(true); // let the story continue
     };
 
     const handleTerminalLose = () => {
-        console.log('Terminal mini-game lost');
         setShowTerminal(false);
     };
 
