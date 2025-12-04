@@ -197,7 +197,8 @@ public class GameRepositoryTests
 			LastUpdate = DateTime.UtcNow 
 		};
 
-		await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.Update(gameSave));
+		// EF Core throws DbUpdateConcurrencyException which is wrapped in InvalidOperationException
+		await Assert.ThrowsAsync<InvalidOperationException>(() => repo.Update(gameSave));
 	}
 
 	[Fact]

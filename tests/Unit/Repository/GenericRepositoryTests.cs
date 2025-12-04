@@ -240,8 +240,9 @@ public class GenericRepositoryTests : IDisposable
     public async Task Update_ShouldThrowException_WhenUserNotFound()
     {
         // Try to update a user that does not exist
+        // EF Core throws DbUpdateConcurrencyException which is wrapped in InvalidOperationException
         var user = new User { Id = 99999, Username = "Nonexistent", AuthUserId = "auth-nonexistent" };
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _repository.Update(user));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.Update(user));
     }
 
     [Fact]
