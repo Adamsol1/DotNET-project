@@ -35,7 +35,7 @@
     "build:frontend": "cd frontend && react-scripts build",
     "build:backend": "dotnet build backend/backend.csproj",
     "start": "npm run build && concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "test": "cd frontend && react-scripts test",
+    "test": "cd tests && dotnet test",
     "eject": "cd frontend && react-scripts eject"
   },
   "eslintConfig": {
